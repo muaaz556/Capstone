@@ -19,6 +19,8 @@ target 'CapstoneApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'react-native-location', :path => '../node_modules/react-native-location'
+
   target 'CapstoneAppTests' do
     inherit! :complete
     # Pods for testing
