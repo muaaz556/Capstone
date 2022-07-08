@@ -2,7 +2,7 @@
 #include "TFMini.h"
 
 // Setup software serial port 
-SoftwareSerial mySerial(2, 3);      // Uno RX (TFMINI TX), Uno TX (TFMINI RX)
+SoftwareSerial SerialTFMini(2, 3);      // Uno RX (TFMINI TX), Uno TX (TFMINI RX)
 TFMini tfmini;
 
 void getTFminiData(int* distance, int* strength){
@@ -58,9 +58,9 @@ void loop() {
   int distance = 0;
   int strength = 0;
 
-  getTFMiniData(&distance, &strength);
+  getTFminiData(&distance, &strength);
   while(!distance){
-    getTFMiniData(&distance, &strength);
+    getTFminiData(&distance, &strength);
     if(distance){
       Serial.print(distance);
       Serial.print("cm\t");
