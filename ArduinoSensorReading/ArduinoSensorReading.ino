@@ -1,8 +1,8 @@
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 #include "TFMini.h"
 
 // Setup software serial port 
-SoftwareSerial SerialTFMini(2, 3);      // Uno RX (TFMINI TX), Uno TX (TFMINI RX)
+//SoftwareSerial SerialTFMini(0, 1);      // Uno RX (TFMINI TX), Uno TX (TFMINI RX)
 TFMini tfmini;
 
 void getTFminiData(int* distance, int* strength){
@@ -10,8 +10,8 @@ void getTFminiData(int* distance, int* strength){
   char j = 0;
   int checksum = 0;
   static int rx[9];
-  if(SerialTFMini.available()){
-    rx[i] = SerialTFMini.read();
+  if(Serial1.available()){
+    rx[i] = Serial1.read();
     if(rx[0] != 0x59){
       i = 0;
     }
@@ -40,8 +40,8 @@ void setup() {
   while (!Serial);
      
   Serial.println ("Initializing...");
-  SerialTFMini.begin(TFMINI_BAUDRATE);
-  tfmini.begin(&SerialTFMini);
+  Serial1.begin(TFMINI_BAUDRATE);
+  tfmini.begin(&Serial1);
   // Step 2: Initialize the data rate for the SoftwareSerial port
 //  mySerial.begin(TFMINI_BAUDRATE);
 
