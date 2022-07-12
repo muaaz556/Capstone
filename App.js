@@ -70,7 +70,7 @@ const App: () => Node = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Section title="Hello World">
-            This is a basic react app.
+            This is a basic react app!
           </Section>
         </View>
       </ScrollView>
