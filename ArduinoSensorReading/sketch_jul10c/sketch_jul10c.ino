@@ -33,6 +33,7 @@ void loop() {
           Serial.print("cm\t");
           Serial.print("strength: ");
           Serial.println(strength);
+          delay(300);
         }
       }
     }

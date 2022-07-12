@@ -2,7 +2,7 @@
 #include "TFMini.h"
 
 // Setup software serial port 
-//SoftwareSerial SerialTFMini(0, 1);      // Uno RX (TFMINI TX), Uno TX (TFMINI RX)
+//SoftwareSerial SerialTFMini(10, 11);      // Uno RX (TFMINI TX), Uno TX (TFMINI RX)
 TFMini tfmini;
 
 void getTFminiData(int* distance, int* strength){
@@ -11,7 +11,7 @@ void getTFminiData(int* distance, int* strength){
   int checksum = 0;
   static int rx[9];
   if(Serial1.available()){
-    rx[i] = Serial1.read();
+    rx[(unsigned char)i] = Serial1.read();
     if(rx[0] != 0x59){
       i = 0;
     }
@@ -20,7 +20,7 @@ void getTFminiData(int* distance, int* strength){
     }
     else if (i == 8){
       for(j = 0; j < 8; j++){
-        checksum += rx[j];
+        checksum += rx[(unsigned char)j];
       }
       if (rx[8] == (checksum % 256)){
         *distance = rx[2] + rx[3] * 256;
