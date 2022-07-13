@@ -1,9 +1,11 @@
+//#include <SoftwareSerial.h>
 int dist;
 int strength;
 int check;
 int i;
 int uart[9];
 const int HEADER = 0x59;
+//SoftwareSerial Serial1(10, 11);
 
 void setup() {
   // put your setup code here, to run once:
@@ -15,8 +17,6 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if(Serial1.available()){
-    Serial.print("BRUHHHHH ITS AVAILABLE");
-    Serial.print(Serial.read());
     if(Serial1.read() == HEADER){
       uart[0] = HEADER;
       if(Serial1.read() == HEADER){
