@@ -75,5 +75,5 @@ void loop() {
 //  Serial.println(strength);
 
   // Wait some short time before taking the next measurement
-  delay(100);  
+  delay(10);  
 }
