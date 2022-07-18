@@ -1,19 +1,67 @@
-/*
-  BLE_Peripheral.ino
-
-  This program uses the ArduinoBLE library to set-up an Arduino Nano 33 BLE 
-  as a peripheral device and specifies a service and a characteristic. Depending 
-  of the value of the specified characteristic, an on-board LED gets on. 
-
-  The circuit:
-  - Arduino Nano 33 BLE. 
-
-  This example code is in the public domain.
-*/
-
 #include <ArduinoBLE.h>
 #include "TFMini.h"
 TFMini tfmini;
+
+const char* deviceServiceUuid = "19b10000-e8f2-537e-4f6c-d104768a1214";
+const char* deviceServiceCharacteristicUuid = "1A3AC131-31EF-758B-BC51-54A61958EF82";
+
+BLEService gestureService(deviceServiceUuid); 
+BLECharacteristic stringCharacteristic(deviceServiceCharacteristicUuid, BLERead | BLENotify, 20 );
+
+void setup() {
+  Serial1.begin(TFMINI_BAUDRATE);
+  tfmini.begin(&Serial1);
+  
+  pinMode(LEDR, OUTPUT);
+  pinMode(LEDG, OUTPUT);
+  pinMode(LEDB, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+  
+  digitalWrite(LEDR, HIGH);
+  digitalWrite(LEDG, HIGH);
+  digitalWrite(LEDB, HIGH);
+  digitalWrite(LED_BUILTIN, LOW);
+  
+  if (!BLE.begin()) {
+    while (1);
+  }
+  
+  BLE.setLocalName("NanoBLE");
+  BLE.setAdvertisedService(gestureService);
+  gestureService.addCharacteristic(stringCharacteristic);
+  BLE.addService(gestureService);
+  BLE.advertise();
+}
+
+void loop() {
+  BLEDevice central = BLE.central();
+  delay(10);
+
+  int distance = 0;
+  int strength = 0;
+
+  getTFminiData(&distance, &strength);
+  while(!distance){
+    getTFminiData(&distance, &strength);
+    if(distance){
+      break;
+    }
+  }
+  
+  if (central) {
+    while (central.connected()) {
+      digitalWrite(LEDR, LOW);
+      digitalWrite(LEDG, HIGH);
+      digitalWrite(LEDB, LOW);
+
+      const char* greeting = String(distance).c_str();
+      stringCharacteristic.writeValue(greeting);
+    }
+    digitalWrite(LEDR, HIGH);
+    digitalWrite(LEDG, HIGH);
+    digitalWrite(LEDB, HIGH);
+  }
+}
 
 void getTFminiData(int* distance, int* strength){
   static char i =0;
@@ -42,101 +90,4 @@ void getTFminiData(int* distance, int* strength){
       i++;
     }
   }
-}
-
-const char* deviceServiceUuid = "19b10000-e8f2-537e-4f6c-d104768a1214";
-const char* deviceServiceCharacteristicUuid = "19b10001-e8f2-537e-4f6c-d104768a1214";
-
-int gesture = -1;
-
-BLEService gestureService(deviceServiceUuid); 
-BLECharCharacteristic gestureCharacteristic(deviceServiceCharacteristicUuid, BLERead | BLEWrite);
-BLECharacteristic stringCharacteristic( "1A3AC131-31EF-758B-BC51-54A61958EF82", BLERead | BLENotify, 20 );
-
-String fileName = "test";
-int counter = 0;
-
-void setup() {
-
-//  Serial.begin(115200);
-//  // wait for serial port to connect. Needed for native USB port only
-//  while (!Serial);
-//     
-//  Serial.println ("Initializing...");
-  Serial1.begin(TFMINI_BAUDRATE);
-  tfmini.begin(&Serial1);
-  
-  pinMode(LEDR, OUTPUT);
-  pinMode(LEDG, OUTPUT);
-  pinMode(LEDB, OUTPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
-  
-  digitalWrite(LEDR, HIGH);
-  digitalWrite(LEDG, HIGH);
-  digitalWrite(LEDB, HIGH);
-  digitalWrite(LED_BUILTIN, LOW);
-
-  
-  if (!BLE.begin()) {
-    while (1);
-  }
-  
-
-  BLE.setLocalName("NanoBLE");
-  BLE.setAdvertisedService(gestureService);
-  gestureService.addCharacteristic(gestureCharacteristic);
-  gestureService.addCharacteristic(stringCharacteristic);
-  BLE.addService(gestureService);
-  gestureCharacteristic.writeValue('A');
-  char* greeting = "Hello World!";
-  stringCharacteristic.writeValue(greeting);
-  BLE.advertise();
-}
-
-void loop() {
-  BLEDevice central = BLE.central();
-  delay(10);
-  counter++;
-  if(counter > 9) counter = 0;
-
-  int distance = 0;
-  int strength = 0;
-  //Serial.print("here1");
-
-  getTFminiData(&distance, &strength);
-  //Serial.print("here4");
-  while(!distance){
-    //Serial.println("here5");
-    getTFminiData(&distance, &strength);
-    if(distance){
-//      Serial.print(distance);
-//      Serial.print("cm\t");
-//      Serial.print("strength: ");
-//      Serial.println(strength);
-      break;
-    }
-  }
-  //Serial.print("here2");
-  if (central) {
-
-    
-
-    while (central.connected()) {
-      digitalWrite(LEDR, LOW);
-    digitalWrite(LEDG, LOW);
-    digitalWrite(LEDB, HIGH);
-      
-         //char str[] = "test";
-        const char* greeting = String(distance).c_str();
-        stringCharacteristic.writeValue(greeting);
-//      if (gestureCharacteristic.written()) {
-//         gesture = gestureCharacteristic.value();
-//         writeGesture(gesture);
-//       }
-    }
-    digitalWrite(LEDR, HIGH);
-    digitalWrite(LEDG, HIGH);
-    digitalWrite(LEDB, HIGH);
-  }
-  //Serial.print("here3");
 }

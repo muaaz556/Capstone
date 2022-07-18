@@ -103,9 +103,6 @@ export async function requestLocationPermission() {
 //   return <MyClassComponent {...props} navigate={navigate} />;
 // };
 
-
-
-
  async function connectAndReceive() {
 
   const permission = requestLocationPermission();
@@ -130,7 +127,8 @@ export async function requestLocationPermission() {
           .then((characteristic) => {
             console.log(base64.decode(characteristic.value))
             device.cancelConnection()
-            return 
+            return base64.decode(characteristic.value)
+            //return
           }, (error) => {
             console.log("Failed to find service or characteristic")
             device.cancelConnection()
@@ -176,7 +174,7 @@ const App: () => Node = () => {
   useEffect(() => {
     // This will fire only on mount.
     const interval = setInterval(() => {
-      connectAndReceive();
+      connectAndReceive()
     }, 5000);
 
   
@@ -193,10 +191,10 @@ const App: () => Node = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Hello World">
-            This is a basic react app.
+          <Section title="Bluetooth Value">
+            Distance reading is shown in logs.
           </Section>
-          <Button title='Press' onPress={connectAndReceive}/>
+          {/* <Button title='Press' onPress={connectAndReceive}/> */}
         </View>
       </ScrollView>
     </SafeAreaView>
