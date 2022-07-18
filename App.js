@@ -16,7 +16,10 @@ import {
   Text,
   useColorScheme,
   View,
+  Button,
 } from 'react-native';
+import { BleManager } from 'react-native-ble-plx';
+import base64 from 'react-native-base64'
 
 import {
   Colors,
@@ -52,6 +55,42 @@ const Section = ({children, title}): Node => {
   );
 };
 
+const bleManager = new BleManager();
+
+const connectAndReceive = () => {
+    bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
+      //this.info("Scanning...")
+      //console.log(device)
+      
+      if (error) {
+        //this.error(error.message)
+        console.log(error.message)
+        return
+      }
+      console.log(device.name)
+      if (device.name === 'NanoBLE' || device.localName === 'NanoBLE') {
+        bleManager.stopDeviceScan();
+        device.connect()
+        .then((device) => {
+          //console.log("connected to device")
+          return device.discoverAllServicesAndCharacteristics()
+        })
+          .then((device) => {
+            return device.readCharacteristicForService("19b10000-e8f2-537e-4f6c-d104768a1214", "1A3AC131-31EF-758B-BC51-54A61958EF82")
+          })
+          .then((characteristic) => {
+            console.log(base64.decode(characteristic.value))
+            device.cancelConnection()
+            return 
+          }, (error) => {
+            console.log("Failed to connect")
+          })
+      }
+      
+    })
+
+};
+
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -72,6 +111,7 @@ const App: () => Node = () => {
           <Section title="Hello World">
             This is a basic react app.
           </Section>
+          <Button title='Press' onPress={connectAndReceive}/>
         </View>
       </ScrollView>
     </SafeAreaView>
