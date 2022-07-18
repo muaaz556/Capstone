@@ -6,8 +6,9 @@
  * @flow strict-local
  */
 
-import React from 'react';
+ import React, { useState, useEffect } from 'react';
 import type {Node} from 'react';
+// import from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -30,6 +31,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -85,43 +87,41 @@ export async function requestLocationPermission() {
   }
 }
 
-const connectAndReceive = () => {
+// export function triggerUpdate() {
+//   useEffect(() => {
+//     // This will fire only on mount.
+//     const interval = setInterval(() => {
+//       connectAndReceive();
+//     }, 10000);
+  
+//     return () => clearInterval(interval);
+//   }, [])
+// }
+// const MyComponentWithNavigation = () => {
+//   const navigate = useNavigate();
 
-  //   if (Platform.OS === 'android') {
-  //     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
-  //         if (result) {
-  //             console.log("Permission is OK");
-  //             // this.retrieveConnected()
-  //         } else {
-  //             PermissionsAndroid.requestPermission(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
-  //                 if (result) {
-  //                     console.log("User accept");
-  //                 } else {
-  //                     console.log("User refuse");
-  //                 }
-  //             });
-  //         }
-  //     });
-  // }
+//   return <MyClassComponent {...props} navigate={navigate} />;
+// };
+
+
+
+
+ async function connectAndReceive() {
 
   const permission = requestLocationPermission();
     if (permission) {
 
     bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
-      //this.info("Scanning...")
-      //console.log(device)
       
       if (error) {
-        //this.error(error.message)
         console.log(error.message)
         return
       }
-      console.log(device.name)
+      //console.log(device.name)
       if (device.name === 'NanoBLE' || device.localName === 'NanoBLE') {
         bleManager.stopDeviceScan();
         device.connect()
         .then((device) => {
-          //console.log("connected to device")
           return device.discoverAllServicesAndCharacteristics()
         })
           .then((device) => {
@@ -132,7 +132,8 @@ const connectAndReceive = () => {
             device.cancelConnection()
             return 
           }, (error) => {
-            console.log("Failed to connect")
+            console.log("Failed to find service or characteristic")
+            device.cancelConnection()
           })
       }
       
@@ -141,12 +142,46 @@ const connectAndReceive = () => {
 
 };
 
+
+
+// async function setConnection() {
+//   const permission = requestLocationPermission();
+//     if (permission) {
+
+//     bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
+      
+//       if (error) {
+//         console.log(error.message)
+//         return
+//       }
+//       //console.log(device.name)
+//       if (device.name === 'NanoBLE' || device.localName === 'NanoBLE') {
+//         bleManager.stopDeviceScan();
+//         device.connect()
+//         .then((device) => {
+//           return device.discoverAllServicesAndCharacteristics()
+//         })
+//       }
+//     })
+//   }
+// }
+
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    // This will fire only on mount.
+    const interval = setInterval(() => {
+      connectAndReceive();
+    }, 5000);
+
+  
+    return () => clearInterval(interval);
+  }, [])
 
   return (
     <SafeAreaView style={backgroundStyle}>
