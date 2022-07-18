@@ -17,6 +17,8 @@ import {
   useColorScheme,
   View,
   Button,
+  PermissionsAndroid,
+  NativeModules, NativeEventEmitter,
 } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 import base64 from 'react-native-base64'
@@ -57,7 +59,54 @@ const Section = ({children, title}): Node => {
 
 const bleManager = new BleManager();
 
+
+//source: https://stackoverflow.com/questions/55813427/unable-to-use-react-native-bluetoothel
+export async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+        title: 'Location permission for bluetooth scanning',
+        message: 'wahtever',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    ); 
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      //console.log('Location permission for bluetooth scanning granted');
+      return true;
+    } else {
+      //console.log('Location permission for bluetooth scanning revoked');
+      return false;
+    }
+  } catch (err) {
+    console.warn(err);
+    return false;
+  }
+}
+
 const connectAndReceive = () => {
+
+  //   if (Platform.OS === 'android') {
+  //     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
+  //         if (result) {
+  //             console.log("Permission is OK");
+  //             // this.retrieveConnected()
+  //         } else {
+  //             PermissionsAndroid.requestPermission(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
+  //                 if (result) {
+  //                     console.log("User accept");
+  //                 } else {
+  //                     console.log("User refuse");
+  //                 }
+  //             });
+  //         }
+  //     });
+  // }
+
+  const permission = requestLocationPermission();
+    if (permission) {
+
     bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
       //this.info("Scanning...")
       //console.log(device)
@@ -88,6 +137,7 @@ const connectAndReceive = () => {
       }
       
     })
+  }
 
 };
 
