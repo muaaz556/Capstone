@@ -1,14 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
- import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type {Node} from 'react';
-// import from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -62,7 +53,6 @@ const Section = ({children, title}): Node => {
 
 const bleManager = new BleManager();
 
-
 //source: https://stackoverflow.com/questions/55813427/unable-to-use-react-native-bluetoothel
 export async function requestLocationPermission() {
   try {
@@ -76,10 +66,8 @@ export async function requestLocationPermission() {
       },
     ); 
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      //console.log('Location permission for bluetooth scanning granted');
       return true;
     } else {
-      //console.log('Location permission for bluetooth scanning revoked');
       return false;
     }
   } catch (err) {
@@ -88,175 +76,80 @@ export async function requestLocationPermission() {
   }
 }
 
-// export function triggerUpdate() {
-//   useEffect(() => {
-//     // This will fire only on mount.
-//     const interval = setInterval(() => {
-//       connectAndReceive();
-//     }, 10000);
-  
-//     return () => clearInterval(interval);
-//   }, [])
-// }
-// const MyComponentWithNavigation = () => {
-//   const navigate = useNavigate();
-
-//   return <MyClassComponent {...props} navigate={navigate} />;
-// };
-
-//  async function connectAndReceive() {
-
-//   const permission = requestLocationPermission();
-//     if (permission) {
-
-//     bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
-      
-//       if (error) {
-//         console.log(error.message)
-//         return
-//       }
-//       //console.log(device.name)
-//       if (device.name === 'NanoBLE' || device.localName === 'NanoBLE') {
-//         bleManager.stopDeviceScan();
-//         device.connect()
-//         .then((device) => {
-//           return device.discoverAllServicesAndCharacteristics()
-//         }, (error) => {
-//           console.log("Failed to connect to NanoBLE")
-//           device.cancelConnection()
-//         })
-//           .then((device) => {
-//             return device.readCharacteristicForService("19b10000-e8f2-537e-4f6c-d104768a1214", "1A3AC131-31EF-758B-BC51-54A61958EF82")
-//           }, (error) => {
-//             console.log("Failed to find service")
-//             device.cancelConnection()
-//           })
-//           .then((characteristic) => {
-//             console.log(base64.decode(characteristic.value))
-//             const distanceValue = parseInt(base64.decode(characteristic.value))
-//             //if(distanceValue < 200) Vibration.vibrate(500)
-//             device.cancelConnection()
-//             return base64.decode(characteristic.value)
-//             //return
-//           }, (error) => {
-//             console.log("Failed to read characteristic")
-//             device.cancelConnection()
-//           })
-//       }
-      
-//     })
-//   }
-
-// };
-
-
-
-// async function setConnection() {
-//   const permission = requestLocationPermission();
-//     if (permission) {
-
-//     bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
-      
-//       if (error) {
-//         console.log(error.message)
-//         return
-//       }
-//       //console.log(device.name)
-//       if (device.name === 'NanoBLE' || device.localName === 'NanoBLE') {
-//         bleManager.stopDeviceScan();
-//         device.connect()
-//         .then((device) => {
-//           return device.discoverAllServicesAndCharacteristics()
-//         })
-//       }
-//     })
-//   }
-// }
-
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   var [state, setState] = useState("Not connected");
-  // var [deviceArd, setDevice] = useState<Device>();
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  //this variable holds the connected bluetooth device info
   var connectorDevice = null;
   var distanceValue = 0;
 
+  //this function searches and then sets up the bluetooth connection with a device
   connectAndReceive = () => {
-
+    //get permission to use phone location (needed for bluetooth)
     const permission = requestLocationPermission();
-      if (permission) {
-  
-      bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
-        
+    //if permission given then continue
+    if (permission) {
+      //scan for devices
+      bleManager.startDeviceScan(null, {allowDuplicates: false, }, (error, device) => {
+        //if error occurs then stop the scan
         if (error) {
+
           console.log(error.message)
           return
         }
-        //console.log(device.name)
+        //find the device named NanoBLE (this is the name set in the arduino code)
         if (device != null && (device.name === 'NanoBLE' || device.localName === 'NanoBLE')) {
+          //the device has been found so we stop searching
           bleManager.stopDeviceScan();
+          //connect to the device
           device.connect()
           .then((device) => {
             return device.discoverAllServicesAndCharacteristics()
           }, (error) => {
             console.log("Failed to connect to NanoBLE")
             return
-            //device.cancelConnection()
           })
-            .then((device) => {
-              connectorDevice = device
-              //console.log(connectorDevice)
-              return
-              //return device.readCharacteristicForService("19b10000-e8f2-537e-4f6c-d104768a1214", "1A3AC131-31EF-758B-BC51-54A61958EF82")
-            }, (error) => {
-              console.log("Failed to find service")
-              return
-              //device.cancelConnection()
-            })
-            // .then((characteristic) => {
-            //   console.log(base64.decode(characteristic.value))
-            //   setState(base64.decode(characteristic.value))
-            //   const distanceValue = parseInt(base64.decode(characteristic.value))
-            //   //if(distanceValue < 200) Vibration.vibrate(500)
-            //   device.cancelConnection()
-            //   return base64.decode(characteristic.value)
-            //   //return
-            // }, (error) => {
-            //   console.log("Failed to read characteristic")
-            //   device.cancelConnection()
-            // })
+          .then((device) => {
+            connectorDevice = device
+            return
+          }, (error) => {
+            console.log("Failed to find service")
+            return
+          })
         }
-        
       })
     }
-  
   };
 
-  //connectAndReceive()
-
   useEffect(() => {
-    // This will fire only on mount.
+    //This function runs every 0.5 seconds.
+    //The job of this function is to read data
+    //when connected to the bluetooth device every 0.5 seconds. 
+    //When not connected this function does nothing (in this 
+    //case connectorDevice is null).
     const interval = setInterval(() => {
-      //connectAndReceive()
-      if(connectorDevice == null) return
+
+      if(connectorDevice == null) {
+        return
+      }
+      //The service and characteristic UUID is set in the arduino code
       connectorDevice.readCharacteristicForService("19b10000-e8f2-537e-4f6c-d104768a1214", "1A3AC131-31EF-758B-BC51-54A61958EF82")
       .then((characteristic) => {
+        //convert the received data in base64 (basically if not decoded the data looks like random stuff)
         console.log(base64.decode(characteristic.value))
         setState(base64.decode(characteristic.value)+"cm")
         distanceValue = parseInt(base64.decode(characteristic.value))
+        //if the distance is less than 100cm then make the phone vibrate
         if(distanceValue < 100) Vibration.vibrate(100)
-        //device.cancelConnection()
-        //return base64.decode(characteristic.value)
         return
       }, (error) => {
         console.log("Failed to read characteristic")
-        //connectorDevice = null
-        //device.cancelConnection()
         return
       })
     }, 500);
@@ -264,21 +157,17 @@ const App: () => Node = () => {
   }, [])
 
   useEffect(() => {
-    // This will fire only on mount.
-    
+    //This function runs every 5 seconds
+    //connectorDevice is null when not connected to a bluetooth device
+    //the job of this function is to try to connect to a bluetooth device
+    //every 5 seconds. When connected this function does nothing.
     const interval = setInterval(() => {
-      
-      // if(connectorDevice == null) {
-      //   connectAndReceive()
-      // } else {
-
-      // }
       
       if(connectorDevice != null) {
         clearInterval(interval);
       } else {
+        console.log("Trying to connect to device")
         connectAndReceive()
-        console.log("here")
       }
       
     }, 5000);
@@ -295,13 +184,9 @@ const App: () => Node = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          {/* <Section title="Bluetooth Value">
-            Distance reading is shown in logs. {state}
-          </Section> */}
           <Section title="Distance Reading:">
             {state}
           </Section>
-          {/* <Button title='Press' onPress={connectAndReceive}/> */}
         </View>
       </ScrollView>
     </SafeAreaView>
