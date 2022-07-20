@@ -40,19 +40,27 @@ void loop() {
   int distance = 0;
   int strength = 0;
 
-  getTFminiData(&distance, &strength);
-  while(!distance){
-    getTFminiData(&distance, &strength);
-    if(distance){
-      break;
-    }
-  }
+//  getTFminiData(&distance, &strength);
+//  while(!distance){
+//    getTFminiData(&distance, &strength);
+//    if(distance){
+//      break;
+//    }
+//  }
   
   if (central) {
     while (central.connected()) {
       digitalWrite(LEDR, LOW);
       digitalWrite(LEDG, HIGH);
       digitalWrite(LEDB, LOW);
+
+      getTFminiData(&distance, &strength);
+      while(!distance){
+        getTFminiData(&distance, &strength);
+        if(distance){
+          break;
+        }
+      }
 
       const char* greeting = String(distance).c_str();
       stringCharacteristic.writeValue(greeting);
