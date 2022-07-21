@@ -154,11 +154,26 @@ function testSearch() {
     console.log("\n");
 }
 
+function emptyAdjLists() {
+    src.clearAdjList();
+    dest.clearAdjList();
+    one.clearAdjList();
+    two.clearAdjList();
+    three.clearAdjList();
+    four.clearAdjList();
+    five.clearAdjList();
+    six.clearAdjList();
+    seven.clearAdjList();
+    eight.clearAdjList();
+    nine.clearAdjList();
+}
+
 export function runTest(num) {
     initEdges(num);
     testAdjLists();
     testHeuristic();
     testSearch();
+    emptyAdjLists();
 }
 
 

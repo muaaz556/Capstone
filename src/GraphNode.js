@@ -27,6 +27,8 @@ export class GraphNode {
 
     printAdjList() { this.adjList.print(this.name); }
 
+    clearAdjList() { this.adjList = new AdjList(); }
+
     addEdge(node) { this.adjList.add(node); }
 
     getName() { return this.name; }
