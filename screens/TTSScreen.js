@@ -9,11 +9,16 @@ const TTSScreen = ({ navigation }) => {
         Speech.speak(text);
     }
 
+    const annotateButton = () => {
+        Speech.speak("You wrote: " + text);
+    }
+
     return (
         <View style = {{flex:1, alignItems:"center", justifyContent:"center"}}>
             <TextInput
                 value={text}
                 onChangeText={handleTextChange}
+                onEndEditing={annotateButton}
             />
             <Button
                 onPress={getTTS}
