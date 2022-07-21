@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Vibration, PermissionsAndroid } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 import base64 from 'react-native-base64'
+import { Button } from 'native-base';
+
+const bleManager = new BleManager();
+
 const DistanceSensingScreen = ({ navigation }) => {
-    const bleManager = new BleManager();
+    
     var [state, setState] = useState("Not connected");
     //this variable holds the connected bluetooth device info
     var connectorDevice = null;
@@ -92,6 +96,8 @@ const DistanceSensingScreen = ({ navigation }) => {
             if(distanceValue < 100) Vibration.vibrate(100)
                 return
         }, (error) => {
+            console.log(connectorDevice)
+            console.log(error)
             console.log("Failed to read characteristic")
             return
         })
@@ -120,9 +126,20 @@ const DistanceSensingScreen = ({ navigation }) => {
 
         return (
             <View style = {{flex:1, alignItems:"center", justifyContent:"center"}}>
-                <Section title="Distance Reading:">
+                <Text>
+                    {"Distance Reading: "}
                     {state}
-                </Section>
+                </Text>
+
+                {/* <Button onPress={() =>
+                    {
+                        if(connectorDevice != null){
+                             connectorDevice.cancelConnection().then(navigation.navigate('Home'))
+                        } else {
+                            navigation.navigate('Home')
+                        }
+                    }
+                }><Text>Disconnect and go back</Text></Button> */}
             </View>
         
         );
