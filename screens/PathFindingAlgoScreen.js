@@ -7,8 +7,6 @@ import { runTest } from '../src/main.js';
 
 const PathFindingAlgoScreen = ({ navigation }) => {
 
-    var [state, setState] = useState("Not connected");
-
     const test = (num) => {
         runTest(num);
     }
@@ -17,17 +15,17 @@ const PathFindingAlgoScreen = ({ navigation }) => {
         <View style = {{flex:1, alignItems:"center", justifyContent:"center"}}>
             <Text>Sample text</Text>
             <Button
-                onPress={test}
+                onPress={test(1)}
                 style={{width:170,backgroundColor:'#99004d',marginTop:20,}}>
                 <Text>Run Test 1</Text>
             </Button>
             <Button
-                onPress={test}
+                onPress={test(2)}
                 style={{width:170,backgroundColor:'#99004d',marginTop:20,}}>
                 <Text>Run Test 2</Text>
             </Button>
             <Button
-                onPress={test}
+                onPress={test(3)}
                 style={{width:170,backgroundColor:'#99004d',marginTop:20,}}>
                 <Text>Run Test 3</Text>
             </Button>
