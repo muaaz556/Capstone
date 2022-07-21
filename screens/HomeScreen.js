@@ -18,6 +18,13 @@ const HomeScreen = ({ navigation }) => {
                 style={{width:250,height: 100, backgroundColor:'#99004d',marginTop:20, borderRadius:20}}>
                 <Text style={{color: "#FFFFFF", fontSize:20, fontWeight:'bold'}}>Text-to-Speech Screen</Text>
             </Button>
+            <Button
+                onPress={() =>
+                    navigation.navigate('PathFinding')
+                }
+                style={{width:250,height: 100, backgroundColor:'#99004d',marginTop:20, borderRadius:20}}>
+                <Text style={{textAlign: 'center', color: "#FFFFFF", fontSize:20, fontWeight:'bold'}}>Path-Finding Algorithm Screen</Text>
+            </Button>
 
         </View>
     );

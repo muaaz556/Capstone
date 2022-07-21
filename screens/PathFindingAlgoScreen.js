@@ -1,7 +1,7 @@
 
 import {Button} from 'native-base';
 import { StyleSheet, Text, View } from 'react-native';
-import { runTest } from '../src/main.mjs';
+import { runTest } from '../src/main.js';
 
 
 
