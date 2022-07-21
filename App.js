@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
 import HomeScreen from './screens/HomeScreen';
 import DistanceSensingScreen from './screens/DistanceSensingScreen';
+import TTSScreen from './screens/TTSScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,10 @@ export default function App() {
             <Stack.Screen
               name="Distance"
               component={DistanceSensingScreen}
+            />
+            <Stack.Screen
+              name="TTS"
+              component={TTSScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>
