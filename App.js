@@ -8,6 +8,7 @@ import { NativeBaseProvider } from 'native-base';
 import HomeScreen from './screens/HomeScreen';
 import DistanceSensingScreen from './screens/DistanceSensingScreen';
 import TTSScreen from './screens/TTSScreen';
+import PathFindingAlgoScreen from './screens/PathFindingAlgoScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,10 @@ export default function App() {
             <Stack.Screen
               name="TTS"
               component={TTSScreen}
+            />
+            <Stack.Screen
+              name="PathFinding"
+              component={PathFindingAlgoScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>
