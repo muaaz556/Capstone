@@ -49,7 +49,7 @@ const PathDiagramScreen = ({ navigation, route }) => {
             <Button
                 onPress={parser}
                 style={{width:170,backgroundColor:'#99004d',marginTop:20,}}>
-                <Text>TTS</Text>
+                <Text style={{color: "#FFFFFF"}}>TTS</Text>
             </Button>
         </View>
 

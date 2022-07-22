@@ -16,6 +16,9 @@ var seven = new GraphNode("7");
 var eight = new GraphNode("8");
 var nine = new GraphNode("9");
 
+var hallNodes = new Array(32);
+var doorNodes = new Array(23);
+
 function initEdges(num) {
     switch(num) {
         case 1:
@@ -33,7 +36,7 @@ function initEdges(num) {
 }
 
 
-function setupGraph1() {
+function setupGraph4() {
     src.adjList.addGNode(one, "N");
     one.adjList.addGNode(two, "N");
     two.adjList.addGNode(three, "N");
@@ -95,7 +98,7 @@ function setupGraph3() {
     four.adjList.addGNode(seven, "E");
     five.adjList.addGNode(eight, "E");
     five.adjList.addGNode(nine, "W");
-    eight.adjList.addGNode(dest, "E");
+    nine.adjList.addGNode(dest, "W");
 
     one.adjList.addGNode(src, "S");
     two.adjList.addGNode(one, "S");
@@ -107,7 +110,68 @@ function setupGraph3() {
     seven.adjList.addGNode(four, "W");
     eight.adjList.addGNode(five, "W");
     nine.adjList.addGNode(five, "E");
-    dest.adjList.addGNode(eight, "W");
+    dest.adjList.addGNode(nine, "E");
+}
+
+function setupGraph1() {
+    var name = "hall";
+    for(var i = 0; i < hallNodes.length; i++) {
+        hallNodes[i] = new GraphNode(name + i);
+    }
+
+    name = "door"
+    for(var i = 0; i < doorNodes.length; i++) {
+        doorNodes[i] = new GraphNode(name + i);
+    }
+
+    const directions = ["W", "N", "E", "S"];
+    var currDirection = 0;
+    for(var i = 0; i < hallNodes.length; i++) {
+        if(i == 10 || i == 16 || i == 26) {
+            currDirection++;
+        }
+        hallNodes[i].adjList.addGNode(hallNodes[(i+1)%hallNodes.length], directions[currDirection]);
+        hallNodes[(i+1)%hallNodes.length].adjList.addGNode(hallNodes[i], directions[(currDirection+2)%4]);
+    }
+
+    var hallDoorPairsSN = [
+        [2,7],[4,8],[6,9],[8,10],[16,22],[17,21],[18,20],[19,19],[20,18],[21,17],
+        [22,16],[23,15],[24,14],[25,13]];
+
+    var hallDoorPairsNS = [[0,0],[2,1],[4,2],[5,3],[7,4],[8,5],[10,6],[20,12],[25,11]];
+
+    for(var i = 0; i < hallDoorPairsNS.length; i++) {
+        var node1 = hallDoorPairsNS[i][0];
+        var node2 = hallDoorPairsNS[i][1];
+
+        hallNodes[node1].adjList.addGNode(doorNodes[node2], "S");
+        doorNodes[node2].adjList.addGNode(hallNodes[node1], "N");
+    }
+
+    for(var i = 0; i < hallDoorPairsSN.length; i++) {
+        var node1 = hallDoorPairsSN[i][0];
+        var node2 = hallDoorPairsSN[i][1];
+
+        hallNodes[node1].adjList.addGNode(doorNodes[node2], "N");
+        doorNodes[node2].adjList.addGNode(hallNodes[node1], "S");
+    }
+
+    var node = aStar(doorNodes[0], doorNodes[22]);
+
+    return node.path;
+
+
+
+    
+
+//     for(var i = 0; i < hallNodes.length; i++) {
+//         hallNodes[i].printAdjList();
+//     }
+
+//     for(var i = 0; i < doorNodes.length; i++) {
+//         doorNodes[i].printAdjList();
+//     }
+
 }
 
 function testAdjLists() {
@@ -167,14 +231,18 @@ function emptyAdjLists() {
 }
 
 export function runTest(num) {
-    initEdges(num);
-    // testAdjLists();
-    // testHeuristic();
-    // testSearch();
-    var node = aStar(src, dest);
-    // console.log("path: " + node.path);
-    emptyAdjLists();
-    return node.path;
+    if(num == 1) {
+        return setupGraph1();
+    } else {
+        initEdges(num);
+        // testAdjLists();
+        // testHeuristic();
+        // testSearch();
+        var node = aStar(src, dest);
+        // console.log("path: " + node.path);
+        emptyAdjLists();
+        return node.path;
+    }
 }
 
 

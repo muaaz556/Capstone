@@ -21,7 +21,7 @@ const PathFindingAlgoScreen = ({ navigation }) => {
                 navigation.navigate("PathDiagram", { searchPath: path, imagePath: require('../assets/test_diagram3.png') });
                 break;
             default:
-                navigation.navigate("PathDiagram", { searchPath: path, imagePath: require('../assets/favicon.png') });
+                navigation.navigate("PathDiagram", { searchPath: path, imagePath: require('../assets/test_diagram1.png') });
         }
         
     }
