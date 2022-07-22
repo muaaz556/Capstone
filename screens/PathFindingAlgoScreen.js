@@ -10,7 +10,20 @@ const PathFindingAlgoScreen = ({ navigation }) => {
     const test = (num) => {
         var path = runTest(num);
         console.log("path: " + path);
-        navigation.navigate("PathDiagram", { searchPath: path, imagePath: '../assets/favicon.png' });
+        switch (num) {
+            case 1:
+                navigation.navigate("PathDiagram", { searchPath: path, imagePath: require('../assets/test_diagram1.png') });
+                break;
+            case 2:
+                navigation.navigate("PathDiagram", { searchPath: path, imagePath: require('../assets/test_diagram2.png') });
+                break;
+            case 3:
+                navigation.navigate("PathDiagram", { searchPath: path, imagePath: require('../assets/test_diagram3.png') });
+                break;
+            default:
+                navigation.navigate("PathDiagram", { searchPath: path, imagePath: require('../assets/favicon.png') });
+        }
+        
     }
 
     return (
