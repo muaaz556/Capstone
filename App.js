@@ -11,6 +11,7 @@ import TTSScreen from './screens/TTSScreen';
 import PathFindingAlgoScreen from './screens/PathFindingAlgoScreen';
 import PathDiagramScreen from './screens/PathDiagramScreen';
 import LocationScreen from './screens/LocationScreen';
+import Accelerometer from './screens/AccelerometerScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,10 @@ export default function App() {
             <Stack.Screen
               name="Location"
               component={LocationScreen}
+            />
+            <Stack.Screen
+              name="Accelerometer"
+              component={Accelerometer}
             />
           </Stack.Navigator>
         </NavigationContainer>
