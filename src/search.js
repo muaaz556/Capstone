@@ -8,7 +8,8 @@ export function aStar(start, dest) {
     var curr = start;
     var list = [];
     var currCost = 0;
-    var currPath = start.getName();
+    // var currPath = start.getName();
+    var currPath = "";
 
     while(curr.getName() != dest.getName()) {
         
@@ -19,7 +20,8 @@ export function aStar(start, dest) {
             list.push({
                 cost: currCost + 1,
                 heuristic: heuristic[recurNode.graphNode.getName()],
-                path: currPath + " " + recurNode.getDirection() + " - " + recurNode.graphNode.getName(),
+                // path: currPath + " " + recurNode.getDirection() + " - " + recurNode.graphNode.getName(),
+                path: currPath + recurNode.getDirection(),
                 node: recurNode
             });
             recurNode = recurNode.next;

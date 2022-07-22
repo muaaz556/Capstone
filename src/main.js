@@ -16,8 +16,6 @@ var seven = new GraphNode("7");
 var eight = new GraphNode("8");
 var nine = new GraphNode("9");
 
-var testNum = 3;
-
 function initEdges(num) {
     switch(num) {
         case 1:
@@ -170,14 +168,14 @@ function emptyAdjLists() {
 
 export function runTest(num) {
     initEdges(num);
-    testAdjLists();
-    testHeuristic();
-    testSearch();
+    // testAdjLists();
+    // testHeuristic();
+    // testSearch();
+    var node = aStar(src, dest);
+    // console.log("path: " + node.path);
     emptyAdjLists();
+    return node.path;
 }
-
-
-runTest(testNum);
 
 
 
