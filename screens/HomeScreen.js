@@ -26,7 +26,7 @@ const HomeScreen = ({ navigation }) => {
             </Button>
             <Button
                 onPress={() =>
-                    navigation.navigate('PathFinding')
+                    navigateWithTTS('PathFinding',"Entering Path Finding Algorithm Demo Page")
                 }
                 style={{width:250,height: 100, backgroundColor:'#99004d',marginTop:20, borderRadius:20}}>
                 <Text style={{textAlign: 'center', color: "#FFFFFF", fontSize:20, fontWeight:'bold'}}>Path-Finding Algorithm Screen</Text>
@@ -34,7 +34,7 @@ const HomeScreen = ({ navigation }) => {
 
             <Button
                 onPress={() =>
-                    navigation.navigate('Location')
+                    navigateWithTTS('Location',"Entering Location Sensor Demo Page")
                 }
                 style={{width:250,height: 100, backgroundColor:'#99004d',marginTop:20, borderRadius:20}}>
                 <Text style={{color: "#FFFFFF", fontSize:20, fontWeight:'bold'}}>Location Screen</Text>
