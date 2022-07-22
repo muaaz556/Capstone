@@ -16,6 +16,7 @@ const PathDiagramScreen = ({ navigation, route }) => {
     const parser = () => {
         //for each char in route.params.searchPath, call get TTS
         var chars = route.params.searchPath.split("");
+        getTTS("Starting navigation");
         chars.forEach(element => {
             switch(element) {
                 case 'N':
@@ -35,11 +36,12 @@ const PathDiagramScreen = ({ navigation, route }) => {
             }
             var d1 = new Date();
             var d2 = new Date();
-            while(d2.getTime() - d1.getTime() < 1000) {
+            while(d2.getTime() - d1.getTime() < 2000) {
                 d2 = new Date();
             }
             // await delay(1000);
         });
+        getTTS("You have arrived at your destination");
     }
 
     return (
