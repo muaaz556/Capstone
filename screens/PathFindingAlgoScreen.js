@@ -10,7 +10,7 @@ const PathFindingAlgoScreen = ({ navigation }) => {
     const test = (num) => {
         var path = runTest(num);
         console.log("path: " + path);
-        // navigation.navigate("TTS");
+        navigation.navigate("PathDiagram", { searchPath: path, imagePath: '../assets/favicon.png' });
     }
 
     return (
