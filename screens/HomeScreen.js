@@ -26,6 +26,14 @@ const HomeScreen = ({ navigation }) => {
             </Button>
             <Button
                 onPress={() =>
+                    navigation.navigate('PathFinding')
+                }
+                style={{width:250,height: 100, backgroundColor:'#99004d',marginTop:20, borderRadius:20}}>
+                <Text style={{textAlign: 'center', color: "#FFFFFF", fontSize:20, fontWeight:'bold'}}>Path-Finding Algorithm Screen</Text>
+            </Button>
+
+            <Button
+                onPress={() =>
                     navigation.navigate('Location')
                 }
                 style={{width:250,height: 100, backgroundColor:'#99004d',marginTop:20, borderRadius:20}}>
