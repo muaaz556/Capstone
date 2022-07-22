@@ -1,9 +1,7 @@
 
 import {Button} from 'native-base';
 import { StyleSheet, Text, View } from 'react-native';
-import { runTest } from '../src/main.js';
-
-
+import { runTest } from '../assets/main.js';
 
 const PathFindingAlgoScreen = ({ navigation }) => {
 
