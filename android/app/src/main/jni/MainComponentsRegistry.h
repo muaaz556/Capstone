@@ -13,7 +13,7 @@ class MainComponentsRegistry
  public:
   // Adapt it to the package you used for your Java class.
   constexpr static auto kJavaDescriptor =
-      "LMy/AndroidApp/newarchitecture/components/MainComponentsRegistry;";
+      "Lcom/capstone/newarchitecture/components/MainComponentsRegistry;";
 
   static void registerNatives();
 
