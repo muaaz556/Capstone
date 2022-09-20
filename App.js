@@ -9,7 +9,7 @@ const App = () => {
 
   return (
     <View>
-      <Text>Temporary Screen</Text>
+      <Text>**Temporary Screen**</Text>
     </View>
   );
 };
