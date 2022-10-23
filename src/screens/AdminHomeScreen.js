@@ -19,15 +19,10 @@ const AdminHomeScreen = () => {
                 </Text>
             </Center>
 
-            <Box w="100%" maxWidth="75%">
-                <Button>Create New Building Mapping</Button>
+            <Box w="100%" maxWidth="75%" mt="5">
+                <Button mb="2">Create New Mapping</Button>
+                <Button>View Existing Mappings</Button>
             </Box>
-
-            <Center>
-                <Text fontSize="xl">
-                    Select one of the following actions to perform
-                </Text>
-            </Center>
         </View>
     )
 }
