@@ -14,6 +14,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { NativeBaseProvider } from "native-base";
+import DistanceSensingScreen from './src/screens/DistanceSensorScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ const App = () => {
           <Stack.Screen name="Login" component={LoginScreen} />
 
           <Stack.Screen name="AdminHomeScreen" component={AdminHomeScreen} />
+          <Stack.Screen name="DistanceSensingScreen" component={DistanceSensingScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>
