@@ -60,7 +60,7 @@ const LoginScreen = ({ navigation }) => {
                         </FormControl.ErrorMessage>
                         <Button style={styles.loginButton}>Login</Button>
                         <Button style={{marginTop: 10}} onPress={() => navigation.navigate('AdminHomeScreen')}>Guest Admin</Button>
-                        <Button style={{marginTop: 10}}>Guest Student</Button>
+                        <Button style={{marginTop: 10}} onPress={() => navigation.navigate('CameraScreen')}>Camera</Button>
                     </Stack>
                 </FormControl>
             </Box>
