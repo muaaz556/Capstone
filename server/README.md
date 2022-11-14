@@ -24,8 +24,8 @@ Run `pip install -r requirements.txt` or `pip3 install -r requirements.txt` to i
 
 Installing Postgres App and pgAdmin4 as they are both needed to run a postgres server and maintain the database.
 
-https://postgresapp.com/
-https://www.pgadmin.org/
+- https://postgresapp.com/
+- https://www.pgadmin.org/
 
 ## Starting up the Postgres Server
 
