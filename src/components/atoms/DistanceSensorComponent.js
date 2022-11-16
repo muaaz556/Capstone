@@ -4,12 +4,17 @@ import {BleManager} from 'react-native-ble-plx';
 import base64 from 'react-native-base64';
 import {Button} from 'native-base';
 import {connectAndReceive} from '../../assets/helperfunctions/DistanceSensorHelperFunctions';
+import {
+  CHARACTERISTIC_UUID,
+  DISTANCE_LIMIT,
+  ENABLE_DISTANCE_SENSOR_VIBRATION,
+  SERVICE_UUID,
+  VIBRATION_DURATION,
+} from '../../common/constants';
 
-const DistanceSensingComponent = ({
-  bleManager,
-  enableVibration,
-  distanceLimit,
-}) => {
+const bleManager = new BleManager();
+
+const DistanceSensingComponent = ({enableVibration, distanceLimit, vibrationDuration}) => {
   var [state, setState] = useState('Not connected');
   //this variable holds the connected bluetooth device info
   var connectorDevice = null;
@@ -27,10 +32,7 @@ const DistanceSensingComponent = ({
       }
       //The service and characteristic UUID is set in the arduino code
       connectorDevice
-        .readCharacteristicForService(
-          '19b10000-e8f2-537e-4f6c-d104768a1214',
-          '1A3AC131-31EF-758B-BC51-54A61958EF82',
-        )
+        .readCharacteristicForService(SERVICE_UUID, CHARACTERISTIC_UUID)
         .then(
           characteristic => {
             //convert the received data in base64 (basically if not decoded the data looks like random stuff)
@@ -38,8 +40,11 @@ const DistanceSensingComponent = ({
             setState(base64.decode(characteristic.value) + 'cm');
             distanceValue = parseInt(base64.decode(characteristic.value));
             //if the distance is less than 100cm then make the phone vibrate
-            if (distanceValue < distanceLimit && enableVibration)
-              Vibration.vibrate(100);
+            if (
+              distanceValue < distanceLimit &&
+              enableVibration
+            )
+              Vibration.vibrate(vibrationDuration);
             return;
           },
           error => {

@@ -2,10 +2,12 @@ import React from 'react';
 
 import {StyleSheet} from 'react-native';
 import {Box, Button, Center, Spacer, Text, View} from 'native-base';
-import {BleManager} from 'react-native-ble-plx';
 import DistanceSensingComponent from '../components/atoms/DistanceSensorComponent';
-
-const bleManager = new BleManager();
+import {
+  DISTANCE_LIMIT,
+  ENABLE_DISTANCE_SENSOR_VIBRATION,
+  VIBRATION_DURATION,
+} from '../common/constants';
 
 const styles = StyleSheet.create({
   view: {
@@ -26,9 +28,9 @@ const AdminHomeScreen = () => {
         <Button>View Existing Mappings</Button>
       </Box>
       <DistanceSensingComponent
-        bleManager={bleManager}
-        enableVibration={true}
-        distanceLimit={100}></DistanceSensingComponent>
+        enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
+        distanceLimit={DISTANCE_LIMIT}
+        vibrationDuration={VIBRATION_DURATION}></DistanceSensingComponent>
     </View>
   );
 };
