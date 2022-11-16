@@ -15,7 +15,7 @@ import {
 const bleManager = new BleManager();
 
 const DistanceSensingComponent = ({enableVibration, distanceLimit, vibrationDuration}) => {
-  var [state, setState] = useState('Not connected');
+  var [distanceReading, setDistanceReading] = useState('Not connected');
   //this variable holds the connected bluetooth device info
   var connectorDevice = null;
   var distanceValue = 0;
@@ -37,7 +37,7 @@ const DistanceSensingComponent = ({enableVibration, distanceLimit, vibrationDura
           characteristic => {
             //convert the received data in base64 (basically if not decoded the data looks like random stuff)
             console.log(base64.decode(characteristic.value));
-            setState(base64.decode(characteristic.value) + 'cm');
+            setDistanceReading(base64.decode(characteristic.value) + 'cm');
             distanceValue = parseInt(base64.decode(characteristic.value));
             //if the distance is less than 100cm then make the phone vibrate
             if (
@@ -77,7 +77,7 @@ const DistanceSensingComponent = ({enableVibration, distanceLimit, vibrationDura
   return (
     <Text>
       {'Distance Reading: '}
-      {state}
+      {distanceReading}
     </Text>
   );
 };
