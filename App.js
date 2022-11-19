@@ -1,15 +1,10 @@
 import React from 'react';
-
-// import {
-//   Text,
-//   View,
-// } from 'react-native';
-
 import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Button, View, Text } from 'react-native';
 import GetLocation from "react-native-get-location";
 import KalmanFilter from 'kalmanjs';
+import GPSComponent from './GPSComponent';
 
 const App = () => {
 
@@ -83,6 +78,7 @@ const App = () => {
 
     return (
         <View>
+            <GPSComponent></GPSComponent>
             <View style = {{alignItems:"center", justifyContent:"center"}}>
                 <View style={{display:'flex', flexDirection:'row', marginBottom: 50}}>
                     <Button
