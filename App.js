@@ -15,6 +15,8 @@ const App = () => {
 
     const [longitude, setLongitude] = useState([]);
     const [latitude, setLatitude] = useState([]);
+    const [kLongitude, kSetLongitude] = useState([]);
+    const [kLatitude, kSetLatitude] = useState([]);
 
     const [mapState, setMapState] = useState(false);
 
@@ -29,10 +31,11 @@ const App = () => {
                     timeout: 15000,
                 })
                 .then(location => {
-                    
                     console.log(JSON.stringify(kflat.filter(location.latitude)) + ',' + JSON.stringify(kflong.filter(location.longitude)));
-                    setLatitude(latitude => [JSON.stringify(location.latitude), ...latitude]);
-                    setLongitude(longitude => [JSON.stringify(location.longitude), ...longitude]);
+                    kSetLatitude(kLatitude => [...kLatitude, JSON.stringify(kflat.filter(location.latitude))] );
+                    kSetLongitude(kLongitude => [...kLongitude, JSON.stringify(kflong.filter(location.longitude))] );
+                    setLatitude(latitude => [...latitude, JSON.stringify(location.latitude)]);
+                    setLongitude(longitude => [...longitude, JSON.stringify(location.longitude)]);
                 })
                 .catch(error => {
                     console.log("Got an error : " + error.message);
@@ -58,6 +61,17 @@ const App = () => {
         console.log("Longitude: ");
 
         longitude.forEach(function (item, index) {
+            console.log(item);
+        });
+
+        console.log("Kalman Latitude: ")
+        kLatitude.forEach(function (item, index) {
+            console.log(item);
+        });
+
+        console.log("Kalman Longitude: ");
+
+        kLongitude.forEach(function (item, index) {
             console.log(item);
         });
     }
@@ -90,15 +104,37 @@ const App = () => {
             </View>
             <ScrollView>
                 <View style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
-                    <View style={{display:'flex', flexDirection:'column'}}>
-                        {latitude.slice(0, 50).map((l, id) => 
-                            <Text key={id} style={{marginBottom: 20}}>Latitude: {l}</Text>
-                        )}
+                    <View style={{display:'flex', flexDirection:'column', marginRight:20}}>
+                        <Text>Latitude</Text>
+                        <Text selectable={true}>
+                            {latitude.slice(0, 50).map((l, id) =>
+                                <Text selectable={true} key={id} style={{marginBottom: 20, fontSize:5}}>{l}{"\n"}</Text>
+                            )}
+                        </Text>
+                    </View>
+                    <View style={{display:'flex', flexDirection:'column', marginRight:20}}>
+                        <Text>Longitude</Text>
+                        <Text selectable={true}>
+                            {longitude.slice(0, 50).map((l, id) =>
+                                <Text selectable={true} key={id} style={{marginBottom: 20, fontSize:5}}>{l}{"\n"}</Text>
+                            )}
+                        </Text>
+                    </View>
+                    <View style={{display:'flex', flexDirection:'column', marginRight:20}}>
+                        <Text>Kalman Latitude</Text>
+                        <Text selectable={true}>
+                            {kLatitude.slice(0, 50).map((l, id) =>
+                                <Text selectable={true} key={id} style={{marginBottom: 20, fontSize:5}}>{l}{"\n"}</Text>
+                            )}
+                        </Text>
                     </View>
                     <View style={{display:'flex', flexDirection:'column'}}>
-                        {longitude.slice(0, 50).map((l, id) => 
-                            <Text key={id} style={{marginBottom: 20}}>  Longitude: {l}</Text>
-                        )}
+                        <Text>Kalman Longitude</Text>
+                        <Text selectable={true}>
+                            {kLongitude.slice(0, 50).map((l, id) =>
+                                <Text selectable={true} key={id} style={{marginBottom: 20, fontSize:5}}>{l}{"\n"}</Text>
+                            )}
+                        </Text>
                     </View>
                 </View>
             </ScrollView>
