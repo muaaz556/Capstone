@@ -137,6 +137,7 @@ const App = () => {
   const _clearLocation = () => {
     setLatitude([]);
     setLongitude([]);
+    setIndexState(0);
   };
 
   return (
