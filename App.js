@@ -12,6 +12,9 @@ const App = () => {
   const [kLongitude, kSetLongitude] = useState([]);
   const [kLatitude, kSetLatitude] = useState([]);
 
+  const [indexTracker, setIndexTracker] = useState([]);
+  const [pointTracker, setPointTracker] = useState([]);
+
   const [mapState, setMapState] = useState(false);
   const [indexState, setIndexState] = useState(0);
 
@@ -50,14 +53,18 @@ const App = () => {
     distanceArray.forEach(val => {
       if (val < minVal) minVal = val;
     });
+
     point = distanceArray.indexOf(minVal);
+
     if (
       (indexState == point || indexState + 1 == point) &&
       minVal < maxBoundary
     ) {
       setIndexState(point);
       // currentIndex = point;
+      setIndexTracker(indexTracker => [...indexTracker, point]);
     }
+    setPointTracker(pointTracker => [...pointTracker, point]);
   };
 
   useEffect(() => {
@@ -199,7 +206,7 @@ const App = () => {
             style={{display: 'flex', flexDirection: 'column', marginRight: 20}}>
             <Text>Kalman Latitude</Text>
             <Text selectable={true}>
-              {kLatitude.slice(0, 50).map((l, id) => (
+              {indexTracker.slice(0, 50).map((l, id) => (
                 <Text
                   selectable={true}
                   key={id}
@@ -213,8 +220,7 @@ const App = () => {
           <View style={{display: 'flex', flexDirection: 'column'}}>
             <Text>Kalman Longitude</Text>
             <Text selectable={true}>
-              <Text>{indexState}</Text>
-              {/* {kLongitude.slice(0, 50).map((l, id) => (
+              {pointTracker.slice(0, 50).map((l, id) => (
                 <Text
                   selectable={true}
                   key={id}
@@ -222,7 +228,7 @@ const App = () => {
                   {l}
                   {'\n'}
                 </Text>
-              ))} */}
+              ))}
             </Text>
           </View>
         </View>
