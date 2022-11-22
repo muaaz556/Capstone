@@ -16,7 +16,6 @@ const App = () => {
   const [pointTracker, setPointTracker] = useState([]);
 
   const [mapState, setMapState] = useState(false);
-  const [indexState, setIndexState] = useState(0);
 
   const kflat = new KalmanFilter();
   const kflong = new KalmanFilter();
@@ -29,7 +28,7 @@ const App = () => {
 
   const maxBoundary = 0.0003285; //0.000219 * 1.5
 
-  //var currentIndex = 0;
+  var currentIndex = 0;
 
   let distance = (x1, y1, x2, y2) => {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -54,17 +53,16 @@ const App = () => {
       if (val < minVal) minVal = val;
     });
 
-    point = distanceArray.indexOf(minVal);
+    let point = distanceArray.indexOf(minVal);
 
     if (
-      (indexState == point || indexState + 1 == point) &&
+      (indexState === point || indexState + 1 === point) &&
       minVal < maxBoundary
     ) {
-      setIndexState(point);
-      // currentIndex = point;
-      setIndexTracker(indexTracker => [...indexTracker, point]);
+        currentIndex = point;
+      setIndexTracker(indexTracker => [...indexTracker, currentIndex]);
     }
-    setPointTracker(pointTracker => [...pointTracker, point]);
+    setPointTracker(pointTracker => [...pointTracker, "POINT3: " + point]);
   };
 
   useEffect(() => {
@@ -144,7 +142,6 @@ const App = () => {
   const _clearLocation = () => {
     setLatitude([]);
     setLongitude([]);
-    setIndexState(0);
     setIndexTracker([])
     setPointTracker([])
   };
