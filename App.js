@@ -145,6 +145,8 @@ const App = () => {
     setLatitude([]);
     setLongitude([]);
     setIndexState(0);
+    setIndexTracker([])
+    setPointTracker([])
   };
 
   return (
