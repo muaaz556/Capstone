@@ -21,13 +21,13 @@ const App = () => {
   const kflong = new KalmanFilter();
 
   //amio sidewalk
-  const array = [
-    [49.2329706, -123.0626055], // 0.000158
-    [49.2329715, -123.0624476], // 0.000219
-    [49.2329728, -123.0622286],
-  ];
+//  const array = [
+//    [49.2329706, -123.0626055], // 0.000158
+//    [49.2329715, -123.0624476], // 0.000219
+//    [49.2329728, -123.0622286],
+//  ];
 
-  const maxBoundary = 0.0003285; //0.000219 * 1.5
+//  const maxBoundary = 0.0003285; //0.000219 * 1.5
 
   // // Location of muaaz (indoor straight path)
   // const array = [
@@ -58,6 +58,14 @@ const App = () => {
 
   // const maxBoundary = 0.00003;
 
+  const array = [
+    [49.2329691, -123.0626058],
+    [49.2329708, -123.0624003], // 0.000206
+    [49.2330052, -123.0622078], // 0.000196
+    [49.2332381, -123.0622109], // 0.000233
+  ]
+
+  const maxBoundary = 0.000196;
   var currentIndex = 0;
 
   let distance = (x1, y1, x2, y2) => {
@@ -93,7 +101,7 @@ const App = () => {
       setIndexTracker(indexTracker => [...indexTracker, currentIndex]);
       setIndexTracker(indexTracker => [
         ...indexTracker,
-        'update coordinate: ' + coordinateX + ', ' + coordinateY,
+        'update coordinates: ' + coordinateX + ', ' + coordinateY,
       ]);
       //console.log('currentIndex: ' + currentIndex);
       console.log('update coordinate: ' + coordinateX + ', ' + coordinateY);
