@@ -20,6 +20,7 @@ const App = () => {
   const kflat = new KalmanFilter();
   const kflong = new KalmanFilter();
 
+  //amio sidewalk
   const array = [
     [49.2329706, -123.0626055], // 0.000158
     [49.2329715, -123.0624476], // 0.000219
@@ -27,6 +28,35 @@ const App = () => {
   ];
 
   const maxBoundary = 0.0003285; //0.000219 * 1.5
+
+  // // Location of muaaz (indoor straight path)
+  // const array = [
+  //   [43.4104967, -80.2795297], // 0.000047
+  //   [43.4105254, -80.2794921], // 0.000056
+  //   [43.4105505, -80.2794425],
+  // ];
+
+  // const maxBoundary = 0.0000616; //0.000056 * 1.1
+
+  //Location of muaaz (indoor 4 corners)
+  // const array = [
+  //   [43.4105259, -80.2795625], // 0.000069
+  //   [43.4104787, -80.2795106], // 0.0001
+  //   [43.4105347, -80.2794378], // 0.000071
+  //   [43.4105724, -80.2794814],
+  // ];
+
+  // const maxBoundary = 0.00005; //0.0001 * 1.1
+
+  // Muaaz yard
+  // const array = [
+  //   [43.4104843, -80.2794714],
+  //   [43.4105556, -80.2793678],
+  //   [43.4106328, -80.2793899],
+  //   [43.4106759, -80.279474],
+  // ];
+
+  // const maxBoundary = 0.00003;
 
   var currentIndex = 0;
 
@@ -56,13 +86,21 @@ const App = () => {
     let point = distanceArray.indexOf(minVal);
 
     if (
-      (indexState === point || indexState + 1 === point) &&
+      (currentIndex === point || currentIndex + 1 === point) &&
       minVal < maxBoundary
     ) {
-        currentIndex = point;
+      currentIndex = point;
       setIndexTracker(indexTracker => [...indexTracker, currentIndex]);
+      setIndexTracker(indexTracker => [
+        ...indexTracker,
+        'update coordinate: ' + coordinateX + ', ' + coordinateY,
+      ]);
+      //console.log('currentIndex: ' + currentIndex);
+      console.log('update coordinate: ' + coordinateX + ', ' + coordinateY);
     }
-    setPointTracker(pointTracker => [...pointTracker, "POINT3: " + point]);
+    setPointTracker(pointTracker => [...pointTracker, 'POINT3: ' + point]);
+    console.log('point: ' + point);
+    console.log('currentIndex: ' + currentIndex);
   };
 
   useEffect(() => {
@@ -70,7 +108,7 @@ const App = () => {
       if (mapState === true) {
         GetLocation.getCurrentPosition({
           enableHighAccuracy: true,
-          timeout: 15000,
+          //timeout: 15000,
         })
           .then(location => {
             console.log(
@@ -78,11 +116,7 @@ const App = () => {
                 ',' +
                 JSON.stringify(kflong.filter(location.longitude)),
             );
-            //---------------------
-            // console.log('Current index before: ' + indexState);
             closestPoint(location.latitude, location.longitude);
-            // console.log('Current index after: ' + indexState);
-            //---------------------
             kSetLatitude(kLatitude => [
               ...kLatitude,
               JSON.stringify(kflat.filter(location.latitude)),
@@ -142,13 +176,18 @@ const App = () => {
   const _clearLocation = () => {
     setLatitude([]);
     setLongitude([]);
-    setIndexTracker([])
-    setPointTracker([])
+    setIndexTracker([]);
+    setPointTracker([]);
   };
 
   return (
     <View>
-      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingTop: 100,
+        }}>
         <View style={{display: 'flex', flexDirection: 'row', marginBottom: 50}}>
           <Button
             title="Get Location"
