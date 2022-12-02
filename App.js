@@ -6,6 +6,18 @@ import GetLocation from 'react-native-get-location';
 import KalmanFilter from 'kalmanjs';
 import GPSComponent from './GPSComponent';
 
+import LoginScreen from "./src/screens/LoginScreen";
+import AdminHomeScreen from './src/screens/AdminHomeScreen';
+
+import SplashScreen from  "react-native-splash-screen";
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { NativeBaseProvider } from "native-base";
+
+const Stack = createNativeStackNavigator();
+
 const App = () => {
   const [longitude, setLongitude] = useState([]);
   const [latitude, setLatitude] = useState([]);
@@ -188,98 +200,20 @@ const App = () => {
     setPointTracker([]);
   };
 
+  useEffect(() => {
+    SplashScreen.hide();
+  })
+
   return (
-    <View>
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: 100,
-        }}>
-        <View style={{display: 'flex', flexDirection: 'row', marginBottom: 50}}>
-          <Button
-            title="Get Location"
-            onPress={_getLocation}
-            style={{backgroundColor: '#99004d', margin: 200}}></Button>
-          <Button
-            title="Stop Location"
-            onPress={_stopLocation}
-            style={{backgroundColor: '#99004d', margin: 200}}></Button>
-          <Button
-            title="Clear Location"
-            onPress={_clearLocation}
-            style={{backgroundColor: '#99004d', margin: 200}}></Button>
-        </View>
-      </View>
-      <ScrollView>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}>
-          <View
-            style={{display: 'flex', flexDirection: 'column', marginRight: 20}}>
-            <Text>Latitude</Text>
-            <Text selectable={true}>
-              {latitude.slice(0, 50).map((l, id) => (
-                <Text
-                  selectable={true}
-                  key={id}
-                  style={{marginBottom: 20, fontSize: 5}}>
-                  {l}
-                  {'\n'}
-                </Text>
-              ))}
-            </Text>
-          </View>
-          <View
-            style={{display: 'flex', flexDirection: 'column', marginRight: 20}}>
-            <Text>Longitude</Text>
-            <Text selectable={true}>
-              {longitude.slice(0, 50).map((l, id) => (
-                <Text
-                  selectable={true}
-                  key={id}
-                  style={{marginBottom: 20, fontSize: 5}}>
-                  {l}
-                  {'\n'}
-                </Text>
-              ))}
-            </Text>
-          </View>
-          <View
-            style={{display: 'flex', flexDirection: 'column', marginRight: 20}}>
-            <Text>Kalman Latitude</Text>
-            <Text selectable={true}>
-              {indexTracker.slice(0, 50).map((l, id) => (
-                <Text
-                  selectable={true}
-                  key={id}
-                  style={{marginBottom: 20, fontSize: 5}}>
-                  {l}
-                  {'\n'}
-                </Text>
-              ))}
-            </Text>
-          </View>
-          <View style={{display: 'flex', flexDirection: 'column'}}>
-            <Text>Kalman Longitude</Text>
-            <Text selectable={true}>
-              {pointTracker.slice(0, 50).map((l, id) => (
-                <Text
-                  selectable={true}
-                  key={id}
-                  style={{marginBottom: 20, fontSize: 5}}>
-                  {l}
-                  {'\n'}
-                </Text>
-              ))}
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+    <NativeBaseProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+
+          <Stack.Screen name="AdminHomeScreen" component={AdminHomeScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </NativeBaseProvider>
   );
 };
 
