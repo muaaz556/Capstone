@@ -6,15 +6,16 @@ import GetLocation from 'react-native-get-location';
 import KalmanFilter from 'kalmanjs';
 import GPSComponent from './GPSComponent';
 
-import LoginScreen from "./src/screens/LoginScreen";
+import LoginScreen from './src/screens/LoginScreen';
 import AdminHomeScreen from './src/screens/AdminHomeScreen';
+import AveragingScreen from './src/screens/AveragingScreen';
 
-import SplashScreen from  "react-native-splash-screen";
+import SplashScreen from 'react-native-splash-screen';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import { NativeBaseProvider } from "native-base";
+import {NativeBaseProvider} from 'native-base';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,13 +34,13 @@ const App = () => {
   const kflong = new KalmanFilter();
 
   //amio sidewalk
-//  const array = [
-//    [49.2329706, -123.0626055], // 0.000158
-//    [49.2329715, -123.0624476], // 0.000219
-//    [49.2329728, -123.0622286],
-//  ];
+  //  const array = [
+  //    [49.2329706, -123.0626055], // 0.000158
+  //    [49.2329715, -123.0624476], // 0.000219
+  //    [49.2329728, -123.0622286],
+  //  ];
 
-//  const maxBoundary = 0.0003285; //0.000219 * 1.5
+  //  const maxBoundary = 0.0003285; //0.000219 * 1.5
 
   // // Location of muaaz (indoor straight path)
   // const array = [
@@ -75,7 +76,7 @@ const App = () => {
     [49.2329708, -123.0624003], // 0.000206
     [49.2330052, -123.0622078], // 0.000196
     [49.2332381, -123.0622109], // 0.000233
-  ]
+  ];
 
   const maxBoundary = 0.000196;
   var currentIndex = 0;
@@ -93,6 +94,8 @@ const App = () => {
 
   let closestPoint = (coordinateX, coordinateY) => {
     let distanceArray = [];
+
+    //in the future, this exhaustive search can be replaced by looking at the adjacency matrix of just the current node
     array.forEach(point => {
       distanceArray.push(
         distance(point[0], point[1], coordinateX, coordinateY),
@@ -202,15 +205,15 @@ const App = () => {
 
   useEffect(() => {
     SplashScreen.hide();
-  })
+  });
 
   return (
     <NativeBaseProvider>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="Login" component={LoginScreen} />
-
           <Stack.Screen name="AdminHomeScreen" component={AdminHomeScreen} />
+          <Stack.Screen name="AveragingScreen" component={AveragingScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>
