@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Box, Button, Center, Text, View } from "native-base";
 import KalmanFilter from 'kalmanjs';
-import GetLocation from 'react-native-get-location';
+import Geolocation from 'react-native-geolocation-service';
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
 
 const styles = StyleSheet.create({
@@ -111,7 +111,7 @@ const AveragingScreen = ({ }) => {
     useEffect(() => {
         const interval = setInterval(() => {
           if (mapState === true) {
-            GetLocation.getCurrentPosition({
+            GeoLocation.getCurrentPosition({
               enableHighAccuracy: true,
               //timeout: 15000,
             })
