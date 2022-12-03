@@ -111,7 +111,7 @@ const AveragingScreen = ({ }) => {
     useEffect(() => {
         const interval = setInterval(() => {
           if (mapState === true) {
-            GeoLocation.getCurrentPosition({
+            Geolocation.getCurrentPosition({
               enableHighAccuracy: true,
               //timeout: 15000,
             })
