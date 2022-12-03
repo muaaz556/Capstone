@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
-
 import { StyleSheet } from 'react-native';
 import { Box, Button, Center, Text, View } from "native-base";
-
+import KalmanFilter from 'kalmanjs';
+import GetLocation from 'react-native-get-location';
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
 
 const styles = StyleSheet.create({
@@ -19,53 +19,139 @@ const styles = StyleSheet.create({
 
 const AveragingScreen = ({ }) => {
 
-    const [accelXData, setAccelXData] = useState([]);
-    const [accelYData, setAccelYData] = useState([]);
+    const [longitude, setLongitude] = useState([]);
+    const [latitude, setLatitude] = useState([]);
+    const [kLongitude, setKLongitude] = useState([]);
+    const [kLatitude, setKLatitude] = useState([]);
 
-    const [avgXData, setAvgXData] = useState([]);
-    const [avgYData, setAvgYData] = useState([]);
+    const [avgkLongitude, setKAvgLongitude] = useState([]);
+    const [avgkLatitude, setKAvgLatitude] = useState([]);
+  
+    const [mapState, setMapState] = useState(false);
+  
+    const kflat = new KalmanFilter();
+    const kflong = new KalmanFilter();
 
-    setUpdateIntervalForType(SensorTypes.accelerometer, 1000);
-    
+    let distance = (x1, y1, x2, y2) => {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      };
+
     const _getData = () => {
-        const subscription = accelerometer.subscribe(({ x, y, z, timestamp }) => {
-            console.log({ x, y, z, timestamp });
-            setAccelXData(accelXData => [x, ...accelXData]);
-            setAccelYData(accelYData => [y, ...accelYData]);
-        });
-
-        return () => subscription.unsubscribe();
+        setMapState(true);
     }
 
     const _clearData = () => {
+        setMapState(false);
 
-        console.log(accelXData);
-        console.log(accelYData);
+        console.log(kLatitude);
+        console.log(kLongitude);
+
+        // if(kLatitude.length !== 0){
+        //     const avgX = kLatitude.reduce((a, b) => a + b) / kLatitude.length;
+        //     setKAvgLatitude(avgkLatitude => [avgX, ...avgkLatitude]);
+        //     console.log(avgX);
+        // }
+
+
+        // if(kLongitude.length !== 0){
+        //     const avgY = kLongitude.reduce((a, b) => a + b) / kLongitude.length;
+        //     setKAvgLongitude(avgkLongitude => [avgY, ...avgkLongitude]);
+        //     console.log(avgY);
+        // }
+
         //average calc
-        const avgX = accelXData.reduce((a, b) => a + b) / accelXData.length;
-        const avgY = accelYData.reduce((a, b) => a + b) / accelYData.length;
-        
-        
-        setAverageXData(averageXData => [avgX, ...averageXData]);
-        setAverageYData(averageYData => [avgY, ...averageYData]);
+        let currLatArray = [...kLatitude];
+        let currLongArray = [...kLongitude];
+        let flag = false;
+        do {
+            flag = false;
+            const avgX = currLatArray.reduce((a, b) => a + b) / currLatArray.length;
+            const avgY = currLongArray.reduce((a, b) => a + b) / currLongArray.length;
+            console.log("")
 
-        console.log(averageXData);
-        console.log(averageYData);
-        setAccelXData([]);
-        setAccelYData([]);
+            for(let i = currLatArray.length - 1; i >= 0; i--){
+                const dist = distance(avgX, avgY, currLatArray[i], currLongArray[i]);
+                if (dist > 0.000054) {
+                    currLatArray.splice(i,1);
+                    currLongArray.splice(i,1);
+                    flag = true;
+                }
+            }
+        } while(flag);
+
+        console.log("pruning done");
+
+        if(currLatArray.length !== 0){
+            const avgX = currLatArray.reduce((a, b) => a + b) / currLatArray.length;
+            console.log(avgX);
+        }
+
+        if(currLongArray.length !== 0){
+            const avgY = currLongArray.reduce((a, b) => a + b) / currLongArray.length;
+            console.log(avgY);
+        }
+        if(kLatitude.length !== 0){
+            const avgX = kLatitude.reduce((a, b) => a + b) / kLatitude.length;
+            setKAvgLatitude(avgkLatitude => [avgX, ...avgkLatitude]);
+            console.log(avgX);
+        }
+
+
+        if(kLongitude.length !== 0){
+            const avgY = kLongitude.reduce((a, b) => a + b) / kLongitude.length;
+            setKAvgLongitude(avgkLongitude => [avgY, ...avgkLongitude]);
+            console.log(avgY);
+        }
+        
+
+        setKLatitude([]);
+        setKLongitude([]);
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          if (mapState === true) {
+            GetLocation.getCurrentPosition({
+              enableHighAccuracy: true,
+              //timeout: 15000,
+            })
+              .then(location => {
+                console.log(
+                  JSON.stringify(kflat.filter(location.latitude)) +
+                    ',' +
+                    kflong.filter(location.longitude),
+                );
+                setKLatitude(kLatitude => [
+                  ...kLatitude,
+                  kflat.filter(location.latitude),
+                ]);
+                setKLongitude(kLongitude => [
+                  ...kLongitude,
+                  kflong.filter(location.longitude),
+                ]);
+                setLatitude(latitude => [
+                  ...latitude,
+                  location.latitude,
+                ]);
+                setLongitude(longitude => [
+                  ...longitude,
+                  location.longitude,
+                ]);
+              })
+              .catch(error => {
+                console.log('Got an error : ' + error.message);
+              });
+          }
+        }, 1500);
+    
+        return () => clearInterval(interval);
+      }, [mapState]);
 
     return (
         <View style={styles.view}>
 
             <Button title="Get Data" mb="2" onPress={_getData}>Get Data </Button>
             <Button title="Clear Data" onPress={_clearData}>Clear Data </Button>
-
-            {/* <ScrollView>
-                {accelData.slice(0, 50).map((data, id) => 
-                    <Text key={id} style={{marginBottom: 20}}>X: {data.x} Y: {data.y} Z: {data.z} Timestamp: {data.timestamp}</Text>
-                )}
-            </ScrollView> */}
             
         </View>
     )
