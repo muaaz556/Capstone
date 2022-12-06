@@ -108,34 +108,47 @@ const AveragingScreen = ({}) => {
     setKLongitude([]);
   };
 
+  // let counter = 0;
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (mapState === true) {
+        // counter++;
+        // if (counter === 50) {
+        //   _clearData();
+        // }
         Geolocation.getCurrentPosition(
-          (location) => {
-            console.log(
-              JSON.stringify(kflat.filter(location.coords.latitude)) +
-                ',' +
+          location => {
+            // if (counter <= 50) {
+              console.log(
+                JSON.stringify(kflat.filter(location.coords.latitude)) +
+                  ',' +
+                  kflong.filter(location.coords.longitude) +
+                  ' provider: ' +
+                  location.provider,
+              );
+              setKLatitude(kLatitude => [
+                ...kLatitude,
+                kflat.filter(location.coords.latitude),
+              ]);
+              setKLongitude(kLongitude => [
+                ...kLongitude,
                 kflong.filter(location.coords.longitude),
-            );
-            setKLatitude(kLatitude => [
-              ...kLatitude,
-              kflat.filter(location.coords.latitude),
-            ]);
-            setKLongitude(kLongitude => [
-              ...kLongitude,
-              kflong.filter(location.coords.longitude),
-            ]);
-            setLatitude(latitude => [...latitude, location.coords.latitude]);
-            setLongitude(longitude => [...longitude, location.coords.longitude]);
+              ]);
+              setLatitude(latitude => [...latitude, location.coords.latitude]);
+              setLongitude(longitude => [
+                ...longitude,
+                location.coords.longitude,
+              ]);
+            // }
           },
-          (error) => {
+          error => {
             console.log('Got an error : ' + error.message);
           },
           {
             enableHighAccuracy: true,
             showLocationDialog: true,
-            maximumAge: 0,
+            maximumAge: 0
             //timeout: 15000,
           },
         );
@@ -166,7 +179,7 @@ const AveragingScreen = ({}) => {
         //   console.log('Got an error : ' + error.message);
         // });
       }
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [mapState]);

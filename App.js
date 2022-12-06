@@ -17,6 +17,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {NativeBaseProvider} from 'native-base';
 
+import AveragingWatchPositionScreen from './src/screens/AveragingWatchPositionScreen';
+
+import KalmanWatchScreen from './src/screens/KalmanWatchScreen'
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -214,6 +218,8 @@ const App = () => {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="AdminHomeScreen" component={AdminHomeScreen} />
           <Stack.Screen name="AveragingScreen" component={AveragingScreen} />
+          <Stack.Screen name="AveragingWatchPositionScreen" component={AveragingWatchPositionScreen} />
+          <Stack.Screen name="KalmanWatchScreen" component={KalmanWatchScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>

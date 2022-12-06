@@ -21,8 +21,10 @@ const AdminHomeScreen = ({navigation}) => {
 
             <Box w="100%" maxWidth="75%" mt="5">
                 <Button mb="2">Create New Mapping</Button>
-                <Button>View Existing Mappings</Button>
-                <Button onPress={() => navigation.navigate('AveragingScreen')}>Test GPS</Button>
+                <Button mb="2">View Existing Mappings</Button>
+                <Button mb="2" onPress={() => navigation.navigate('AveragingScreen')}>Test GPS</Button>
+                <Button mb="2" onPress={() => navigation.navigate('AveragingWatchPositionScreen')}>Test Watch</Button>
+                <Button mb="2" onPress={() => navigation.navigate('KalmanWatchScreen')}>Test Watch w. Kalman</Button>
             </Box>
             
         </View>
