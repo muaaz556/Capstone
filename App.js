@@ -21,6 +21,8 @@ import AveragingWatchPositionScreen from './src/screens/AveragingWatchPositionSc
 
 import KalmanWatchScreen from './src/screens/KalmanWatchScreen'
 
+import AccelerationScreen from './src/screens/AccelerationScreen';
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -220,6 +222,7 @@ const App = () => {
           <Stack.Screen name="AveragingScreen" component={AveragingScreen} />
           <Stack.Screen name="AveragingWatchPositionScreen" component={AveragingWatchPositionScreen} />
           <Stack.Screen name="KalmanWatchScreen" component={KalmanWatchScreen} />
+          <Stack.Screen name="AccelerationScreen" component={AccelerationScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>
