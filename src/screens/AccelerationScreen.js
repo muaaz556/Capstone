@@ -24,24 +24,73 @@ const AccelerationScreen = ({ }) => {
 
     const [avgXData, setAvgXData] = useState([]);
     const [avgYData, setAvgYData] = useState([]);
+
+    const [vix, setVix] = useState(0);
+    const [viy, setViy] = useState(0);
+    // const [prevTimestamp, setPrevTimestamp] = useState(0);
+    let prevTimestamp = 0;
+
+    const [veloXData, setVeloXData] = useState([]);
+    const [veloYData, setVeloYData] = useState([]);
+
+    const [distXData, setDistXData] = useState([]);
+    const [distYData, setDistYData] = useState([]);
     
     //let subscription = null;
 
     // setUpdateIntervalForType(SensorTypes.accelerometer, 50);
     
     const _getData = () => {
-        setUpdateIntervalForType(SensorTypes.accelerometer, 50);
+        setUpdateIntervalForType(SensorTypes.accelerometer, 500);
         const subscription = accelerometer.subscribe(({ x, y, z, timestamp }) => {
-            console.log({ x, y, z, timestamp });
+            x = _roundAcceleration(x);
+            y = _roundAcceleration(y);
+            // console.log( "x: " + x.toFixed(2) + " y: " + y.toFixed(2) + " prevTimestamp: " + prevTimestamp + " timestamp: " + timestamp);
+            // console.log( "x: " + x.toFixed(2) + " y: " + y.toFixed(2));
+
             setAccelXData(accelXData => [x, ...accelXData]);
             setAccelYData(accelYData => [y, ...accelYData]);
+
+            
+            if(prevTimestamp !== 0) {
+                const vx = _calcVelocity(vix, x, prevTimestamp, timestamp);
+                const dx = _calcDistance(vix, vx, prevTimestamp, timestamp);
+                const vy = _calcVelocity(viy, y, prevTimestamp, timestamp);
+                const dy = _calcDistance(viy, vy, prevTimestamp, timestamp);
+                console.log("vx: " + vx.toFixed(2) + " dx: " + dx.toFixed(2) + " vy: " + vy.toFixed(2) + " dy: " + dy.toFixed(2));
+                // console.log("vix: " + vix.toFixed(2) + " viy: " + viy.toFixed(2));
+
+                setVeloXData(veloXData => [vx, ...veloXData]);
+                setVeloYData(veloYData => [vy, ...veloYData]);
+                
+                setDistXData(distXData => [dx, ...distXData]);
+                setDistYData(distYData => [dy, ...distYData]);
+
+                setVix(vx);
+                setViy(vy);
+            } 
+            prevTimestamp = timestamp;
+            // setPrevTimestamp(timestamp);
         });
 
         return () => subscription.unsubscribe();
     }
 
-    const _calcDistance = (p1, p2, timestamp1, timestamp2) => {
-        return (p2 - p1) * Math.pow(timestamp2 - timestamp1, 2)
+    const _roundAcceleration = (accel) => {
+        if (Math.abs(accel) <= 1) {
+            return 0;
+        }
+        return accel;
+    }
+
+    const _calcVelocity = (vi, a, timestamp1, timestamp2) => {
+        const dt = (timestamp2 - timestamp1) / 1000;
+        return (vi) + a*dt;
+    }
+
+    const _calcDistance = (vi, vf, timestamp1, timestamp2) => {
+        const dt = (timestamp2 - timestamp1) / 1000;
+        return (vi + vf) * dt / 2;
     }
 
     const _clearData = () => {
@@ -59,6 +108,10 @@ const AccelerationScreen = ({ }) => {
 
         console.log(avgXData);
         console.log(avgYData);
+
+        console.log(distXData.reduce((a, b) => a + b));
+        console.log(distYData.reduce((a, b) => a + b));
+
         setAccelXData([]);
         setAccelYData([]);
     }
