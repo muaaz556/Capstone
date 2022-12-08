@@ -13,6 +13,10 @@ const styles = StyleSheet.create({
     }
 })
 
+
+let subscription = null;
+let prevTimestamp = 0;
+
 //start button
 //stop button OR get values for a certain amount of time
 //single output - the averaged location value
@@ -27,26 +31,21 @@ const AccelerationScreen = ({ }) => {
 
     const [vix, setVix] = useState(0);
     const [viy, setViy] = useState(0);
-    // const [prevTimestamp, setPrevTimestamp] = useState(0);
-    let prevTimestamp = 0;
-
+    
     const [veloXData, setVeloXData] = useState([]);
     const [veloYData, setVeloYData] = useState([]);
 
     const [distXData, setDistXData] = useState([]);
     const [distYData, setDistYData] = useState([]);
-    
-    //let subscription = null;
 
-    // setUpdateIntervalForType(SensorTypes.accelerometer, 50);
+    setUpdateIntervalForType(SensorTypes.accelerometer, 200);
     
     const _getData = () => {
-        setUpdateIntervalForType(SensorTypes.accelerometer, 500);
-        const subscription = accelerometer.subscribe(({ x, y, z, timestamp }) => {
+        subscription = accelerometer.subscribe(({ x, y, z, timestamp }) => {
             x = _roundAcceleration(x);
             y = _roundAcceleration(y);
             // console.log( "x: " + x.toFixed(2) + " y: " + y.toFixed(2) + " prevTimestamp: " + prevTimestamp + " timestamp: " + timestamp);
-            // console.log( "x: " + x.toFixed(2) + " y: " + y.toFixed(2));
+            console.log( "x: " + x.toFixed(2) + " y: " + y.toFixed(2));
 
             setAccelXData(accelXData => [x, ...accelXData]);
             setAccelYData(accelYData => [y, ...accelYData]);
@@ -69,8 +68,8 @@ const AccelerationScreen = ({ }) => {
                 setVix(vx);
                 setViy(vy);
             } 
+            
             prevTimestamp = timestamp;
-            // setPrevTimestamp(timestamp);
         });
 
         return () => subscription.unsubscribe();
@@ -94,7 +93,7 @@ const AccelerationScreen = ({ }) => {
     }
 
     const _clearData = () => {
-        setUpdateIntervalForType(SensorTypes.accelerometer, 50000000);
+        subscription.unsubscribe();
 
         console.log(accelXData);
         console.log(accelYData);
@@ -114,6 +113,14 @@ const AccelerationScreen = ({ }) => {
 
         setAccelXData([]);
         setAccelYData([]);
+
+        setVeloXData([]);
+        setVeloYData([]);
+
+        setDistXData([]);
+        setDistYData([]);
+
+        prevTimestamp = 0;
     }
 
     return (
