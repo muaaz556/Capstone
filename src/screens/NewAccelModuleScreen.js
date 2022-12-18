@@ -6,6 +6,10 @@ import { Box, Button, Center, Text, View } from "native-base";
 
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
 
+import { NativeModules } from 'react-native';
+
+const {SensorEventModule} = NativeModules;
+
 const styles = StyleSheet.create({
     view: {
         flex: 1,
@@ -21,7 +25,7 @@ let prevTimestamp = 0;
 //stop button OR get values for a certain amount of time
 //single output - the averaged location value
 
-const AccelerationScreen = ({ }) => {
+const NewAccelModuleScreen = ({ }) => {
 
     const [accelXData, setAccelXData] = useState([]);
     const [accelYData, setAccelYData] = useState([]);
@@ -40,6 +44,11 @@ const AccelerationScreen = ({ }) => {
 
     setUpdateIntervalForType(SensorTypes.accelerometer, 200);
     
+    const temp = () => {
+        let str = SensorEventModule.printTemp();
+        console.log(str);
+    }
+
     const _getData = async () => {
         subscription = accelerometer.subscribe( ({ x, y, z, timestamp }) => {
             x = _roundAcceleration(x);
@@ -126,7 +135,7 @@ const AccelerationScreen = ({ }) => {
     return (
         <View style={styles.view}>
 
-            <Button title="Get Data" mb="2" onPress={_getData}>Get Data </Button>
+            <Button title="Get Data" mb="2" onPress={temp}>Get Data </Button>
             <Button title="Clear Data" onPress={_clearData}>Clear Data </Button>
 
             {/* <ScrollView>
@@ -139,4 +148,4 @@ const AccelerationScreen = ({ }) => {
     )
 }
 
-export default AccelerationScreen;
+export default NewAccelModuleScreen;

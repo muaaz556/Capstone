@@ -26,6 +26,7 @@ const AdminHomeScreen = ({navigation}) => {
                 <Button mb="2" onPress={() => navigation.navigate('AveragingWatchPositionScreen')}>Test Watch</Button>
                 <Button mb="2" onPress={() => navigation.navigate('KalmanWatchScreen')}>Test Watch w. Kalman</Button>
                 <Button mb="2" onPress={() => navigation.navigate('AccelerationScreen')}>Test Acceleration</Button>
+                <Button mb="2" onPress={() => navigation.navigate('NewAccelModuleScreen')}>Test New Acceleration Module</Button>
             </Box>
             
         </View>
