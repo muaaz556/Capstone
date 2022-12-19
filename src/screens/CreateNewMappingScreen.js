@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     }
 })
 
-const AdminHomeScreen = () => {
+const CreateNewMappingScreen = () => {
     return (
         <View style={styles.view}>
             <Center>
@@ -27,4 +27,4 @@ const AdminHomeScreen = () => {
     )
 }
 
-export default AdminHomeScreen;
+export default CreateNewMappingScreen;
