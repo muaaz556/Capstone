@@ -8,7 +8,7 @@ import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-nati
 
 import { NativeModules } from 'react-native';
 
-const {SensorEventModule} = NativeModules;
+// const {SensorEventModule} = NativeModules;
 
 const styles = StyleSheet.create({
     view: {
@@ -45,8 +45,9 @@ const NewAccelModuleScreen = ({ }) => {
     setUpdateIntervalForType(SensorTypes.accelerometer, 200);
     
     const temp = () => {
-        let str = SensorEventModule.printTemp();
-        console.log(str);
+        NativeModules?.SensorEventModule?.printTemp();
+        // SensorEventModule.printTemp();
+        console.log("fuck")
     }
 
     const _getData = async () => {

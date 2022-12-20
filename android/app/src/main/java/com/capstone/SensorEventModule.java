@@ -78,8 +78,12 @@ public class SensorEventModule extends ReactContextBaseJavaModule /*implements S
     // }
 
     @ReactMethod
-    public String printTemp() {
-        return "temp";
+    public void printTemp() {
+        Log.i("SensorEventModule", "shitttttttttttttttttttttttttttttttttttttttttt1111111111111tttttttttttttttt");
+
+        
+        // System.out.println(7);
+        return;
     }
 
     
