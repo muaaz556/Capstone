@@ -20,7 +20,7 @@ const AdminHomeScreen = () => {
             </Center>
 
             <Box w="100%" maxWidth="75%" mt="5">
-                <Button mb="2">Create New Mapping</Button>
+                <Button mb="2" onPress={() => navigation.navigate('CreateNewMappingScreen')}>Create New Mapping</Button>
                 <Button mb="2">View Existing Mappings</Button>
             </Box>
         </View>
