@@ -6,7 +6,7 @@ import { Box, Button, Center, Text, View } from "native-base";
 
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
 
-import { NativeModules } from 'react-native';
+import { NativeModules, DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 
 // const {SensorEventModule} = NativeModules;
 
@@ -42,12 +42,32 @@ const NewAccelModuleScreen = ({ }) => {
     const [distXData, setDistXData] = useState([]);
     const [distYData, setDistYData] = useState([]);
 
+    const [result, setResult] = useState(0);  
+
     setUpdateIntervalForType(SensorTypes.accelerometer, 200);
     
     const temp = () => {
+        console.log("XCVMXCVMXCVM");
         NativeModules?.SensorEventModule?.printTemp();
         // SensorEventModule.printTemp();
-        console.log("fuck")
+        // console.log("fuck")
+        NativeModules?.SensorEventModule?.startAccelerationSensor();
+
+        const eventEmitter = new NativeEventEmitter(NativeModules.SensorEventModule);
+      
+        const subscription = eventEmitter.addListener(
+            'SensorModule',
+            (data) => {
+                console.log("OASJOASJOAJSOAOJS");
+                console.log(data);
+                setResult(data.lightValue);
+            },
+        );
+
+        return () => {
+            NativeModules?.SensorEventModule?.stopAccelerationSensor();
+            subscription?.remove();
+        };
     }
 
     const _getData = async () => {
