@@ -45,29 +45,31 @@ const NewAccelModuleScreen = ({ }) => {
     const [result, setResult] = useState(0);  
 
     setUpdateIntervalForType(SensorTypes.accelerometer, 200);
-    
-    const temp = () => {
-        console.log("XCVMXCVMXCVM");
-        NativeModules?.SensorEventModule?.printTemp();
-        // SensorEventModule.printTemp();
-        // console.log("fuck")
-        NativeModules?.SensorEventModule?.startAccelerationSensor();
 
+    const [distX, setDistX] = useState(0.0);
+    const [distY, setDistY] = useState(0.0);
+    const [distZ, setDistZ] = useState(0.0);
+    
+    const startListener = () => {
+        console.log("Start Listening");
+        NativeModules?.SensorEventModule?.startAccelerationSensor();
         const eventEmitter = new NativeEventEmitter(NativeModules.SensorEventModule);
       
-        const subscription = eventEmitter.addListener(
+        subscription = eventEmitter.addListener(
             'SensorModule',
             (data) => {
-                console.log("OASJOASJOAJSOAOJS");
                 console.log(data);
-                setResult(data.lightValue);
+                // setDistX(distX + data.distanceX);
+                // setDistY(distY + data.distanceY);
+                // setDistZ(distZ + data.distanceZ);
             },
         );
-
-        return () => {
-            NativeModules?.SensorEventModule?.stopAccelerationSensor();
-            subscription?.remove();
-        };
+    }
+    
+    const stopListener = () =>{
+        console.log("Stop Listening");
+        NativeModules?.SensorEventModule?.stopAccelerationSensor();
+        subscription?.remove();
     }
 
     const _getData = async () => {
@@ -156,8 +158,9 @@ const NewAccelModuleScreen = ({ }) => {
     return (
         <View style={styles.view}>
 
-            <Button title="Get Data" mb="2" onPress={temp}>Get Data </Button>
-            <Button title="Clear Data" onPress={_clearData}>Clear Data </Button>
+            <Button title="Get Data" mb="2" onPress={startListener}>Get Data </Button>
+            <Button title="Clear Data" mb="2" onPress={_clearData}>Clear Data </Button>
+            <Button title="Stop Listening" onPress={stopListener}>Stop Listening </Button>
 
             {/* <ScrollView>
                 {accelData.slice(0, 50).map((data, id) => 
