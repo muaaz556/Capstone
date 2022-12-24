@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     }
 })
 
-const AdminHomeScreen = () => {
+const AdminHomeScreen = ({navigation}) => {
     return (
         <View style={styles.view}>
             <Center>
@@ -21,8 +21,14 @@ const AdminHomeScreen = () => {
 
             <Box w="100%" maxWidth="75%" mt="5">
                 <Button mb="2">Create New Mapping</Button>
-                <Button>View Existing Mappings</Button>
+                <Button mb="2">View Existing Mappings</Button>
+                <Button mb="2" onPress={() => navigation.navigate('AveragingScreen')}>Test GPS</Button>
+                <Button mb="2" onPress={() => navigation.navigate('AveragingWatchPositionScreen')}>Test Watch</Button>
+                <Button mb="2" onPress={() => navigation.navigate('KalmanWatchScreen')}>Test Watch w. Kalman</Button>
+                <Button mb="2" onPress={() => navigation.navigate('AccelerationScreen')}>Test Acceleration</Button>
+                <Button mb="2" onPress={() => navigation.navigate('NewAccelModuleScreen')}>Test New Acceleration Module</Button>
             </Box>
+            
         </View>
     )
 }
