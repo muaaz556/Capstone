@@ -73,8 +73,8 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
             
             for(int index = 0; index < 3;++index){
                 acceleration[index] = (Math.round(event.values[index] * scale)) / scale;
-                velocity[index] += (acceleration[index] + last_values[index])/2 * dt;
-                position[index] += velocity[index] * dt;
+                velocity[index] += Math.round(((acceleration[index] + last_values[index])/2 * dt) * scale) / scale ;
+                position[index] += Math.round(velocity[index] * dt * scale) / scale;
             }
             Log.i("SensorEventModule", "2");
         }
@@ -83,11 +83,14 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
             velocity = new double[3];
             position = new double[3];
             acceleration = new double[3];
-            velocity[0] = velocity[1] = velocity[2] = 0f;
-            position[0] = position[1] = position[2] = 0f;
+            velocity[0] = velocity[1] = velocity[2] = 0;
+            position[0] = position[1] = position[2] = 0;
         }
-        // this is the issue (event.values is float[] I am guessing and its copuying into double[])
-        System.arraycopy(event.values, 0, last_values, 0, 3);
+        // this is the issue (event.values is float[] I am guessing and its copying into double[])
+        // System.arraycopy(event.values, 0, last_values, 0, 3);
+        for (int i = 0; i < 3; i++) {
+            last_values[i] = event.values[i];
+        }
         last_timestamp = event.timestamp;
 
         WritableMap sensorMap = Arguments.createMap();
