@@ -44,11 +44,11 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
         return NAME;
     }
 
-    static final float NS2S = 1.0f / 1000000000.0f;
+    static final double NS2S = 1.0 / 1000000000.0;
     float[] last_values = null;
     double[] acceleration = null;
-    float[] velocity = null;
-    float[] position = null;
+    double[] velocity = null;
+    double[] position = null;
     long last_timestamp = 0;
     double scale = Math.pow(10, 2);
 
@@ -68,7 +68,7 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
 
 
         if(last_values != null){
-            float dt = (event.timestamp - last_timestamp) * NS2S;
+            double dt = (event.timestamp - last_timestamp) * NS2S;
     
             
             for(int index = 0; index < 3;++index){
@@ -80,8 +80,8 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
         }
         else{
             last_values = new float[3];
-            velocity = new float[3];
-            position = new float[3];
+            velocity = new double[3];
+            position = new double[3];
             acceleration = new double[3];
             velocity[0] = velocity[1] = velocity[2] = 0f;
             position[0] = position[1] = position[2] = 0f;
