@@ -45,7 +45,7 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
     }
 
     static final double NS2S = 1.0 / 1000000000.0;
-    float[] last_values = null;
+    double[] last_values = null;
     double[] acceleration = null;
     double[] velocity = null;
     double[] position = null;
@@ -79,13 +79,14 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
             Log.i("SensorEventModule", "2");
         }
         else{
-            last_values = new float[3];
+            last_values = new double[3];
             velocity = new double[3];
             position = new double[3];
             acceleration = new double[3];
             velocity[0] = velocity[1] = velocity[2] = 0f;
             position[0] = position[1] = position[2] = 0f;
         }
+        // this is the issue (event.values is float[] I am guessing and its copuying into double[])
         System.arraycopy(event.values, 0, last_values, 0, 3);
         last_timestamp = event.timestamp;
 
