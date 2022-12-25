@@ -21,6 +21,14 @@ const styles = StyleSheet.create({
 let subscription = null;
 let prevTimestamp = 0;
 
+let maxAccelX = -1000.0;
+let minAccelX = 1000.0;
+
+let maxAccelY = -1000.0;
+let minAccelY = 1000.0;
+
+let maxAccelZ = -1000.0;
+let minAccelZ = 1000.0;
 //start button
 //stop button OR get values for a certain amount of time
 //single output - the averaged location value
@@ -49,7 +57,16 @@ const NewAccelModuleScreen = ({ }) => {
     const [distX, setDistX] = useState(0.0);
     const [distY, setDistY] = useState(0.0);
     const [distZ, setDistZ] = useState(0.0);
+
+    // const [maxAccelX, setMaxAccelX] = useState(-1000.0);
+    // const [minAccelX, setMinAccelX] = useState(1000.0);
     
+    // const [maxAccelY, setMaxAccelY] = useState(-1000.0);
+    // const [minAccelY, setMinAccelY] = useState(1000.0);
+
+    // const [maxAccelZ, setMaxAccelZ] = useState(-1000.0);
+    // const [minAccelZ, setMinAccelZ] = useState(1000.0);
+
     const startListener = () => {
         console.log("Start Listening");
         NativeModules?.SensorEventModule?.startAccelerationSensor();
@@ -58,7 +75,33 @@ const NewAccelModuleScreen = ({ }) => {
         subscription = eventEmitter.addListener(
             'SensorModule',
             (data) => {
-                console.log(data);
+                // console.log(data);
+                if(data.accelerationsX > maxAccelX) {
+                    maxAccelX = data.accelerationsX;
+                    // setMaxAccelX(data.accelerationsX);
+                }
+                if(data.accelerationsX < minAccelX) {
+                    minAccelX = data.accelerationsX;
+                    // setMinAccelX(data.accelerationsX);
+                }
+
+                if(data.accelerationsY > maxAccelY) {
+                    maxAccelY = data.accelerationsY;
+                    // setMaxAccelY(data.accelerationsY);
+                }
+                if(data.accelerationsY < minAccelY) {
+                    minAccelY = data.accelerationsY;
+                    //setMinAccelY(data.accelerationsY);
+                }
+
+                if(data.accelerationsZ > maxAccelZ) {
+                    maxAccelZ = data.accelerationsZ;
+                    //setMaxAccelZ(data.accelerationsZ);
+                }
+                if(data.accelerationsZ < minAccelZ) {
+                    minAccelZ = data.accelerationsZ;
+                    //setMinAccelZ(data.accelerationsZ);
+                }
                 // setDistX(distX + data.distanceX);
                 // setDistY(distY + data.distanceY);
                 // setDistZ(distZ + data.distanceZ);
@@ -68,6 +111,24 @@ const NewAccelModuleScreen = ({ }) => {
     
     const stopListener = () =>{
         console.log("Stop Listening");
+
+        console.log("Max X = ", maxAccelX);
+        console.log("Min X = ", minAccelX);
+
+        console.log("Max Y = ", maxAccelY);
+        console.log("Min Y = ", minAccelY);
+
+        console.log("Max Z = ", maxAccelZ);
+        console.log("Min Z = ", minAccelZ);
+
+        maxAccelX = -1000.0;
+        minAccelX = 1000.0;
+
+        maxAccelY = -1000.0;
+        minAccelY = 1000.0;
+
+        maxAccelZ = -1000.0;
+        minAccelZ = 1000.0;
         NativeModules?.SensorEventModule?.stopAccelerationSensor();
         subscription?.remove();
     }

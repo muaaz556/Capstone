@@ -72,10 +72,12 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
     
             
             for(int index = 0; index < 3;++index){
-                acceleration[index] = (Math.round(event.values[index] * scale)) / scale;
-                velocity[index] += Math.round(((acceleration[index] + last_values[index])/2 * dt) * scale) / scale ;
-                position[index] += Math.round(velocity[index] * dt * scale) / scale;
+                // acceleration[index] = (Math.round(event.values[index] * scale)) / scale;
+                acceleration[index] = event.values[index];
+                velocity[index] += (acceleration[index] + last_values[index])/2 * dt ;
+                position[index] += velocity[index] * dt;
             }
+            
             Log.i("SensorEventModule", "2");
         }
         else{
@@ -95,16 +97,16 @@ public class SensorEventModule extends ReactContextBaseJavaModule implements Sen
 
         WritableMap sensorMap = Arguments.createMap();
         
-        sensorMap.putDouble("positionsX", position[0]);
-        sensorMap.putDouble("velocityX", velocity[0]);
+        // sensorMap.putDouble("positionsX", position[0]);
+        // sensorMap.putDouble("velocityX", velocity[0]);
         sensorMap.putDouble("accelerationsX", acceleration[0]);
 
-        sensorMap.putDouble("positionsY", position[1]);
-        sensorMap.putDouble("velocityY", velocity[1]);
+        // sensorMap.putDouble("positionsY", position[1]);
+        // sensorMap.putDouble("velocityY", velocity[1]);
         sensorMap.putDouble("accelerationsY", acceleration[1]);
 
-        sensorMap.putDouble("positionsZ", position[2]);
-        sensorMap.putDouble("velocityZ", velocity[2]);
+        // sensorMap.putDouble("positionsZ", position[2]);
+        // sensorMap.putDouble("velocityZ", velocity[2]);
         sensorMap.putDouble("accelerationsZ", acceleration[2]);
 
         sendEvent(sensorMap);
