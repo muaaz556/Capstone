@@ -1,7 +1,7 @@
 import { NGROK_URL } from '@env'
 
-export const getGPSData = () => {
-    fetch(`${NGROK_URL}/api/get-gps`, {
+export const getGPSData = async () => {
+    await fetch(`${NGROK_URL}/api/get-gps`, {
         method: 'GET',
         headers: {
             "access-control-allow-origin": "*",
@@ -23,8 +23,8 @@ export const getGPSData = () => {
     })
 }
 
-export const postGPSData = (requestData) => {
-    fetch(`${NGROK_URL}/api/post-gps`, {
+export const postGPSData = async (requestData) => {
+    await fetch(`${NGROK_URL}/api/post-gps`, {
         method: 'POST',
         headers: {
             "access-control-allow-origin": "*",
