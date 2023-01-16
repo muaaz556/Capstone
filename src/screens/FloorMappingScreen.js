@@ -29,7 +29,7 @@ const FloorMappingScreen = () => {
                 {photo && (
                     <Image
                         source={{ uri: photo.uri }}
-                        style={{ width: 100%, height: 100% }}
+                        style={{ width: '100%', height: '100%' }}
                     />
                 )}
                 <Button title="Choose Photo" onPress={choosePhotoHandler} />
