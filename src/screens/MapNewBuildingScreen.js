@@ -42,7 +42,6 @@ export const BuildingNameInputContext = createContext();
 export const GPSCornerSelectionContext = createContext();
 
 const MapNewBuildingScreen = ({navigation}) => {
-  const [stepNumber, setStepNumber] = useState(0);
   const [buildingName, setBuildingName] = useState('');
 
   const [longitude, setLongitude] = useState([]);
