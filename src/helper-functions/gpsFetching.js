@@ -23,8 +23,8 @@ export const getGPSData = async () => {
     })
 }
 
-export const postGPSData = async (requestData) => {
-    await fetch(`${NGROK_URL}/api/post-gps`, {
+export const postGPSData = async (requestData, urlPath = "post-gps") => {
+    await fetch(`${NGROK_URL}/api/` + urlPath, {
         method: 'POST',
         headers: {
             "access-control-allow-origin": "*",

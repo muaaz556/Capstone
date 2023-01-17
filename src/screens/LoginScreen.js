@@ -73,6 +73,7 @@ const LoginScreen = ({ navigation }) => {
                             Atleast 6 characters are required.
                         </FormControl.ErrorMessage>
                         <Button style={styles.loginButton}>Login</Button>
+                        <Button style={{marginTop: 10}} onPress={() => navigation.navigate('AccessibilityScreen')}>Accessibility</Button>
                         <Button style={{marginTop: 10}} onPress={() => navigation.navigate('AdminHomeScreen')}>Guest Admin</Button>
                         <Button style={{marginTop: 10}} onPress={handleGuestStudentButtonClick}>Guest Student</Button>
                         <Button style={{marginTop: 10}} onPress={postRequest}>Post Request</Button>
