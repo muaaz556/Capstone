@@ -32,5 +32,8 @@ export const postGPSData = async (requestData, urlPath = "post-gps") => {
             'Content-type': 'application/json'
         },
         body: requestData,
+    }).catch(error => {
+        console.log("Bad JSON")
+        console.log(error)
     })
 }
