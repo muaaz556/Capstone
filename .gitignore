@@ -62,3 +62,4 @@ buck-out/
 
 /capstone-env
 .env
+local.properties
