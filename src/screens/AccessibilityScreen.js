@@ -8,13 +8,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  title: {
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+  },
 });
 
 const AccessibilityScreen = ({navigation}) => {
   return (
     <View style={styles.view}>
       <Center>
-        <Text fontSize="2xl">Accessibility</Text>
+        <Text style={styles.title} fontSize="2xl">Accessibility</Text>
       </Center>
 
       <Box w="100%" maxWidth="75%" mt="5">

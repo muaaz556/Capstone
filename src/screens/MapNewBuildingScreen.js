@@ -1,7 +1,7 @@
 import React from 'react';
 import {useState} from 'react';
 
-import {StyleSheet, TextInput} from 'react-native';
+import {ActivityIndicator, StyleSheet, TextInput} from 'react-native';
 import {Box, Button, Center, Text, View} from 'native-base';
 import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import {getGPSData, postGPSData} from '../helper-functions/gpsFetching';
@@ -10,12 +10,26 @@ const styles = StyleSheet.create({
   view: {
     flex: 1,
     alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   input: {
     height: 40,
     margin: 12,
     width: 200,
     borderWidth: 1,
+    padding: 10,
+  },
+  title: {
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+  },
+  pleaseWait: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activityIndicator: {
     padding: 10,
   },
 });
@@ -52,18 +66,23 @@ const MapNewBuildingScreen = ({navigation}) => {
   return stepNumber === 0 ? (
     <View style={styles.view}>
       <Center>
-        <Text fontSize="2xl">Overview of mapping a building</Text>
+        <Text style={styles.title} fontSize="2xl">
+          Overview of Mapping a Building
+        </Text>
       </Center>
 
-      <Box w="100%" maxWidth="75%" mt="5">
-        <Text numberOfLines={14}>
-          The process of mapping a building starts with getting the coordinates
-          of the four corners of the building from the outside. For example for
-          the first corner you will go outside and stand by the first corner of
-          the building then you can click the button to get the gps coordinate
-          and it will be saved by the app. Next, you go to the second corner of
-          the building and do the same thing.
+      <Box w="100%" maxWidth="90%" mt="5">
+        <Text numberOfLines={14} styles={styles.overview}>
+          To map a building you will complete the following steps:{'\n'}- Go to
+          each corner of the building from the outside and then press the "Get
+          GPS Location" button to get the current GPS location{'\n'}- Upload the
+          building map and then label the corners you visited in the first step
+          on the map{'\n'}- Label paths and locations in the building map which
+          will be used to navigate{'\n'}
         </Text>
+      </Box>
+
+      <Box w="100%" maxWidth="75%" mt="5">
         <Button mb="2" onPress={() => setStepNumber(1)}>
           Start
         </Button>
@@ -72,7 +91,9 @@ const MapNewBuildingScreen = ({navigation}) => {
   ) : stepNumber === 1 ? (
     <View style={styles.view}>
       <Center>
-        <Text fontSize="2xl">Enter the name of the building</Text>
+        <Text style={styles.title} fontSize="2xl">
+          Enter the Name of the Building
+        </Text>
       </Center>
 
       <TextInput
@@ -93,14 +114,19 @@ const MapNewBuildingScreen = ({navigation}) => {
   ) : stepNumber === 2 ? (
     <View style={styles.view}>
       <Center>
-        <Text fontSize="2xl">Corner {latitude.length + 1}</Text>
+        <Text style={styles.title} fontSize="2xl">
+          Corner {latitude.length + 1}
+        </Text>
       </Center>
 
-      <Box w="100%" maxWidth="75%" mt="5">
+      <Box w="100%" maxWidth="90%" mt="5">
         <Text numberOfLines={14}>
-          Go to corner {latitude.length + 1} of the building and hit get
-          coordinate.
+          Go to corner {latitude.length + 1} of the building and press the "Get GPS
+          Location" button.
         </Text>
+      </Box>
+
+      <Box w="100%" maxWidth="75%" mt="5">
         <Button
           mb="2"
           onPress={() => {
@@ -125,21 +151,24 @@ const MapNewBuildingScreen = ({navigation}) => {
             );
             setStepNumber(3);
           }}>
-          Get Coordinate
+          Get GPS Location
         </Button>
       </Box>
     </View>
   ) : stepNumber === 3 ? (
-    <View style={styles.view}>
+    <View style={styles.pleaseWait}>
       <Center>
-        <Text fontSize="2xl">Please wait</Text>
+        <Text fontSize="2xl">
+          Please wait
+        </Text>
+        <ActivityIndicator style={styles.activityIndicator} size="large" />
       </Center>
     </View>
   ) : stepNumber === 4 ? (
     <View style={styles.view}>
       <Center>
-        <Text fontSize="2xl">
-          Coordinate Received for Corner {latitude.length}
+        <Text style={styles.title} fontSize="2xl">
+          GPS Location Received for Corner {latitude.length}
         </Text>
       </Center>
       <Box w="100%" maxWidth="75%" mt="5">
@@ -152,17 +181,15 @@ const MapNewBuildingScreen = ({navigation}) => {
               setStepNumber(2);
             }
           }}>
-          {latitude.length === 4 ? 'Next Step' : 'Get Next Coordinate'}
+          {latitude.length === 4 ? 'Save and Upload Floor Map' : 'Get Next GPS Location'}
         </Button>
         {latitude.length === 4 && (
           <Button
             mb="2"
             onPress={() => {
-              setStepNumber(2);
-              setLatitude([]);
-              setLongitude([]);
+              navigation.navigate('AccessibilityScreen');
             }}>
-            Redo Coordinates
+            Discard GPS Locations
           </Button>
         )}
       </Box>
