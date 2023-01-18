@@ -2,13 +2,27 @@
 import React, {useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {StyleSheet, Image, TouchableOpacity, Dimensions} from 'react-native';
-import {Box, Button, Center, Text, View} from 'native-base';
+import {Button, View} from 'native-base';
 import Svg, {Circle} from 'react-native-svg';
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  button: {
+    marginTop: 10
+  },
 
-let imageWidth = -1;
-let imageHeight = -1;
+  touchableOpacity: {
+    flex: 1,
+    width: '110%',
+    height: '100%',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+  },
+
+  optionBar : {
+    flex: 0.1,
+    alignItems: 'center',
+    backgroundColor: 'grey'}
+});
 
 const FloorMappingScreen = () => {
   // stores photo resource
@@ -19,12 +33,10 @@ const FloorMappingScreen = () => {
     const options = {
       noData: true,
     };
+
     launchImageLibrary(options, response => {
       if (response.assets && response.assets[0].uri) {
-        console.log(response.assets[0]);
         setPhoto(response.assets[0]);
-        imageWidth = response.assets[0].width;
-        imageHeight = response.assets[0].height;
         setGestureLocations([]);
       }
     });
@@ -36,8 +48,6 @@ const FloorMappingScreen = () => {
   const windowHeight = Dimensions.get('window').height;
 
   const handleGestureClick = (evt) => {
-    console.log('X : ', evt.nativeEvent.pageX);
-    console.log('Y : ', evt.nativeEvent.pageY);
 
     let oldXRange = windowWidth;
     let newXRange = 100;
@@ -52,70 +62,34 @@ const FloorMappingScreen = () => {
       y: newYValue,
     };
 
-    console.log('gestureLocation: ', gestureLocations);
-    console.log('imageWidth: ', oldXRange);
-    console.log('imageHeight: ', oldYRange);
-
     setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
   };
 
   const undoRecentClick = () => {
     setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
-    console.log('gestureLocation: ', gestureLocations);
+  }
+
+  const clearAllClicks = () => {
+    setGestureLocations([])
   }
 
   const listItems = gestureLocations.map((item, key) => (
-    <>
+    <View key={key}>
       <Circle
-        key={key+item.x+item.y}
         cx={item.x}
         cy={item.y}
         r="1"
         stroke="blue"
-        fill="green"
+        fill="blue"
       />
-    </>
+    </View>
   ));
 
   return (
-    // <View style={styles.view} height="100%">
-    //     {/* <Center>
-    //         <Text fontSize="2xl">
-    //             Mapping Page
-    //         </Text>
-    //     </Center> */}
-    //     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    //         {photo && (
-    //             <Image
-    //                 source={{ uri: photo.uri }}
-    //                 style={{ width: '100%', height: '100%' }}
-    //             />
-    //         )}
-    //         <Button title="Choose Photo" onPress={choosePhotoHandler} />
-    //     </View>
-    //     {/* <View>
-    //         <Box bg="primary.400" borderRadius="5" rounded="md" height="70%" width="20%" mt="10">
-    //             <Text color="white">Option 1</Text>
-    //             <Text color="white">Option 2</Text>
-    //             <Text color="white">Option 3</Text>
-    //         </Box>
-    //     </View> */}
-    // </View>
-
     <View style={{flex: 1, flexDirection: 'row'}}>
       <View style={{flex: 0.9, alignItems: 'center'}}>
         <TouchableOpacity
-          style={{
-            flex: 1,
-            borderColor: 'red',
-            borderWidth: 3,
-            width: '100%',
-            height: '100%',
-            alignItems: 'center',
-            alignSelf: 'flex-start',
-            padding: 0,
-            margin: 0,
-          }}
+          style={styles.touchableOpacity}
           activeOpacity={1}
           onPress={evt => handleGestureClick(evt)}>
           {photo && (
@@ -124,6 +98,7 @@ const FloorMappingScreen = () => {
                 position="absolute"
                 zIndex={10}
                 source={{uri: photo.uri}}
+                alt={'Alternative Image text'}
                 resizeMode="contain"
                 style={{width: '100%', height: '100%'}}
               />
@@ -139,18 +114,24 @@ const FloorMappingScreen = () => {
           )}
         </TouchableOpacity>
       </View>
-      <View style={{flex: 0.1, alignItems: 'center', backgroundColor: 'grey'}}>
+      <View style={styles.optionBar}>
         <Button
           title="Choose Photo"
           onPress={choosePhotoHandler}
-          style={{marginTop: 10}}>
+          style={styles.button}>
           Add Photo
         </Button>
         <Button
           title="Undo"
           onPress={undoRecentClick}
-          style={{marginTop: 10}}>
+          style={styles.button}>
           Undo
+        </Button>
+        <Button
+          title="Clear"
+          onPress={clearAllClicks}
+          style={styles.button}>
+          Clear
         </Button>
       </View>
     </View>
