@@ -28,19 +28,9 @@ const App = () => {
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="AdminHomeScreen" component={AdminHomeScreen} />
-          <Stack.Screen
-            name="FloorMappingScreen"
-            component={FloorMappingScreen}
-            options={{orientation: 'landscape'}}
-          />
-          <Stack.Screen
-            name="AccessibilityScreen"
-            component={AccessibilityScreen}
-          />
-          <Stack.Screen
-            name="MapNewBuildingScreen"
-            component={MapNewBuildingScreen}
-          />
+          <Stack.Screen name="FloorMappingScreen" component={FloorMappingScreen} options={{orientation: 'landscape'}}/>
+          <Stack.Screen name="AccessibilityScreen" component={AccessibilityScreen}/>
+          <Stack.Screen name="MapNewBuildingScreen" component={MapNewBuildingScreen}/>
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>
