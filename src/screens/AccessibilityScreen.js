@@ -24,7 +24,7 @@ const AccessibilityScreen = ({navigation}) => {
       <Box w="100%" maxWidth="75%" mt="5">
         <Button
           mb="2"
-          onPress={() => navigation.navigate('FloorMappingScreen')}>
+          onPress={() => navigation.navigate('MapNewBuildingScreen')}>
           Map New Building
         </Button>
       </Box>
