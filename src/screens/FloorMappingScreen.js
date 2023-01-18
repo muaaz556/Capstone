@@ -67,7 +67,7 @@ const FloorMappingScreen = () => {
   const listItems = gestureLocations.map((item, key) => (
     <>
       <Circle
-        key={key}
+        key={key+item.x+item.y}
         cx={item.x}
         cy={item.y}
         r="1"
@@ -109,10 +109,12 @@ const FloorMappingScreen = () => {
             flex: 1,
             borderColor: 'red',
             borderWidth: 3,
-            width: '110%',
+            width: '100%',
             height: '100%',
             alignItems: 'center',
-            alignSelf: 'flex-start'
+            alignSelf: 'flex-start',
+            padding: 0,
+            margin: 0,
           }}
           activeOpacity={1}
           onPress={evt => handleGestureClick(evt)}>
