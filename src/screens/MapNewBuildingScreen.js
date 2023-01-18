@@ -68,7 +68,7 @@ const MapNewBuildingScreen = ({navigation}) => {
     });
 
     postGPSData(requestData, 'post-corner-cords').then(() =>
-      navigation.navigate('AccessibilityScreen'),
+      navigation.navigate('FloorMappingScreen'),
     );
   };
 

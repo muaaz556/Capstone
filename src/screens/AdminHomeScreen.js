@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     }
 })
 
-const AdminHomeScreen = () => {
+const AdminHomeScreen = ({navigation}) => {
     return (
         <View style={styles.view}>
             <Center>
@@ -20,7 +20,7 @@ const AdminHomeScreen = () => {
             </Center>
 
             <Box w="100%" maxWidth="75%" mt="5">
-                <Button mb="2">Create New Mapping</Button>
+                <Button mb="2" onPress={() => navigation.navigate('FloorMappingScreen')}>Create New Mapping</Button>
                 <Button>View Existing Mappings</Button>
             </Box>
         </View>
