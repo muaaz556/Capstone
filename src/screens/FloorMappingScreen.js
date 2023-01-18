@@ -25,6 +25,7 @@ const FloorMappingScreen = () => {
         setPhoto(response.assets[0]);
         imageWidth = response.assets[0].width;
         imageHeight = response.assets[0].height;
+        setGestureLocations([]);
       }
     });
   };
@@ -34,17 +35,17 @@ const FloorMappingScreen = () => {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
-  const handleGestureClick = evt => {
-    console.log('X : ', evt.nativeEvent.locationX);
-    console.log('Y : ', evt.nativeEvent.locationY);
+  const handleGestureClick = (evt) => {
+    console.log('X : ', evt.nativeEvent.pageX);
+    console.log('Y : ', evt.nativeEvent.pageY);
 
-    let oldXRange = imageWidth;
+    let oldXRange = windowWidth;
     let newXRange = 100;
-    let newXValue = (evt.nativeEvent.locationX * newXRange) / oldXRange;
+    let newXValue = (evt.nativeEvent.pageX / oldXRange * newXRange);
 
-    let oldYRange = imageHeight;
+    let oldYRange = windowHeight;
     let newYRange = 100;
-    let newYValue = (evt.nativeEvent.locationY * newYRange) / oldYRange;
+    let newYValue = (evt.nativeEvent.pageY / oldYRange * newYRange) ;
 
     let gestureItem = {
       x: newXValue,
@@ -52,11 +53,16 @@ const FloorMappingScreen = () => {
     };
 
     console.log('gestureLocation: ', gestureLocations);
-    console.log('imageWidth: ', imageWidth);
-    console.log('imageHeight: ', imageHeight);
+    console.log('imageWidth: ', oldXRange);
+    console.log('imageHeight: ', oldYRange);
 
     setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
   };
+
+  const undoRecentClick = () => {
+    setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
+    console.log('gestureLocation: ', gestureLocations);
+  }
 
   const listItems = gestureLocations.map((item, key) => (
     <>
@@ -101,11 +107,12 @@ const FloorMappingScreen = () => {
         <TouchableOpacity
           style={{
             flex: 1,
-            borderColor: 'black',
-            borderWidth: 1,
-            width: '100%',
+            borderColor: 'red',
+            borderWidth: 3,
+            width: '110%',
             height: '100%',
             alignItems: 'center',
+            alignSelf: 'flex-start'
           }}
           activeOpacity={1}
           onPress={evt => handleGestureClick(evt)}>
@@ -136,6 +143,12 @@ const FloorMappingScreen = () => {
           onPress={choosePhotoHandler}
           style={{marginTop: 10}}>
           Add Photo
+        </Button>
+        <Button
+          title="Undo"
+          onPress={undoRecentClick}
+          style={{marginTop: 10}}>
+          Undo
         </Button>
       </View>
     </View>
