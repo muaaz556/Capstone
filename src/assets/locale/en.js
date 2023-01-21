@@ -21,7 +21,14 @@ export const NEXT_LOCATION_MESSAGE = "Go to the next distinct corner of the buil
 Location button.\n\nIf you have already obtained the current location for \
 every distinct corner of the building, then press Save and Upload Floor Map "
 
-export const FOUR_CORNERS_STATE_TITLE = "Add Corner GPS Coordinates"
-
-export const FOUR_CORNERS_STATE_MESSAGE = "Please click on the four corners of the building in the uploaded floorplan in the same order that you visited them previously."
 export const PLEASE_WAIT_MESSAGE = "Please wait"
+
+
+export const FOUR_CORNERS_STATE_TITLE = "Add Corner GPS Coordinates"
+export const FOUR_CORNERS_STATE_MESSAGE = "Please click on the four corners of the building in the uploaded \
+floorplan in the same order that you visited them previously."
+
+export const TOO_MANY_NODES_PLACED_TITLE = "Multiple Corner Nodes Detected"
+export const TOO_MANY_NODES_PLACED_ERROR_MESSAGE = "You have already placed 4 corner nodes. Please undo if \
+you need to replace any poorly placed nodes."
+

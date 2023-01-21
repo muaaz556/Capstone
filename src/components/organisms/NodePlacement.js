@@ -1,9 +1,8 @@
-import React, { useState, useContext } from 'react';
-
-import { StyleSheet, TextInput, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { Box, Button, Center, Text, View } from 'native-base';
+import React, { useContext } from 'react';
+import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View } from 'native-base';
 import Svg, {Ellipse} from 'react-native-svg';
-import { NodePlacementContext } from '../../screens/FloorMappingScreen';
+import { NodePlacementContext } from './FourCornerState';
 
 const styles = StyleSheet.create({ 
     touchableOpacity: {
@@ -15,12 +14,10 @@ const styles = StyleSheet.create({
     }
 });
 
-
-
 const NodePlacement = ({photo}) => {
 
-    const {windowH, gestureLocations} = useContext(NodePlacementContext);
-    const [gestureLocationsState, setGestureLocationsState] = gestureLocations;
+    const {windowH, gestures} = useContext(NodePlacementContext);
+    const [gestureLocations, setGestureLocations] = gestures;
     const [windowHState, setWindowHState] = windowH;
 
     const windowWidth = Dimensions.get('window').width;
@@ -42,10 +39,10 @@ const NodePlacement = ({photo}) => {
             y: newYValue,
         };
 
-        setGestureLocationsState(gestureLocationsState => [...gestureLocationsState, gestureItem]);
+        setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
     };
 
-    const listItems = gestureLocationsState.map((item, key) => (
+    const listItems = gestureLocations.map((item, key) => (
         <View key={key}>
         <Ellipse
             cx={item.x}
