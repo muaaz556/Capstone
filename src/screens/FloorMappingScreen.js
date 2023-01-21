@@ -1,9 +1,12 @@
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
+import React, {useState, useContext, createContext} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {StyleSheet, Image, TouchableOpacity, Dimensions} from 'react-native';
 import {Button, View} from 'native-base';
 import Svg, {Ellipse} from 'react-native-svg';
+import { displayTextAlert } from '../helper-functions/textAlert';
+import { FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE } from '../assets/locale/en';
+import NodePlacement from '../components/organisms/NodePlacement';
 
 const styles = StyleSheet.create({
   button: {
@@ -35,7 +38,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
 
-  optionBar: {
+  navBarView: {
     flex: 0.1,
     alignItems: 'center',
     backgroundColor: 'transparent',
@@ -43,7 +46,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 5,
   },
 
-  navBarView: {
+  optionBar: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -51,9 +54,14 @@ const styles = StyleSheet.create({
   }
 });
 
+export const NodePlacementContext = createContext();
+
 const FloorMappingScreen = () => {
   // stores photo resource
+  
   const [photo, setPhoto] = useState(null);
+  const [gestureLocations, setGestureLocations] = useState([]);
+  const [windowH, setWindowH] = useState(0);
 
   // event handler for choosing photo
   let choosePhotoHandler = () => {
@@ -65,32 +73,33 @@ const FloorMappingScreen = () => {
       if (response.assets && response.assets[0].uri) {
         setPhoto(response.assets[0]);
         setGestureLocations([]);
+        displayTextAlert(FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE);
       }
     });
   };
 
-  const [gestureLocations, setGestureLocations] = useState([]);
-  const [windowH, setWindowH] = useState(0);
+  // const [gestureLocations, setGestureLocations] = useState([]);
+  // const [windowH, setWindowH] = useState(0);
 
-  const windowWidth = Dimensions.get('window').width;
+  // const windowWidth = Dimensions.get('window').width;
 
-  const handleGestureClick = (evt) => {
+  // const handleGestureClick = (evt) => {
 
-    let oldXRange = windowWidth*0.9;
-    let newXRange = 100;
-    let newXValue = (evt.nativeEvent.pageX / oldXRange * newXRange);
+  //   let oldXRange = windowWidth*0.9;
+  //   let newXRange = 100;
+  //   let newXValue = (evt.nativeEvent.pageX / oldXRange * newXRange);
 
-    let oldYRange = windowH;
-    let newYRange = 100;
-    let newYValue = (evt.nativeEvent.pageY / oldYRange * newYRange) ;
+  //   let oldYRange = windowH;
+  //   let newYRange = 100;
+  //   let newYValue = (evt.nativeEvent.pageY / oldYRange * newYRange) ;
 
-    let gestureItem = {
-      x: newXValue,
-      y: newYValue,
-    };
+  //   let gestureItem = {
+  //     x: newXValue,
+  //     y: newYValue,
+  //   };
 
-    setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
-  };
+  //   setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
+  // };
 
   const undoRecentClick = () => {
     setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
@@ -100,29 +109,15 @@ const FloorMappingScreen = () => {
     setGestureLocations([])
   }
 
-  const listItems = gestureLocations.map((item, key) => (
-    <View key={key}>
-      <Ellipse
-        cx={item.x}
-        cy={item.y}
-        rx="0.2"
-        ry="1.1"
-        stroke="blue"
-        fill="blue"
-      />
-    </View>
-  ));
-
   const onLayout = (event) => {
-    if (event.nativeEvent.layout.height < event.nativeEvent.layout.width) {
-      console.log(event.nativeEvent.layout.height)
+  if (event.nativeEvent.layout.height < event.nativeEvent.layout.width) {
       setWindowH(event.nativeEvent.layout.height)
-    }
   }
+}
 
   return (
     <View style={{ flex: 1, flexDirection: 'row' }} onLayout={( (event) => { onLayout(event) } )}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.touchableOpacity}
         activeOpacity={1}
         onPress={evt => handleGestureClick(evt)}>
@@ -146,9 +141,13 @@ const FloorMappingScreen = () => {
               </Svg>
             </>
           )}
-      </TouchableOpacity>
-      <View style={styles.optionBar}>
-        <View style={styles.navBarView}>
+      </TouchableOpacity> */}
+      <NodePlacementContext.Provider value={{ windowH: [windowH, setWindowH], gestureLocations: [gestureLocations, setGestureLocations], }}>
+        <NodePlacement photo={photo}/>
+      </NodePlacementContext.Provider>
+      
+      <View style={styles.navBarView}>
+        <View style={styles.optionBar}>
           <Button
             title="Choose Photo"
             onPress={choosePhotoHandler}
