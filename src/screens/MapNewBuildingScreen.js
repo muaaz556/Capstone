@@ -53,7 +53,7 @@ const MapNewBuildingScreen = ({navigation}) => {
     let cornerCoordinates = []
 
     for (let i = 0; i < longitude.length; i++) {
-      cornerCoordinates.push({long: longitude[i], lat: latitude[i]})
+      cornerCoordinates.push({'long': longitude[i], 'lat': latitude[i], 'gestureLong': null, 'gestureLat': null})
     }
 
     const requestData = JSON.stringify({
@@ -68,7 +68,7 @@ const MapNewBuildingScreen = ({navigation}) => {
     });
 
     postGPSData(requestData, 'post-corner-cords').then(() =>
-      navigation.navigate('FloorMappingScreen'),
+      navigation.navigate('FloorMappingScreen', {buildingName}),
     );
   };
 

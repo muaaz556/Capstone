@@ -4,7 +4,7 @@ import {StyleSheet} from 'react-native';
 import {Button, View} from 'native-base';
 import { displayTextAlert } from '../../helper-functions/textAlert';
 import { FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE } from '../../assets/locale/en';
-import { StateBarContext } from './FourCornerState';
+import { SideBarContext } from './FourCornerState';
 
 let stateNames = ['state1', 'state2', 'state3', 'state4'];
 
@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
       alignContent: 'center',
       textAlign: 'center',
     },
-  
     disabledButton: {
       marginTop: 10,
       flex: 1,
@@ -29,18 +28,17 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       backgroundColor: 'grey'
     },
-  
     optionBar: {
       flex: 1,
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-    }
+    },
   });
 
-const StateBar = ({mapGesturesToGPS}) => {
+const SideBar = ({mapGesturesToGPS}) => {
 
-    const {photo, gestures, state} = useContext(StateBarContext);
+    const {photo, gestures, state} = useContext(SideBarContext);
     const [gestureLocations, setGestureLocations] = gestures;
     const [photoState, setPhotoState] = photo;
     const [stateName, setStateName] = state;
@@ -55,7 +53,7 @@ const StateBar = ({mapGesturesToGPS}) => {
 
         const stateIndex = stateNames.indexOf(stateName);
         if(stateIndex == stateNames.length - 1) {
-            console.log("you're on the last state already dummy. Get a life fuckface");
+            console.log("you're on the last state already.");
         } else {
             setStateName(stateNames[(stateIndex + 1)]);
         }
@@ -65,7 +63,7 @@ const StateBar = ({mapGesturesToGPS}) => {
     const prevState = () => {
         const stateIndex = stateNames.indexOf(stateName);
         if(stateIndex == 0) {
-            console.log("you're on the first state already dummy. Get a life fuckface");
+            console.log("you're on the first state already.");
         } else {
             setStateName(stateNames[(stateIndex - 1)]);
         }
@@ -179,4 +177,4 @@ const StateBar = ({mapGesturesToGPS}) => {
     )
 };
 
-export default StateBar;
+export default SideBar;

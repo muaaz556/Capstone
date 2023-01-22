@@ -6,7 +6,7 @@ import FourCornerState from '../components/organisms/FourCornerState';
 
 export const FourCornerStateContext = createContext();
 
-const FloorMappingScreen = () => {
+const FloorMappingScreen = ({route}) => {
   // stores photo resource
   
  
@@ -17,6 +17,7 @@ const FloorMappingScreen = () => {
     if (event.nativeEvent.layout.height < event.nativeEvent.layout.width) {
         setWindowH(event.nativeEvent.layout.height)
     }
+    console.log("buildingName:", route.params.buildingName);
   }
 
   return (
@@ -28,7 +29,7 @@ const FloorMappingScreen = () => {
             windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
             }}>
-            <FourCornerState/>
+            <FourCornerState buildingName={route.params.buildingName}/>
           </FourCornerStateContext.Provider>
         </>
       ) : stateName === 'state2' ? (
