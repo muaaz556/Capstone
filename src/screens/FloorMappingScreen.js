@@ -6,23 +6,12 @@ import FourCornerState from '../components/organisms/FourCornerState';
 
 export const FourCornerStateContext = createContext();
 
-const styles = StyleSheet.create({
-  navBarView: {
-    flex: 0.1,
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    borderColor: 'black',
-    borderLeftWidth: 5,
-  },
-});
-
 const FloorMappingScreen = () => {
   // stores photo resource
   
  
   const [windowH, setWindowH] = useState(0);
   const [stateName, setStateName] = useState('state1');
-
 
   const onLayout = (event) => {
     if (event.nativeEvent.layout.height < event.nativeEvent.layout.width) {
@@ -44,39 +33,30 @@ const FloorMappingScreen = () => {
         </>
       ) : stateName === 'state2' ? (
         <>
-          <FourCornerStateContext.Provider value={{ 
+          {/* <FourCornerStateContext.Provider value={{ 
             windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
             }}>
             <FourCornerState/>
-          </FourCornerStateContext.Provider>
-          {/* <NodePlacementContext.Provider value={{ windowH: [windowH, setWindowH], gestureLocations: [gestureLocations, setGestureLocations] }}>
-            <NodePlacement photo={photo}/>
-          </NodePlacementContext.Provider>
-
-          <View style={styles.navBarView}>
-            <StateBarContext.Provider value={{photo: [photo, setPhoto], gestureLocations: [gestureLocations, setGestureLocations], state: [stateName, setStateName]}}>
-              <StateBar/>
-            </StateBarContext.Provider>
-          </View> */}
+          </FourCornerStateContext.Provider> */}
         </>
       ) : stateName === 'state3' ? (
         <>
-          <FourCornerStateContext.Provider value={{ 
+          {/* <FourCornerStateContext.Provider value={{ 
             windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
             }}>
             <FourCornerState/>
-          </FourCornerStateContext.Provider>
+          </FourCornerStateContext.Provider> */}
         </>
       ) : stateName === 'state4' ? (
         <>
-          <FourCornerStateContext.Provider value={{ 
+          {/* <FourCornerStateContext.Provider value={{ 
             windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
             }}>
             <FourCornerState/>
-          </FourCornerStateContext.Provider>
+          </FourCornerStateContext.Provider> */}
         </>
       ) : (
         <></>

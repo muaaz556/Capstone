@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     }
   });
 
-const StateBar = () => {
+const StateBar = ({mapGesturesToGPS}) => {
 
     const {photo, gestures, state} = useContext(StateBarContext);
     const [gestureLocations, setGestureLocations] = gestures;
@@ -47,6 +47,12 @@ const StateBar = () => {
 
 
     const nextState = () => {
+
+        //figure out how to do this more cleanly
+        if(stateName === "state1"){
+            mapGesturesToGPS();
+        }
+
         const stateIndex = stateNames.indexOf(stateName);
         if(stateIndex == stateNames.length - 1) {
             console.log("you're on the last state already dummy. Get a life fuckface");
