@@ -102,42 +102,11 @@ const LoginScreen = ({navigation}) => {
         alt="Logo image"
       />
       <Text style={styles.titleText}>Welcome to Eye Guide!</Text>
-      <Text style={styles.titleSubText}>Login to start navigating!</Text>
+      <Text style={styles.titleSubText}>Choose an option to begin!</Text>
 
       <Box w="100%" maxWidth="300px">
         <FormControl isRequired>
           <Stack mx="0">
-            <Box style={styles.inputBox}>
-              <Input
-                style={styles.inputField}
-                type="text"
-                defaultValue=""
-                placeholder="Username"
-              />
-            </Box>
-            <Box style={styles.inputBox}>
-              <Input
-                style={styles.inputField}
-                type="password"
-                defaultValue=""
-                placeholder="Password"
-              />
-            </Box>
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}>
-              Atleast 6 characters are required.
-            </FormControl.ErrorMessage>
-
-            <Button style={styles.button}>
-              <Text style={styles.buttonText}>Login</Text>
-            </Button>
-            <View style={styles.dividerView}>
-              <View style={styles.dividerLine} />
-              <View>
-                <Text style={styles.dividerText}>Or continue as</Text>
-              </View>
-              <View style={styles.dividerLine} />
-            </View>
             <Button
               style={styles.button}
               onPress={() => navigation.navigate('AdminHomeScreen')}>
@@ -152,9 +121,6 @@ const LoginScreen = ({navigation}) => {
               style={styles.button}
               onPress={() => navigation.navigate('AccessibilityScreen')}>
               <Text style={styles.buttonText}>Accessibility</Text>
-            </Button>
-            <Button style={styles.button} onPress={postRequest}>
-              <Text style={styles.buttonText}>Post Request</Text>
             </Button>
           </Stack>
         </FormControl>
