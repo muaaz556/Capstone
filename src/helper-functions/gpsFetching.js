@@ -15,18 +15,15 @@ export const getGPSData = async (urlPath = "get-gps", query="", value="") => {
         },
     }).then(res => {
         if (res.ok) {
-            console.log("RES");
             return res.json()
         } else {
             throw res.json()
         }
     }).then(json => {
-        console.log("Good JSON")
-        console.log(json)
+        console.log("Good JSON ", json)
         response = json;
     }).catch(error => {
-        console.log("Bad JSON")
-        console.log(error)
+        console.log("Bad JSON ", error)
     })
     
     return response;
@@ -42,7 +39,6 @@ export const postGPSData = async (requestData, urlPath = "post-gps") => {
         },
         body: requestData,
     }).catch(error => {
-        console.log("Bad JSON")
-        console.log(error)
+        console.log("Bad JSON", error)
     })
 }

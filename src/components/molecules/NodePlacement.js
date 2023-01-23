@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { View } from 'native-base';
 import Svg, {Ellipse} from 'react-native-svg';
-import { NodePlacementContext } from './FourCornerState';
+import { NodePlacementContext } from '../organisms/FourCornerState';
 
 const styles = StyleSheet.create({ 
     touchableOpacity: {
@@ -42,14 +42,14 @@ const NodePlacement = ({photo}) => {
 
     const listItems = gestureLocations.map((item, key) => (
         <View key={key}>
-        <Ellipse
-            cx={item.x}
-            cy={item.y}
-            rx="0.2"
-            ry="1.1"
-            stroke="blue"
-            fill="blue"
-        />
+            <Ellipse
+                cx={item.x}
+                cy={item.y}
+                rx="0.2"
+                ry="1.1"
+                stroke="blue"
+                fill="blue"
+            />
         </View>
     ));
 

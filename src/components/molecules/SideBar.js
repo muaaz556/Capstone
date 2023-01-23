@@ -4,7 +4,7 @@ import {StyleSheet} from 'react-native';
 import {Button, View} from 'native-base';
 import { displayTextAlert } from '../../helper-functions/textAlert';
 import { FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE } from '../../assets/locale/en';
-import { SideBarContext } from './FourCornerState';
+import { SideBarContext } from '../organisms/FourCornerState';
 
 let stateNames = ['state1', 'state2', 'state3', 'state4'];
 
