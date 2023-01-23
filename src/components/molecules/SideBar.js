@@ -46,7 +46,6 @@ const SideBar = ({mapGesturesToGPS}) => {
 
     const nextState = () => {
 
-        //figure out how to do this more cleanly
         if(stateName === "state1"){
             mapGesturesToGPS();
         }
