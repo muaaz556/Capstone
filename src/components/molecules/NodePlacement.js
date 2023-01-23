@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { View } from 'native-base';
 import Svg, {Ellipse} from 'react-native-svg';
-import { NodePlacementContext } from '../organisms/FourCornerState';
 
 const styles = StyleSheet.create({ 
     touchableOpacity: {
@@ -14,7 +13,7 @@ const styles = StyleSheet.create({
     }
 });
 
-const NodePlacement = ({photo}) => {
+const NodePlacement = ({photo, NodePlacementContext}) => {
 
     const {windowH, gestures} = useContext(NodePlacementContext);
     const [gestureLocations, setGestureLocations] = gestures;

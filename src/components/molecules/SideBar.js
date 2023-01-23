@@ -4,7 +4,6 @@ import {StyleSheet} from 'react-native';
 import {Button, View} from 'native-base';
 import { displayTextAlert } from '../../helper-functions/textAlert';
 import { FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE } from '../../assets/locale/en';
-import { SideBarContext } from '../organisms/FourCornerState';
 
 let stateNames = ['state1', 'state2', 'state3', 'state4'];
 
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
     },
   });
 
-const SideBar = ({mapGesturesToGPS}) => {
+const SideBar = ({mapGesturesToGPS, SideBarContext, onPressFunctions}) => {
 
     const {photo, gestures, state} = useContext(SideBarContext);
     const [gestureLocations, setGestureLocations] = gestures;
@@ -44,51 +43,30 @@ const SideBar = ({mapGesturesToGPS}) => {
     const [stateName, setStateName] = state;
 
 
-    const nextState = () => {
-
-        if(stateName === "state1"){
-            mapGesturesToGPS();
-        }
-
-        const stateIndex = stateNames.indexOf(stateName);
-        if(stateIndex == stateNames.length - 1) {
-            console.log("you're on the last state already.");
-        } else {
-            setStateName(stateNames[(stateIndex + 1)]);
-        }
-        
-    };
-
-    const prevState = () => {
-        const stateIndex = stateNames.indexOf(stateName);
-        if(stateIndex == 0) {
-            console.log("you're on the first state already.");
-        } else {
-            setStateName(stateNames[(stateIndex - 1)]);
-        }
-    };
-
     let choosePhotoHandler = () => {
-        const options = {
-          noData: true,
-        };
-    
-        launchImageLibrary(options, response => {
-            if (response.assets && response.assets[0].uri) {
-            setPhotoState(response.assets[0]);
-            setGestureLocations([]);
-            displayTextAlert(FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE);
-            }
-        });
+        onPressFunctions[0]();
     };
+
+    const nextState = () => {
+        onPressFunctions[1]();
+    };
+
+    const clearAllClicks = () => {
+        onPressFunctions[2]();
+    }
 
     const undoRecentClick = () => {
-        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
+        onPressFunctions[3]();
     }
-    
-    const clearAllClicks = () => {
-        setGestureLocations([])
-    }
+
+    const prevState = () => {
+        // const stateIndex = stateNames.indexOf(stateName);
+        // if(stateIndex == 0) {
+        //     console.log("you're on the first state already.");
+        // } else {
+        //     setStateName(stateNames[(stateIndex - 1)]);
+        // }
+    };
 
     return (
 

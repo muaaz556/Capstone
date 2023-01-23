@@ -3,13 +3,16 @@ import {StyleSheet} from 'react-native';
 import {Button, View} from 'native-base';
 import { displayTextAlert } from '../helper-functions/textAlert';
 import FourCornerState from '../components/organisms/FourCornerState';
+import DestinationNodeState from '../components/organisms/DestinationNodeState';
 
 export const FourCornerStateContext = createContext();
+export const DestinationNodeStateContext = createContext();
 
 const FloorMappingScreen = ({route}) => {
 
   const [windowH, setWindowH] = useState(0);
   const [stateName, setStateName] = useState('state1');
+  const [photo, setPhoto] = useState(null);
 
   const onLayout = (event) => {
     if (event.nativeEvent.layout.height < event.nativeEvent.layout.width) {
@@ -25,19 +28,20 @@ const FloorMappingScreen = ({route}) => {
           <FourCornerStateContext.Provider value={{ 
             windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
+            photoState: [photo, setPhoto]
             }}>
             <FourCornerState buildingName={route.params.buildingName}/>
           </FourCornerStateContext.Provider>
         </>
       ) : stateName === 'state2' ? (
         <>
-          {/* These are placeholders */}
-          {/* <FourCornerStateContext.Provider value={{ 
+          <DestinationNodeStateContext.Provider value={{ 
             windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
+            photoState: [photo, setPhoto]
             }}>
-            <FourCornerState/>
-          </FourCornerStateContext.Provider> */}
+            <DestinationNodeState/>
+          </DestinationNodeStateContext.Provider>
         </>
       ) : stateName === 'state3' ? (
         <>
