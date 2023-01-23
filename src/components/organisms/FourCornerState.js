@@ -26,27 +26,6 @@ let getFourGPSCoords;
 
 const FourCornerState = ({buildingName}) => {
 
-
-    //NodePlacement
-        //image
-        //place nodes ontop of it
-        ////limit the number of placements to 4
-    //SideBar
-        //Add photo
-        //Undo
-        //Clear
-        //Finish
-            //take the 4 gesture locations and map them to the 4 GPS locations
-                //format of data??
-
-    
-    useEffect(() => {
-        //Runs only on the first render
-        // getFourGPSCoords = getGPSData('get-corner-cords', 'buildingName', buildingName);
-        // console.log(buildingName);
-        //res is json
-    }, [buildingName]);
-
     const {windowHeight, state} = useContext(FourCornerStateContext);
     const [stateName, setStateName] = state;
     const [windowH, setWindowH] = windowHeight;
@@ -60,30 +39,13 @@ const FourCornerState = ({buildingName}) => {
     }
 
     const mapGesturesToGPS = async () => {
-        //find corresponding GPS for each set of gestures in gestureLocations
-        console.log("state name has updated and we can do gesture location stuff here");
-        // getFourGPSCoords = await getGPSData('get-corner-cords', 'buildingName', buildingName).then(response => response.json())
-        // .then(response => {
-        
-        //     console.log("asjdolasdask??", response)
-        
-        // });
-        // {"buildingName": "RCH", "cords": {"cornerCords": [[Object], [Object]]}}
         getFourGPSCoords = await getGPSData('get-corner-cords', 'buildingName', buildingName);
-        console.log("FINAL  ", getFourGPSCoords);
-        console.log("coords ", getFourGPSCoords.cords.cornerCords[0].gestureLat);
-        console.log("gestures x ", gestureLocations[0].x);
-        // coords  {"gestureLat": null, "gestureLong": null, "lat": 43.47747747747748, "long": -80.5248301073921} 
         for (let i = 0; i < gestureLocations.length; i++) {
-            //add gestureLocations[i].x & gestureLocations[i].y to getFourGPSCoords[i].gesture-lat & getFourGPSCoords[i].gesture-long
-            // console.log("coords ", getFourGPSCoords.cords);
             getFourGPSCoords.cords.cornerCords[i]['gestureLat']  = gestureLocations[i].x;
             getFourGPSCoords.cords.cornerCords[i]['gestureLong'] = gestureLocations[i].y;
         }
         const requestData = JSON.stringify({'gpsCornerCord': [getFourGPSCoords]});
-        console.log("request Data: ", requestData);
         postGPSData(requestData, 'post-corner-cords');
-        // {"cornerCords": [{"lat": 43.47747747747748, "long": -80.5248301073921, "gesture-lat": null, "gesture-long": null}, {"lat": 43.47747747747748, "long": -80.5248301073921, "gesture-lat": null, "gesture-long": null}]}
     };
 
     return ( 

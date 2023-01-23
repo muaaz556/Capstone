@@ -22,7 +22,7 @@ export const getGPSData = async (urlPath = "get-gps", query="", value="") => {
         }
     }).then(json => {
         console.log("Good JSON")
-        console.log(json) // {"buildingName": "RCH", "cords": {"cornerCords": [[Object]]}}
+        console.log(json)
         response = json;
     }).catch(error => {
         console.log("Bad JSON")

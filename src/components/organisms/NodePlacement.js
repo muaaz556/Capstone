@@ -24,8 +24,6 @@ const NodePlacement = ({photo}) => {
 
     const handleGestureClick = (evt) => {
 
-        console.log("listItems");
-
         let oldXRange = windowWidth*0.9;
         let newXRange = 100;
         let newXValue = (evt.nativeEvent.pageX / oldXRange * newXRange);
