@@ -8,7 +8,7 @@ import { displayTextAlert } from '../../helper-functions/textAlert';
 import { TOO_MANY_NODES_PLACED_TITLE, TOO_MANY_NODES_PLACED_ERROR_MESSAGE, FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE } from '../../assets/locale/en';
 import { getGPSData, postGPSData } from '../../helper-functions/gpsFetching';
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import {Ellipse} from 'react-native-svg';
 
 const styles = StyleSheet.create({ 
     navBarView: {
@@ -20,16 +20,15 @@ const styles = StyleSheet.create({
       },
 });
 
-const NodePlacementContext = createContext();
-const SideBarContext = createContext();
+// const NodePlacementContext = createContext();
+// const SideBarContext = createContext();
 let getFourGPSCoords;
+let stateNames = ['state1', 'state2', 'state3', 'state4'];
 
+const FourCornerState = ({buildingName, windowH}) => {
 
-const FourCornerState = ({buildingName}) => {
-
-    const {windowHeight, state, photoState} = useContext(FourCornerStateContext);
+    const {state, photoState} = useContext(FourCornerStateContext);
     const [stateName, setStateName] = state;
-    const [windowH, setWindowH] = windowHeight;
 
     const [photo, setPhoto] = photoState;
     const [gestureLocations, setGestureLocations] = useState([]);
@@ -88,16 +87,30 @@ const FourCornerState = ({buildingName}) => {
         console.log("func4");
     }
 
+    const func5 = (gestureItem) => {
+        setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
+    }
+
+
+    const listItems = gestureLocations.map((item, key) => (
+        <View key={key}>
+            <Ellipse
+                cx={item.x}
+                cy={item.y}
+                rx="0.2"
+                ry="1.1"
+                stroke="blue"
+                fill="blue"
+            />
+        </View>
+    ));
+    
     return ( 
         <>
-            <NodePlacementContext.Provider value={{ windowH: [windowH, setWindowH], gestures: [gestureLocations, setGestureLocations]}}>
-                <NodePlacement photo={photo} NodePlacementContext={NodePlacementContext}/>
-            </NodePlacementContext.Provider>
+            <NodePlacement photo={photo} windowH={windowH} updateGesture={func5} listItems={listItems}/>
 
             <View style={styles.navBarView}>
-                <SideBarContext.Provider value={{photo: [photo, setPhoto], gestures: [gestureLocations, setGestureLocations], state: [stateName, setStateName] }}>
-                    <SideBar mapGesturesToGPS={mapGesturesToGPS} SideBarContext={SideBarContext} onPressFunctions={[func1, func2, func3, func4]}/>
-                </SideBarContext.Provider>
+                <SideBar numOfNodes={gestureLocations.length} onPressFunctions={[func1, func2, func3, func4]} stateName={stateName} />
             </View>
         </>
     );

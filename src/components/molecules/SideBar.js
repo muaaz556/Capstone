@@ -5,8 +5,6 @@ import {Button, View} from 'native-base';
 import { displayTextAlert } from '../../helper-functions/textAlert';
 import { FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE } from '../../assets/locale/en';
 
-let stateNames = ['state1', 'state2', 'state3', 'state4'];
-
 const styles = StyleSheet.create({
     button: {
       marginTop: 10,
@@ -35,15 +33,30 @@ const styles = StyleSheet.create({
     },
   });
 
-const SideBar = ({mapGesturesToGPS, SideBarContext, onPressFunctions}) => {
+const SideBar = ({onPressFunctions, numOfNodes, stateName}) => {
 
-    const {photo, gestures, state} = useContext(SideBarContext);
-    const [gestureLocations, setGestureLocations] = gestures;
-    const [photoState, setPhotoState] = photo;
-    const [stateName, setStateName] = state;
+    // const {photo, gestures, state} = useContext(SideBarContext);
+    // const [gestureLocations, setGestureLocations] = gestures;
+    // const [photoState, setPhotoState] = photo;
+    // const [stateName, setStateName] = state;
+
+
+
+    // const getIndex = (value, arr) => {
+    //     console.log(arr[0]);
+    //     console.log(value);
+    //     for(var i = 0; i < arr.length; i++) {
+    //         if(arr[i] === value) {
+    //             return i;
+    //         }
+    //     }
+    //     return -1; //to handle the case where the value doesn't exist
+    // }
 
 
     let choosePhotoHandler = () => {
+        // let index = getIndex('[Function func1]', onPressFunctions);
+        // console.log(onPressFunctions[0]);
         onPressFunctions[0]();
     };
 
@@ -84,15 +97,15 @@ const SideBar = ({mapGesturesToGPS, SideBarContext, onPressFunctions}) => {
             <Button
                 title="Undo"
                 onPress={undoRecentClick}
-                style={gestureLocations.length > 0 ? styles.button : styles.disabledButton}
-                disabled={gestureLocations.length > 0 ? false : true}>
+                style={numOfNodes > 0 ? styles.button : styles.disabledButton}
+                disabled={numOfNodes > 0 ? false : true}>
                 Undo
             </Button>
             <Button
                 title="Clear"
                 onPress={clearAllClicks}
-                style={gestureLocations.length > 0 ? styles.button : styles.disabledButton}
-                disabled={gestureLocations.length > 0 ? false : true}>
+                style={numOfNodes > 0 ? styles.button : styles.disabledButton}
+                disabled={numOfNodes > 0 ? false : true}>
                 Clear
             </Button>
             <Button

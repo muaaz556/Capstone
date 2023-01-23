@@ -26,21 +26,19 @@ const FloorMappingScreen = ({route}) => {
         //initial state component
         <>
           <FourCornerStateContext.Provider value={{ 
-            windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
             photoState: [photo, setPhoto]
             }}>
-            <FourCornerState buildingName={route.params.buildingName}/>
+            <FourCornerState buildingName={route.params.buildingName} windowH={windowH} />
           </FourCornerStateContext.Provider>
         </>
       ) : stateName === 'state2' ? (
         <>
           <DestinationNodeStateContext.Provider value={{ 
-            windowHeight: [windowH, setWindowH], 
             state: [stateName, setStateName],
             photoState: [photo, setPhoto]
             }}>
-            <DestinationNodeState/>
+            <DestinationNodeState windowH={windowH} />
           </DestinationNodeStateContext.Provider>
         </>
       ) : stateName === 'state3' ? (
