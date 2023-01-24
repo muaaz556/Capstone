@@ -33,7 +33,7 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
     const listOfButtonNames = [BUTTON.UPLOAD, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT];
 
     if (gestureLocations.length > 4) {
-        displayTextAlert(TOO_MANY_NODES_PLACED.TITLE, TOO_MANY_NODES_PLACED_ERROR.MESSAGE);
+        displayTextAlert(TOO_MANY_NODES_PLACED.TITLE, TOO_MANY_NODES_PLACED.MESSAGE);
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1));
     }
 
