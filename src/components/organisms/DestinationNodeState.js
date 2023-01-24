@@ -5,8 +5,7 @@ import { DestinationNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
-import { BUTTON_CLEAR, BUTTON_NEXT, BUTTON_UNDO, STATE_NAMES, BUTTON_BACK, CLEAR_TITLE,
-        CLEAR_MESSAGE, DESTINATION_NODE_STATE_TITLE, DESTINATION_NODE_STATE_MESSAGE, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
+import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 
 const styles = StyleSheet.create({ 
@@ -25,10 +24,10 @@ const DestinationNodeState = ({windowH, photo}) => {
     const [stateName, setStateName] = state;
     const [gestureLocations, setGestureLocations] = destinationGestures;
 
-    const listOfButtonNames = [BUTTON_UNDO, BUTTON_CLEAR, BUTTON_NEXT, BUTTON_BACK];
+    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
 
     useEffect(() => {
-        displayTextAlert(DESTINATION_NODE_STATE_TITLE, DESTINATION_NODE_STATE_MESSAGE);
+        displayTextAlert(DESTINATION_NODE_STATE.TITLE, DESTINATION_NODE_STATE.MESSAGE);
     }, []);
     
     const next = () => {
@@ -48,7 +47,7 @@ const DestinationNodeState = ({windowH, photo}) => {
 
     const clear = () => {
         console.log("clear function invoked");
-        displayTextAlertClear(CLEAR_TITLE, CLEAR_MESSAGE, 
+        displayTextAlertClear(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
                 console.log("clear function called");
                 setGestureLocations([]);
@@ -67,16 +66,16 @@ const DestinationNodeState = ({windowH, photo}) => {
 
     const onPress = (buttonName) => {
         switch (buttonName) {
-            case BUTTON_NEXT:
+            case BUTTON.NEXT:
                 next();
                 break;
-            case BUTTON_CLEAR:
+            case BUTTON.CLEAR:
                 clear();
                 break;
-            case BUTTON_UNDO:
+            case BUTTON.UNDO:
                 undo();
                 break;
-            case BUTTON_BACK:
+            case BUTTON.BACK:
                 back();
                 break;
             default:
@@ -86,7 +85,7 @@ const DestinationNodeState = ({windowH, photo}) => {
     }
     
     const isDisabled = (buttonName) => {
-        return (buttonName === BUTTON_UNDO || buttonName === BUTTON_CLEAR) && gestureLocations.length === 0;
+        return (buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && gestureLocations.length === 0;
     }
     
     const listItems = gestureLocations.map((item, key) => (

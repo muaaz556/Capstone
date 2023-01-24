@@ -4,9 +4,8 @@ import { View } from 'native-base';
 import { NodeSelectionStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
-import { displayTextAlert, displayTextAlertClear } from '../../helper-functions/textAlert';
-import { BUTTON_CLEAR, BUTTON_NEXT, BUTTON_UNDO, STATE_NAMES, BUTTON_BACK, CLEAR_TITLE,
-        CLEAR_MESSAGE, BATHROOM_NODE_STATE_TITLE, BATHROOM_NODE_STATE_MESSAGE, NEXT_TITLE, NEXT_MESSAGE } from '../../assets/locale/en';
+import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
+import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_TITLE, NEXT_MESSAGE } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 
 const styles = StyleSheet.create({ 
@@ -24,10 +23,10 @@ const NodeSelectionState = ({windowH, photo}) => {
     const {stateName, setStateName} = useContext(NodeSelectionStateContext);
     const [gestureLocations, setGestureLocations] = useState([]);
 
-    const listOfButtonNames = [BUTTON_UNDO, BUTTON_CLEAR, BUTTON_NEXT, BUTTON_BACK];
+    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.VIEW_TEXT, BUTTON.NEXT, BUTTON.BACK];
 
     useEffect(() => {
-        displayTextAlert(BATHROOM_NODE_STATE_TITLE, BATHROOM_NODE_STATE_MESSAGE);
+        displayTextAlert(NODE_SELECTION_STATE.TITLE, NODE_SELECTION_STATE.MESSAGE);
     }, []);
     
     const next = () => {
@@ -42,12 +41,12 @@ const NodeSelectionState = ({windowH, photo}) => {
 
     const back = () => {
         console.log("back function");
-        setStateName(STATE_NAMES.HALLWAY_NODE_STATE);
+        setStateName(STATE_NAMES.BATHROOM_NODE_STATE);
     }
 
     const clear = () => {
         console.log("clear function invoked");
-        displayTextAlertClear(CLEAR_TITLE, CLEAR_MESSAGE, 
+        displayTextAlertClear(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
                 setGestureLocations([]);
                 console.log("clear function called");
@@ -57,26 +56,53 @@ const NodeSelectionState = ({windowH, photo}) => {
 
     const undo = () => {
         console.log("undo function");
-        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
+        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1));
+    }
+
+    const unselect = () => {
+        // unselect a node (clear the variable)
+        console.log("unselect function");
+    }
+
+    const viewText = () => {
+        // create a text alert for showing text for node selected
+        console.log("view text function");
     }
 
     const updateGesture = (gestureItem) => {
         setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
+        
+        //on click of the screen
+
+        //select a node
+        //set a variable which stores the currently selected node
+
+        //OR
+
+        //if a node is currently selected, create a connection between the selected node and 
+        //the closest node to the current click (if the closest click is the current selected node, do nothing)
+        //if successfull, unselect the currently selected node
     }
 
     const onPress = (buttonName) => {
         switch (buttonName) {
-            case BUTTON_NEXT:
+            case BUTTON.NEXT:
                 next();
                 break;
-            case BUTTON_CLEAR:
+            case BUTTON.CLEAR:
                 clear();
                 break;
-            case BUTTON_UNDO:
+            case BUTTON.UNDO:
                 undo();
                 break;
-            case BUTTON_BACK:
+            case BUTTON.BACK:
                 back();
+                break;
+            case BUTTON.VIEW_TEXT:
+                viewText();
+                break;
+            case BUTTON.UNSELECT:
+                unselect();
                 break;
             default:
                 console.log("invalid button name");
@@ -85,7 +111,7 @@ const NodeSelectionState = ({windowH, photo}) => {
     }
     
     const isDisabled = (buttonName) => {
-        return (buttonName === BUTTON_UNDO || buttonName === BUTTON_CLEAR) && gestureLocations.length === 0;
+        return (buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && gestureLocations.length === 0;
     }
     
     const listItems = gestureLocations.map((item, key) => (
