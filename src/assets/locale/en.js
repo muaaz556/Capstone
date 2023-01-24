@@ -33,4 +33,9 @@ export const TOO_MANY_NODES_PLACED_TITLE = "Multiple Corner Nodes Detected"
 export const TOO_MANY_NODES_PLACED_ERROR_MESSAGE = "You have already placed 4 corner nodes. Please undo if \
 you need to replace any poorly placed nodes."
 
+export const BUTTON_NEXT = "Next";
+export const BUTTON_UNDO = "Undo";
+export const BUTTON_CLEAR = "Clear";
+export const BUTTON_UPLOAD = "Upload";
+
 export const DESCRIPTION = "Description"

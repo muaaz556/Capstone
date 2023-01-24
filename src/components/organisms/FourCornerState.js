@@ -5,7 +5,9 @@ import { FourCornerStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert } from '../../helper-functions/textAlert';
-import { TOO_MANY_NODES_PLACED_TITLE, TOO_MANY_NODES_PLACED_ERROR_MESSAGE, FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE } from '../../assets/locale/en';
+import { TOO_MANY_NODES_PLACED_TITLE, TOO_MANY_NODES_PLACED_ERROR_MESSAGE,
+    FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE, BUTTON_CLEAR,
+    BUTTON_NEXT, BUTTON_UNDO, BUTTON_UPLOAD } from '../../assets/locale/en';
 import { getGPSData, postGPSData } from '../../helper-functions/gpsFetching';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {Ellipse} from 'react-native-svg';
@@ -32,6 +34,7 @@ const FourCornerState = ({buildingName, windowH}) => {
 
     const [photo, setPhoto] = photoState;
     const [gestureLocations, setGestureLocations] = useState([]);
+    const buttonArray = [BUTTON_NEXT, BUTTON_CLEAR, BUTTON_UPLOAD, BUTTON_UNDO];
 
     if (gestureLocations.length > 4) {
         displayTextAlert(TOO_MANY_NODES_PLACED_TITLE, TOO_MANY_NODES_PLACED_ERROR_MESSAGE);
@@ -91,6 +94,26 @@ const FourCornerState = ({buildingName, windowH}) => {
         setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
     }
 
+    const onPress = (buttonName) => {
+        switch (buttonName) {
+            case "Add Photo":
+                func1();
+                break;
+            case "Next":
+                func2();
+                break;
+            case "Clear":
+                func3();
+                break;
+            case "Undo":
+                func4();
+                break;
+            default:
+                console.log("invalid button name");
+
+        }
+    }
+
 
     const listItems = gestureLocations.map((item, key) => (
         <View key={key}>
@@ -110,7 +133,7 @@ const FourCornerState = ({buildingName, windowH}) => {
             <NodePlacement photo={photo} windowH={windowH} updateGesture={func5} listItems={listItems}/>
 
             <View style={styles.navBarView}>
-                <SideBar numOfNodes={gestureLocations.length} onPressFunctions={[func1, func2, func3, func4]} stateName={stateName} />
+                <SideBar numOfNodes={gestureLocations.length} onPress={onPress} stateName={stateName} />
             </View>
         </>
     );
