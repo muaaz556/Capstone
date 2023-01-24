@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from 'native-base';
-import { DestinationNodeStateContext } from '../../screens/FloorMappingScreen';
+import { FloorChangingNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
 import { BUTTON_CLEAR, BUTTON_NEXT, BUTTON_UNDO, STATE_NAMES, BUTTON_BACK, CLEAR_TITLE,
-        CLEAR_MESSAGE, DESTINATION_NODE_STATE_TITLE, DESTINATION_NODE_STATE_MESSAGE, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
+        CLEAR_MESSAGE, FLOOR_CHANGING_NODE_STATE_TITLE, FLOOR_CHANGING_NODE_STATE_MESSAGE, NEXT_TITLE, NEXT_MESSAGE } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 
 const styles = StyleSheet.create({ 
@@ -19,16 +19,16 @@ const styles = StyleSheet.create({
       },
 });
 
-const DestinationNodeState = ({windowH, photo}) => {
-    
-    const {state, destinationGestures} = useContext(DestinationNodeStateContext)
+const FloorChangingNodeState = ({windowH, photo}) => {
+
+    const {state, floorChangingGestures} = useContext(FloorChangingNodeStateContext);
     const [stateName, setStateName] = state;
-    const [gestureLocations, setGestureLocations] = destinationGestures;
+    const [gestureLocations, setGestureLocations] = floorChangingGestures;
 
     const listOfButtonNames = [BUTTON_UNDO, BUTTON_CLEAR, BUTTON_NEXT, BUTTON_BACK];
 
     useEffect(() => {
-        displayTextAlert(DESTINATION_NODE_STATE_TITLE, DESTINATION_NODE_STATE_MESSAGE);
+        displayTextAlert(FLOOR_CHANGING_NODE_STATE_TITLE, FLOOR_CHANGING_NODE_STATE_MESSAGE);
     }, []);
     
     const next = () => {
@@ -36,14 +36,14 @@ const DestinationNodeState = ({windowH, photo}) => {
         displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
             () => {
                 //STUFF to do before moving to next state
-                setStateName(STATE_NAMES.HALLWAY_NODE_STATE);
+                setStateName(STATE_NAMES.BATHROOM_NODE_STATE);
             }
-        );
+        ); 
     }
 
     const back = () => {
         console.log("back function");
-        setStateName(STATE_NAMES.FOUR_CORNER_STATE);
+        setStateName(STATE_NAMES.HALLWAY_NODE_STATE);
     }
 
     const clear = () => {
@@ -58,7 +58,7 @@ const DestinationNodeState = ({windowH, photo}) => {
 
     const undo = () => {
         console.log("undo function");
-        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
+        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))  
     }
 
     const updateGesture = (gestureItem) => {
@@ -96,8 +96,8 @@ const DestinationNodeState = ({windowH, photo}) => {
                 cy={item.y}
                 rx="0.2"
                 ry="1.1"
-                stroke="red"
-                fill="red"
+                stroke="purple"
+                fill="purple"
             />
         </View>
     ));
@@ -113,4 +113,4 @@ const DestinationNodeState = ({windowH, photo}) => {
     );
 };
 
-export default DestinationNodeState;
+export default FloorChangingNodeState;

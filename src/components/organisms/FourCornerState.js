@@ -1,13 +1,13 @@
-import React, {useState, createContext, useContext, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from 'native-base';
 import { FourCornerStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
-import { displayTextAlert } from '../../helper-functions/textAlert';
+import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
 import { TOO_MANY_NODES_PLACED_TITLE, TOO_MANY_NODES_PLACED_ERROR_MESSAGE,
     FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE, BUTTON_CLEAR,
-    BUTTON_NEXT, BUTTON_UNDO, BUTTON_UPLOAD } from '../../assets/locale/en';
+    BUTTON_NEXT, BUTTON_UNDO, BUTTON_UPLOAD, STATE_NAMES, CLEAR_MESSAGE, CLEAR_TITLE, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
 import { getGPSData, postGPSData } from '../../helper-functions/gpsFetching';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {Ellipse} from 'react-native-svg';
@@ -22,19 +22,16 @@ const styles = StyleSheet.create({
       },
 });
 
-// const NodePlacementContext = createContext();
-// const SideBarContext = createContext();
 let getFourGPSCoords;
-let stateNames = ['state1', 'state2', 'state3', 'state4'];
 
-const FourCornerState = ({buildingName, windowH}) => {
+const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
 
-    const {state, photoState} = useContext(FourCornerStateContext);
+    const {state, photoState, fourCornerGestures} = useContext(FourCornerStateContext);
     const [stateName, setStateName] = state;
-
     const [photo, setPhoto] = photoState;
-    const [gestureLocations, setGestureLocations] = useState([]);
-    const buttonArray = [BUTTON_NEXT, BUTTON_CLEAR, BUTTON_UPLOAD, BUTTON_UNDO];
+    const [gestureLocations, setGestureLocations] = fourCornerGestures;
+
+    const listOfButtonNames = [BUTTON_UPLOAD, BUTTON_UNDO, BUTTON_CLEAR, BUTTON_NEXT];
 
     if (gestureLocations.length > 4) {
         displayTextAlert(TOO_MANY_NODES_PLACED_TITLE, TOO_MANY_NODES_PLACED_ERROR_MESSAGE);
@@ -51,7 +48,7 @@ const FourCornerState = ({buildingName, windowH}) => {
         postGPSData(requestData, 'post-corner-cords');
     };
 
-    const func1 = () => {
+    const upload = () => {
         const options = {
             noData: true,
         };
@@ -59,62 +56,66 @@ const FourCornerState = ({buildingName, windowH}) => {
         launchImageLibrary(options, response => {
             if (response.assets && response.assets[0].uri) {
             setPhoto(response.assets[0]);
-            setGestureLocations([]);
+            clearAllNodes();
             displayTextAlert(FOUR_CORNERS_STATE_TITLE, FOUR_CORNERS_STATE_MESSAGE);
             }
         });
-        console.log("func1");
+        console.log("upload function");
     }
 
-    const func2 = () => {
-        console.log("func2");
-        if(stateName === "state1"){
-            mapGesturesToGPS();
-        }
-
-        const stateIndex = stateNames.indexOf(stateName);
-        if(stateIndex == stateNames.length - 1) {
-            console.log("you're on the last state already.");
-        } else {
-            setStateName(stateNames[(stateIndex + 1)]);
-        }
+    const next = () => {
+        console.log("next function");
+        displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
+            () => {
+                mapGesturesToGPS();
+                setStateName(STATE_NAMES.DESTINATION_NODE_STATE);
+            }
+        );
     }
 
-    const func3 = () => {
-        setGestureLocations([]);
-        console.log("func3");
+    const clear = () => {
+        console.log("clear function invoked");
+        displayTextAlertClear(CLEAR_TITLE, CLEAR_MESSAGE, 
+            () => {
+                setGestureLocations([]);
+                console.log("clear function called");
+            }
+        );
     }
 
-    const func4 = () => {
+    const undo = () => {
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
-        console.log("func4");
+        console.log("undo function");
     }
 
-    const func5 = (gestureItem) => {
+    const updateGesture = (gestureItem) => {
         setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
     }
 
     const onPress = (buttonName) => {
         switch (buttonName) {
-            case "Add Photo":
-                func1();
+            case BUTTON_UPLOAD:
+                upload();
                 break;
-            case "Next":
-                func2();
+            case BUTTON_NEXT:
+                next();
                 break;
-            case "Clear":
-                func3();
+            case BUTTON_CLEAR:
+                clear();
                 break;
-            case "Undo":
-                func4();
+            case BUTTON_UNDO:
+                undo();
                 break;
             default:
                 console.log("invalid button name");
 
         }
     }
-
-
+    
+    const isDisabled = (buttonName) => {
+        return (buttonName === BUTTON_UNDO || buttonName === BUTTON_CLEAR) && gestureLocations.length === 0;
+    }
+    
     const listItems = gestureLocations.map((item, key) => (
         <View key={key}>
             <Ellipse
@@ -130,10 +131,10 @@ const FourCornerState = ({buildingName, windowH}) => {
     
     return ( 
         <>
-            <NodePlacement photo={photo} windowH={windowH} updateGesture={func5} listItems={listItems}/>
+            <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItems}/>
 
             <View style={styles.navBarView}>
-                <SideBar numOfNodes={gestureLocations.length} onPress={onPress} stateName={stateName} />
+                <SideBar onPress={onPress} stateName={stateName} isDisabled={isDisabled} listOfButtonNames={listOfButtonNames}/>
             </View>
         </>
     );

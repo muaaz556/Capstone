@@ -24,18 +24,90 @@ every distinct corner of the building, then press Save and Upload Floor Map "
 
 export const PLEASE_WAIT_MESSAGE = "Please wait"
 
+export const CLEAR_TITLE = "Clear GPS Coordinates"
+export const CLEAR_MESSAGE = "This action will clear all of the coordinates on the screen."
+export const CLEAR = { TITLE: 'Clear GPS Coordinates', 
+                                    MESSAGE: 'This action will clear all of the coordinates on the screen.', 
+                                    };
+
+export const NEXT_TITLE = "Go to Next State"
+export const NEXT_MESSAGE = "Please ensure you have completed this state before proceeding."
+export const NEXT = { TITLE: 'Go to Next State', 
+                                    MESSAGE: 'Please ensure you have completed this state before proceeding.', 
+                                    };
 
 export const FOUR_CORNERS_STATE_TITLE = "Add Corner GPS Coordinates"
 export const FOUR_CORNERS_STATE_MESSAGE = "Please click on the four corners of the building in the uploaded \
 floorplan in the same order that you visited them previously."
+export const FOUR_CORNERS_STATE = { TITLE: 'Add Corner GPS Coordinates', 
+                                    MESSAGE: 'Please click on the four corners of the building in the uploaded \
+                                    floorplan in the same order that you visited them previously.', 
+                                    };
+
+export const DESTINATION_NODE_STATE_TITLE = "Add Destination GPS Coordinates"
+export const DESTINATION_NODE_STATE_MESSAGE = "Please click on the map of the building to place nodes \
+that are destinations such as rooms."
+export const DESTINATION_NODE_STATE = { TITLE: 'Add Destination GPS Coordinates', 
+                                    MESSAGE: 'Please click on the map of the building to place nodes \
+                                    that are destinations such as rooms.', 
+                                    };
+
+export const HALLWAY_NODE_STATE_TITLE = "Add Hallway GPS Coordinates"
+export const HALLWAY_NODE_STATE_MESSAGE = "Please click on the map of the building to place nodes \
+that are hallways."
+export const HALLWAY_NODE_STATE = { TITLE: 'Add Hallway GPS Coordinates', 
+                                    MESSAGE: 'Please click on the map of the building to place nodes \
+                                    that are hallways.', 
+                                    };
+
+export const BATHROOM_NODE_STATE_TITLE = "Add Bathroom GPS Coordinates"
+export const BATHROOM_NODE_STATE_MESSAGE = "Please click on the map of the building to place nodes \
+that are bathrooms."
+export const BATHROOM_NODE_STATE = { TITLE: 'Add Bathroom GPS Coordinates', 
+                                    MESSAGE: 'Please click on the map of the building to place nodes \
+                                    that are bathrooms.', 
+                                    };
+
+export const FLOOR_CHANGING_NODE_STATE_TITLE = "Add Floor Changing GPS Coordinates"
+export const FLOOR_CHANGING_NODE_STATE_MESSAGE = "Please click on the map of the building to place nodes \
+that could be used to change floors ex: stairs, elevators, etc."
+export const FLOOR_CHANGING_NODE_STATE = { TITLE: 'Add Floor Changing GPS Coordinates', 
+                                        MESSAGE: 'Please click on the map of the building to place nodes \
+                                        that could be used to change floors ex: stairs, elevators, etc.', 
+                                        };
+
+export const NODE_SELECTION_NODE_STATE_TITLE = "Select Nodes Placed on Map"
+export const NODE_SELECTION_NODE_STATE_MESSAGE = "Please click on the map of the building to select any nodes."
+export const NODE_SELECTION_NODE_STATE = { TITLE: 'Select Nodes Placed on Map', 
+                                        MESSAGE: 'Please click on the map of the building to select any nodes.', 
+                                        };
 
 export const TOO_MANY_NODES_PLACED_TITLE = "Multiple Corner Nodes Detected"
 export const TOO_MANY_NODES_PLACED_ERROR_MESSAGE = "You have already placed 4 corner nodes. Please undo if \
 you need to replace any poorly placed nodes."
+export const TOO_MANY_NODES_PLACED = { TITLE: 'Multiple Corner Nodes Detected', 
+                                        MESSAGE: 'You have already placed 4 corner nodes. Please undo if \
+                                        you need to replace any poorly placed nodes.', 
+                                        };
 
 export const BUTTON_NEXT = "Next";
 export const BUTTON_UNDO = "Undo";
 export const BUTTON_CLEAR = "Clear";
 export const BUTTON_UPLOAD = "Upload";
+export const BUTTON_BACK = "Back";
+export const BUTTON = { NEXT: 'Next', 
+                        UNDO: 'Undo', 
+                        CLEAR: 'Clear', 
+                        UPLOAD: 'Upload', 
+                        BACK: 'Back', 
+                        };
 
-export const DESCRIPTION = "Description"
+export const DESCRIPTION = "Description";
+
+export const STATE_NAMES = { FOUR_CORNER_STATE: 'FourCornerState', 
+                            DESTINATION_NODE_STATE: 'DestinationNodeState', 
+                            HALLWAY_NODE_STATE: 'HallwayNodeState',
+                            BATHROOM_NODE_STATE: 'BathroomNodeState',
+                            FLOOR_CHANGING_NODE_STATE : 'FloorChangingNodeState',
+                            NODE_SELECTION_STATE : 'NodeSelectionState',
+                            };

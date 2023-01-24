@@ -1,17 +1,30 @@
 import React, {useState, createContext} from 'react';
-import {StyleSheet} from 'react-native';
-import {Button, View} from 'native-base';
-import { displayTextAlert } from '../helper-functions/textAlert';
+import {View} from 'native-base';
 import FourCornerState from '../components/organisms/FourCornerState';
 import DestinationNodeState from '../components/organisms/DestinationNodeState';
+import HallwayNodeState from '../components/organisms/HallwayNodeState';
+import FloorChangingNodeState from '../components/organisms/FloorChangingNodeState';
+import BathroomNodeState from '../components/organisms/BathroomNodeState';
+import NodeSelectionState from '../components/organisms/NodeSelectionState';
+import { STATE_NAMES } from '../assets/locale/en';
 
 export const FourCornerStateContext = createContext();
 export const DestinationNodeStateContext = createContext();
+export const HallwayNodeStateContext = createContext();
+export const BathroomNodeStateContext = createContext();
+export const FloorChangingNodeStateContext = createContext();
+export const NodeSelectionStateContext = createContext();
 
 const FloorMappingScreen = ({route}) => {
+  
+  const [fourCornerGestures, setFourCornerGestures] = useState([]);
+  const [destinationGestures, setDestinationGestures] = useState([]);
+  const [hallwayGestures, setHallwayGestures] = useState([]);
+  const [bathroomGestures, setBathroomGestures] = useState([]);
+  const [floorChangingGestures, setFloorChangingGestures] = useState([]);
 
   const [windowH, setWindowH] = useState(0);
-  const [stateName, setStateName] = useState('state1');
+  const [stateName, setStateName] = useState(STATE_NAMES.FOUR_CORNER_STATE);
   const [photo, setPhoto] = useState(null);
 
   const onLayout = (event) => {
@@ -20,46 +33,68 @@ const FloorMappingScreen = ({route}) => {
     }
   }
 
+  const clearAllNodes = () => {
+    setFourCornerGestures([]);
+    setDestinationGestures([]);
+    setHallwayGestures([]);
+    setBathroomGestures([]);
+    setFloorChangingGestures([]);
+  }
+
   return (
     <View style={{ flex: 1, flexDirection: 'row' }} onLayout={( (event) => { onLayout(event) } )}>
-      {stateName === 'state1' ? (
+      {stateName === STATE_NAMES.FOUR_CORNER_STATE ? (
         //initial state component
         <>
           <FourCornerStateContext.Provider value={{ 
             state: [stateName, setStateName],
-            photoState: [photo, setPhoto]
+            photoState: [photo, setPhoto],
+            fourCornerGestures: [fourCornerGestures, setFourCornerGestures],
             }}>
-            <FourCornerState buildingName={route.params.buildingName} windowH={windowH} />
+            <FourCornerState buildingName={route.params.buildingName} windowH={windowH} clearAllNodes={clearAllNodes}/>
           </FourCornerStateContext.Provider>
         </>
-      ) : stateName === 'state2' ? (
+      ) : stateName === STATE_NAMES.DESTINATION_NODE_STATE ? (
         <>
           <DestinationNodeStateContext.Provider value={{ 
             state: [stateName, setStateName],
-            photoState: [photo, setPhoto]
+            destinationGestures: [destinationGestures, setDestinationGestures],
             }}>
-            <DestinationNodeState windowH={windowH} />
+            <DestinationNodeState windowH={windowH} photo={photo} />
           </DestinationNodeStateContext.Provider>
         </>
-      ) : stateName === 'state3' ? (
+      ) : stateName === STATE_NAMES.HALLWAY_NODE_STATE ? (
         <>
-          {/* These are placeholders */}
-          {/* <FourCornerStateContext.Provider value={{ 
-            windowHeight: [windowH, setWindowH], 
+          <HallwayNodeStateContext.Provider value={{ 
             state: [stateName, setStateName],
+            hallwayGestures: [hallwayGestures, setHallwayGestures],
             }}>
-            <FourCornerState/>
-          </FourCornerStateContext.Provider> */}
+            <HallwayNodeState windowH={windowH} photo={photo} />
+          </HallwayNodeStateContext.Provider>
         </>
-      ) : stateName === 'state4' ? (
+      ) : stateName === STATE_NAMES.FLOOR_CHANGING_NODE_STATE ? (
         <>
-          {/* These are placeholders */}
-          {/* <FourCornerStateContext.Provider value={{ 
-            windowHeight: [windowH, setWindowH], 
+          <FloorChangingNodeStateContext.Provider value={{ 
             state: [stateName, setStateName],
+            floorChangingGestures: [floorChangingGestures, setFloorChangingGestures],
             }}>
-            <FourCornerState/>
-          </FourCornerStateContext.Provider> */}
+            <FloorChangingNodeState windowH={windowH} photo={photo} />
+          </FloorChangingNodeStateContext.Provider>
+        </>
+      ) : stateName === STATE_NAMES.BATHROOM_NODE_STATE ? (
+        <>
+          <BathroomNodeStateContext.Provider value={{ 
+            state: [stateName, setStateName],
+            bathroomGestures: [bathroomGestures, setBathroomGestures],
+            }}>
+            <BathroomNodeState windowH={windowH} photo={photo} />
+          </BathroomNodeStateContext.Provider>
+        </>
+      ) : stateName === STATE_NAMES.NODE_SELECTION_STATE ? (
+        <>
+          <NodeSelectionStateContext.Provider value={{ stateName, setStateName }}>
+            <NodeSelectionState windowH={windowH} photo={photo} />
+          </NodeSelectionStateContext.Provider>
         </>
       ) : (
         <></>
