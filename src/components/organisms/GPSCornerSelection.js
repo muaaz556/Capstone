@@ -68,8 +68,6 @@ const GPSCornerSelection = ({navigation}) => {
   const getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
       position => {
-        console.log(position.coords.latitude);
-        console.log(position.coords.longitude);
         setLatitude(latitude => [...latitude, position.coords.latitude]);
         setLongitude(longitude => [...longitude, position.coords.longitude]);
         Alert.alert('SUCCESS', 'Current Location Obtained', [
