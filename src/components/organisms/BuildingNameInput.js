@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 4,
     borderColor: '#808585',
-    color: '#000000'
+    color: '#000000',
   },
   title: {
     paddingTop: '30%',
@@ -50,6 +50,7 @@ const BuildingNameInput = () => {
           onChangeText={e => setBuildingNameState(e)}
           value={buildingNameState}
           placeholder="Building name"
+          placeholderTextColor="#808585"
         />
       </Box>
 
