@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     },
   });
 
-const SideBar = ({onPressFunctions, numOfNodes, stateName}) => {
+const SideBar = ({onPress, numOfNodes, stateName}) => {
 
     // const {photo, gestures, state} = useContext(SideBarContext);
     // const [gestureLocations, setGestureLocations] = gestures;
@@ -88,7 +88,7 @@ const SideBar = ({onPressFunctions, numOfNodes, stateName}) => {
                 <>
                     <Button
                         title="Choose Photo"
-                        onPress={choosePhotoHandler}
+                        onPress={onPress("func1")}
                         style={styles.button}>
                         Upload
                     </Button>
