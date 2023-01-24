@@ -1,88 +1,132 @@
 import React from 'react';
 
-import { 
-    View, 
-    StyleSheet
-} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 
-import { Box, Button, Center, FormControl, Image, Input, Stack, Text, WarningOutlineIcon } from "native-base";
-import { getGPSData, postGPSData } from '../helper-functions/gpsFetching';
+import {
+  Box,
+  Button,
+  Center,
+  FormControl,
+  Image,
+  Input,
+  Stack,
+  Text,
+  WarningOutlineIcon,
+} from 'native-base';
+import {getGPSData, postGPSData} from '../helper-functions/gpsFetching';
 
 const styles = StyleSheet.create({
-    view: {
-        flex: 1, 
-        alignItems: 'center', 
-        marginTop: 100
-    },
-    text: {
-        color: 'black'
-    },
-    loginButton: {
-        marginTop: 10
-    },
-    logoContainer: {
-        marginBottom: 25
-    },
-    logoImage: {
-        marginBottom: 10
-    }
-  });
+  view: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoImage: {
+    marginBottom: 10,
+  },
+  titleText: {
+    fontSize: 26,
+    paddingTop: 20,
+    fontWeight: '500',
+    color: '#353d3f',
+  },
+  titleSubText: {
+    fontSize: 14,
+    marginTop: 4,
+    marginBottom: 30,
+    fontWeight: '400',
+    color: '#808585',
+  },
+  inputBox: {
+    marginBottom: 10,
+  },
+  inputField: {
+    paddingBottom: 10,
+    paddingTop: 10,
+    backgroundColor: 'white',
+  },
+  button: {
+    marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '500',
+  },
+  dividerView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  dividerText: {
+    textAlign: 'center',
+    color: '#808585',
+    paddingHorizontal: 10,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#808585',
+  },
+});
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({navigation}) => {
+  const postRequest = () => {
+    const requestData = JSON.stringify({
+      gps: [
+        {
+          name: 'names',
+          gpsCord: {
+            x: 10,
+            y: 10,
+          },
+        },
+      ],
+    });
 
-    const postRequest = () => {
-        const requestData = JSON.stringify({
-            'gps': [
-                {
-                    'name': 'names',
-                    'gpsCord': {
-                        'x': 10,
-                        'y': 10,
-                    }
-                }
-            ]
-        })
+    postGPSData(requestData);
+  };
 
-        postGPSData(requestData)
-    }
+  const handleGuestStudentButtonClick = () => {
+    console.log('Fetching data');
+    getGPSData();
+  };
 
-    const handleGuestStudentButtonClick = () => {
-        console.log('Fetching data')
-        getGPSData()
-    }
+  return (
+    <View style={styles.view}>
+      <Image
+        style={styles.logoImage}
+        source={require('../assets/images/splashscreen_logo.png')}
+        size="lg"
+        alt="Logo image"
+      />
+      <Text style={styles.titleText}>Welcome to Eye Guide!</Text>
+      <Text style={styles.titleSubText}>Choose an option to begin!</Text>
 
-    return (
-        <View style={styles.view} >
-            {/* <Text style={styles.text}>Home Screen</Text> */}
-            <Center style={styles.logoContainer}>
-                <Image style={styles.logoImage} source={require('../assets/images/splashscreen_logo.png')} size='xl' alt="Logo image"/>
-                <Text bold fontSize='md'>Eye Guide</Text>
-            </Center>
-
-            <Box w="100%" maxWidth="300px">
-                <FormControl isRequired>
-                    <Stack mx="4">
-                        <FormControl.Label>Username</FormControl.Label>
-                        <Input type="text" defaultValue="" placeholder="Username"/>
-                        <FormControl.Label>Password</FormControl.Label>
-                        <Input type="password" defaultValue="12345" placeholder="password" />
-                        <FormControl.HelperText>
-                            Must be atleast 6 characters.
-                        </FormControl.HelperText>
-                        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                            Atleast 6 characters are required.
-                        </FormControl.ErrorMessage>
-                        <Button style={styles.loginButton}>Login</Button>
-                        <Button style={{marginTop: 10}} onPress={() => navigation.navigate('AccessibilityScreen')}>Accessibility</Button>
-                        <Button style={{marginTop: 10}} onPress={() => navigation.navigate('AdminHomeScreen')}>Guest Admin</Button>
-                        <Button style={{marginTop: 10}} onPress={handleGuestStudentButtonClick}>Guest Student</Button>
-                        <Button style={{marginTop: 10}} onPress={postRequest}>Post Request</Button>
-                    </Stack>
-                </FormControl>
-            </Box>
-
-        </View>
-    )
-}
+      <Box w="100%" maxWidth="300px">
+        <FormControl isRequired>
+          <Stack mx="0">
+            <Button
+              style={styles.button}
+              onPress={() => navigation.navigate('AdminHomeScreen')}>
+              <Text style={styles.buttonText}>Guest Admin</Text>
+            </Button>
+            <Button
+              style={styles.button}
+              onPress={handleGuestStudentButtonClick}>
+              <Text style={styles.buttonText}>Guest Student</Text>
+            </Button>
+            <Button
+              style={styles.button}
+              onPress={() => navigation.navigate('AccessibilityScreen')}>
+              <Text style={styles.buttonText}>Accessibility</Text>
+            </Button>
+          </Stack>
+        </FormControl>
+      </Box>
+    </View>
+  );
+};
 
 export default LoginScreen;
