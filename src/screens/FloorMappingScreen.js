@@ -15,7 +15,7 @@ export const BathroomNodeStateContext = createContext();
 export const FloorChangingNodeStateContext = createContext();
 export const NodeSelectionStateContext = createContext();
 
-const FloorMappingScreen = ({route}) => {
+const FloorMappingScreen = ({route, navigation}) => {
   
   const [fourCornerGestures, setFourCornerGestures] = useState([]);
   const [destinationGestures, setDestinationGestures] = useState([]);
@@ -100,9 +100,11 @@ const FloorMappingScreen = ({route}) => {
             <NodeSelectionState 
               windowH={windowH} 
               photo={photo} 
-              allGestures={[{color: 'blue', array: fourCornerGestures}, {color: 'red', array: destinationGestures},
-                          {color: 'green', array: hallwayGestures}, {color: '#FFC0CB', array: bathroomGestures},
-                          {color: 'purple', array: floorChangingGestures}]}
+              navigation={navigation}
+              allGestures={[{color: 'red', array: destinationGestures, type: STATE_NAMES.DESTINATION_NODE_STATE},
+                          {color: 'green', array: hallwayGestures,  type: STATE_NAMES.HALLWAY_NODE_STATE}, 
+                          {color: '#FFC0CB', array: bathroomGestures, type: STATE_NAMES.BATHROOM_NODE_STATE},
+                          {color: 'purple', array: floorChangingGestures, type: STATE_NAMES.FLOOR_CHANGING_NODE_STATE}]}
               />
           </NodeSelectionStateContext.Provider>
         </>

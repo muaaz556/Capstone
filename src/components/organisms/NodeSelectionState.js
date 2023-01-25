@@ -7,6 +7,8 @@ import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES } from '../../assets/locale/en';
 import {Ellipse, Line} from 'react-native-svg';
+import { postGPSData, getGPSData } from '../../helper-functions/gpsFetching';
+import uuid from 'react-native-uuid';
 
 const styles = StyleSheet.create({ 
     navBarView: {
@@ -19,7 +21,7 @@ const styles = StyleSheet.create({
 });
 
 
-const NodeSelectionState = ({windowH, photo, allGestures}) => {
+const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
 
     const {state, connectionsArray} = useContext(NodeSelectionStateContext);
     const [stateName, setStateName] = state;
@@ -49,7 +51,7 @@ const NodeSelectionState = ({windowH, photo, allGestures}) => {
         let size = 0;
         let listItems = [];
         let listItem = connections.map((item, key) => (
-            <View key={key+size}>
+            <View key={uuid.v4()}>
                 <Line
                     x1={item[0].x}
                     y1={item[0].y}
@@ -63,7 +65,7 @@ const NodeSelectionState = ({windowH, photo, allGestures}) => {
         listItems = listItems.concat(listItem);
         allGestures.forEach(gestureList => {
             let listItem = gestureList.array.map((item, key) => (
-                <View key={key+size}>
+                <View key={uuid.v4()}>
                     <Ellipse
                         cx={item.x}
                         cy={item.y}
@@ -83,12 +85,51 @@ const NodeSelectionState = ({windowH, photo, allGestures}) => {
 
     const next = () => {
         console.log("next function");
-        displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
-            () => {
-                //STUFF to do before moving to next state
-                setStateName(STATE_NAMES.NODE_SELECTION_STATE);
-            }
+        
+        let gestureArray = []
+        
+        let nodeItems = {
+            buildingName: "testBuildingName",
+            floorNumber: "testFloorName",
+            node: []
+        }
+        allGestures.forEach(gestureList => {
+            gestureList.array.map((item, key) => (
+                gestureArray.push(
+                    {
+                        guid: item.guid,
+                        type: gestureList.type,
+                        long: item.x,
+                        lat: item.y,
+                        adjacencyList: item.adjacencyList,
+                        name: "nodeName",
+                    }
+                )
+            ));
+        })
+        const requestData = JSON.stringify({
+            node: 
+            {
+                buildingName: "testBuildingName",
+                floorNumber: "testFloorName",
+                nodes: gestureArray
+            },
+        });
+    
+        postGPSData(requestData, 'post-nodes').then(() =>
+            // *add a screen to say, map has been generated and post worked later*
+            navigation.navigate('AccessibilityScreen'),
         );
+        
+          
+        // displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
+        //     () => {
+                
+        //         //STUFF to do before moving to next state
+        //         setStateName(STATE_NAMES.NODE_SELECTION_STATE);
+        //     }
+        // );
+        
     }
 
     const back = () => {
@@ -100,14 +141,38 @@ const NodeSelectionState = ({windowH, photo, allGestures}) => {
         console.log("clear function invoked");
         displayTextAlertClear(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
+                allGestures.forEach(gestureList => {
+                    gestureList.array.map((item, key) => (
+                        item.adjacencyList = []
+                    ));
+                });
                 setConnections([]);
                 console.log("clear function called");
             }
         );
     }
 
+    // node
+    // node.guid = unique
+    //node.adjacecy = [unique, unique]
+
+    //adding
+    //update node1.adjacency add node2.guid
+    //update node2.adjacency add node1.guid
+
+    //removing
+    //take last item from the connections list [[node1, node2]]
+    //node1.guid and node2.guid
+    //node1.adjacency remove node2.guid
+    //node2.adjacency remove node1.guid
+    //remove the item from the connections array
+
     const undo = () => {
         console.log("undo function");
+
+        console.log(connections[connections.length -1][0].adjacencyList.pop())
+        console.log(connections[connections.length -1][1].adjacencyList.pop())
+
         setConnections((connection) => connection.filter((_, index) => index !== connections.length - 1));
     }
 
@@ -127,6 +192,8 @@ const NodeSelectionState = ({windowH, photo, allGestures}) => {
     }
 
     const createConnection = (node1, node2) => {
+        node1.adjacencyList.push(node2.guid);
+        node2.adjacencyList.push(node1.guid);
         setConnections(connections => [...connections, [node1, node2]]);
     }
 
@@ -213,6 +280,7 @@ const NodeSelectionState = ({windowH, photo, allGestures}) => {
 
     return ( 
         <>
+            
             <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItemGen()}/>
 
             <View style={styles.navBarView}>

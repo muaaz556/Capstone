@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { View } from 'native-base';
 import Svg from 'react-native-svg';
+import uuid from 'react-native-uuid';
 
 const styles = StyleSheet.create({ 
     touchableOpacity: {
@@ -30,6 +31,8 @@ const NodePlacement = ({photo, windowH, updateGesture, listItems}) => {
         let gestureItem = {
             x: newXValue,
             y: newYValue,
+            guid: uuid.v4(),
+            adjacencyList: [],
         };
 
         updateGesture(gestureItem);
