@@ -22,6 +22,7 @@ const FloorMappingScreen = ({route}) => {
   const [hallwayGestures, setHallwayGestures] = useState([]);
   const [bathroomGestures, setBathroomGestures] = useState([]);
   const [floorChangingGestures, setFloorChangingGestures] = useState([]);
+  const [connections, setConnections] = useState([]);
 
   const [windowH, setWindowH] = useState(0);
   const [stateName, setStateName] = useState(STATE_NAMES.FOUR_CORNER_STATE);
@@ -92,8 +93,17 @@ const FloorMappingScreen = ({route}) => {
         </>
       ) : stateName === STATE_NAMES.NODE_SELECTION_STATE ? (
         <>
-          <NodeSelectionStateContext.Provider value={{ stateName, setStateName }}>
-            <NodeSelectionState windowH={windowH} photo={photo} />
+          <NodeSelectionStateContext.Provider value={{ 
+            state: [stateName, setStateName],
+            connectionsArray: [connections, setConnections] 
+            }}>
+            <NodeSelectionState 
+              windowH={windowH} 
+              photo={photo} 
+              allGestures={[{color: 'blue', array: fourCornerGestures}, {color: 'red', array: destinationGestures},
+                          {color: 'green', array: hallwayGestures}, {color: '#FFC0CB', array: bathroomGestures},
+                          {color: 'purple', array: floorChangingGestures}]}
+              />
           </NodeSelectionStateContext.Provider>
         </>
       ) : (

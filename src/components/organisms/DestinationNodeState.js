@@ -93,8 +93,9 @@ const DestinationNodeState = ({windowH, photo}) => {
             <Ellipse
                 cx={item.x}
                 cy={item.y}
-                rx="0.2"
-                ry="1.1"
+                rx="0.7"
+                ry="1.3"
+                strokeWidth="0.2"
                 stroke="red"
                 fill="red"
             />

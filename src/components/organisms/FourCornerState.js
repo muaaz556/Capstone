@@ -120,14 +120,16 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
             <Ellipse
                 cx={item.x}
                 cy={item.y}
-                rx="0.2"
-                ry="1.1"
+                rx="0.7"
+                ry="1.3"
+                strokeWidth="0.2"
                 stroke="blue"
                 fill="blue"
             />
         </View>
     ));
-    
+
+    console.log(listItems);
     return ( 
         <>
             <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItems}/>
