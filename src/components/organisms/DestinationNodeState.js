@@ -1,12 +1,14 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from 'native-base';
 import { DestinationNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
-import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
-import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES  } from '../../assets/locale/en';
+import NodeModal from '../molecules/NodeModal';
+import { displayTextAlert, displayTextAlertClear, displayTextAlertNext, displayTextInputPrompt } from '../../helper-functions/textAlert';
+import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES, ENTER_NODE_NAME_TITLE  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
+import Dialog from "react-native-dialog";
 
 const styles = StyleSheet.create({ 
     navBarView: {
@@ -23,6 +25,9 @@ const DestinationNodeState = ({windowH, photo}) => {
     const {state, destinationGestures} = useContext(DestinationNodeStateContext)
     const [stateName, setStateName] = state;
     const [gestureLocations, setGestureLocations] = destinationGestures;
+    const [modalVisible, setModalVisible] = useState(false);
+    const [name, setName] = useState("");
+    const [currentGesture, setCurrentGesture] = useState(null);
 
     const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
 
@@ -61,7 +66,22 @@ const DestinationNodeState = ({windowH, photo}) => {
     }
 
     const updateGesture = (gestureItem) => {
-        setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
+
+        //add text prompt
+        //store in a separate array? with the gestures?
+        console.log("trying to place node");
+        setCurrentGesture(gestureItem);
+        setName("");
+        setModalVisible(true);
+        
+    }
+
+    const modalConfirm = () => {
+        console.log(currentGesture);
+        currentGesture.name = name;
+        console.log(currentGesture);
+        setGestureLocations(gestureLocations => [...gestureLocations, currentGesture]);
+        console.log("node placement succeeded");
     }
 
     const onPress = (buttonName) => {
@@ -101,11 +121,29 @@ const DestinationNodeState = ({windowH, photo}) => {
             />
         </View>
     ));
+
+    const toggleModal = () => {
+        setModalVisible(!modalVisible);
+    }
     
     return ( 
         <>
+            <View>
+                <Dialog.Container visible={modalVisible}>
+                    <Dialog.Title>Set Destination Name</Dialog.Title>
+                    <Dialog.Description>
+                        Please provide a name for the selected destination.
+                    </Dialog.Description>
+                    <Dialog.Input onChangeText={(input) => {setName(input)}} value={name} />
+                    <Dialog.Button label="Cancel" onPress={() => toggleModal()}/>
+                    <Dialog.Button label="Ok" onPress={() => {
+                        modalConfirm();
+                        toggleModal();
+                        }}/>
+                </Dialog.Container>
+            </View>
             <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItems}/>
-
+            {/* <NodeModal toggleModal={toggleModal} isVisible={modalVisible}/> */}
             <View style={styles.navBarView}>
                 <SideBar onPress={onPress} stateName={stateName} isDisabled={isDisabled} listOfButtonNames={listOfButtonNames}/>
             </View>

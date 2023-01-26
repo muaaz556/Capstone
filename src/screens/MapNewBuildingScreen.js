@@ -6,6 +6,7 @@ import {View} from 'native-base';
 import {postGPSData} from '../helper-functions/gpsFetching';
 import Overview from '../components/organisms/Overview';
 import BuildingNameInput from '../components/organisms/BuildingNameInput';
+import FloorNameInput from '../components/organisms/FloorNameInput';
 import GPSCornerSelection from '../components/organisms/GPSCornerSelection';
 import PleaseWait from '../components/molecules/PleaseWait';
 
@@ -39,10 +40,12 @@ const styles = StyleSheet.create({
 
 export const OverviewContext = createContext();
 export const BuildingNameInputContext = createContext();
+export const FloorNameInputContext = createContext();
 export const GPSCornerSelectionContext = createContext();
 
 const MapNewBuildingScreen = ({navigation}) => {
   const [buildingName, setBuildingName] = useState('');
+  const [floorName, setFloorName] = useState('');
 
   const [longitude, setLongitude] = useState([]);
   const [latitude, setLatitude] = useState([]);
@@ -60,6 +63,7 @@ const MapNewBuildingScreen = ({navigation}) => {
       gpsCornerCord: [
         {
           buildingName: buildingName,
+          floorName: floorName,
           cornerCords: {
             cornerCords: cornerCoordinates,
           },
@@ -68,7 +72,7 @@ const MapNewBuildingScreen = ({navigation}) => {
     });
 
     postGPSData(requestData, 'post-corner-cords').then(() =>
-      navigation.navigate('FloorMappingScreen', {buildingName}),
+      navigation.navigate('FloorMappingScreen', {buildingName, floorName}),
     );
   };
 
@@ -82,6 +86,10 @@ const MapNewBuildingScreen = ({navigation}) => {
         <BuildingNameInputContext.Provider value={{ buildingName: [buildingName, setBuildingName], stepName: [stepName, setStepName]}}>
           <BuildingNameInput/>
         </BuildingNameInputContext.Provider>
+      ): stepName === 'floor_name' ? (
+        <FloorNameInputContext.Provider value={{ floorName: [floorName, setFloorName], stepName: [stepName, setStepName]}}>
+          <FloorNameInput/>
+        </FloorNameInputContext.Provider>
       ) : stepName === 'gps_call' ? (
         <GPSCornerSelectionContext.Provider value={{
           long: [longitude, setLongitude],

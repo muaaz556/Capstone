@@ -101,6 +101,8 @@ const FloorMappingScreen = ({route, navigation}) => {
               windowH={windowH} 
               photo={photo} 
               navigation={navigation}
+              buildingName={route.params.buildingName}
+              floorName={route.params.floorName}
               allGestures={[{color: 'red', array: destinationGestures, type: STATE_NAMES.DESTINATION_NODE_STATE},
                           {color: 'green', array: hallwayGestures,  type: STATE_NAMES.HALLWAY_NODE_STATE}, 
                           {color: '#FFC0CB', array: bathroomGestures, type: STATE_NAMES.BATHROOM_NODE_STATE},

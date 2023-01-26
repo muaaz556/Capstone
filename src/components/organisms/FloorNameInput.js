@@ -2,8 +2,8 @@ import React, {useContext} from 'react';
 
 import {StyleSheet, TextInput} from 'react-native';
 import {Box, Button, Center, Text} from 'native-base';
-import {BuildingNameInputContext} from '../../screens/MapNewBuildingScreen';
-import {BUILDING_NAME_TITLE, NEXT_LABEL} from '../../assets/locale/en';
+import {FloorNameInputContext} from '../../screens/MapNewBuildingScreen';
+import {FLOOR_NAME_TITLE, NEXT_LABEL} from '../../assets/locale/en';
 
 const styles = StyleSheet.create({
   input: {
@@ -33,23 +33,23 @@ const styles = StyleSheet.create({
   },
 });
 
-const BuildingNameInput = () => {
-  const {buildingName, stepName} = useContext(BuildingNameInputContext);
-  const [buildingNameState, setBuildingNameState] = buildingName;
+const FloorNameInput = () => {
+  const {floorName, stepName} = useContext(FloorNameInputContext);
+  const [floorNameState, setFloorNameState] = floorName;
   const [stepNameState, setStepNameState] = stepName;
 
   return (
     <>
       <Text style={styles.title} fontSize="2xl">
-        {BUILDING_NAME_TITLE}
+        {FLOOR_NAME_TITLE}
       </Text>
 
       <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
         <TextInput
           style={styles.input}
-          onChangeText={e => setBuildingNameState(e)}
-          value={buildingNameState}
-          placeholder="Building name"
+          onChangeText={e => setFloorNameState(e)}
+          value={floorNameState}
+          placeholder="Floor name"
           placeholderTextColor="#808585"
         />
       </Box>
@@ -57,7 +57,7 @@ const BuildingNameInput = () => {
         <Button
           mb="2"
           onPress={() => {
-            setStepNameState('floor_name');
+            setStepNameState('gps_call');
           }}>
           <Text style={styles.buttonText}>{NEXT_LABEL}</Text>
         </Button>
@@ -66,4 +66,4 @@ const BuildingNameInput = () => {
   );
 };
 
-export default BuildingNameInput;
+export default FloorNameInput;

@@ -15,6 +15,7 @@ export const DISCARD_GPS_LOCATIONS_LABEL = "Discard GPS Locations"
 
 export const LOCATION_OF_CORNER_TITLE = "Location of\nBuilding Corner"
 export const BUILDING_NAME_TITLE = "Enter the Name\nof the Building"
+export const FLOOR_NAME_TITLE = "Enter the Name\nof the floor"
 
 export const FIRST_LOCATION_MESSAGE = "Go to any distinct corner of the building and press the Get Current \
 Location button."
@@ -65,6 +66,8 @@ export const TOO_MANY_NODES_PLACED = { TITLE: 'Multiple Corner Nodes Detected',
                                         MESSAGE: 'You have already placed 4 corner nodes. Please undo if \
                                         you need to replace any poorly placed nodes.', 
                                         };
+
+export const ENTER_NODE_NAME_TITLE = "Enter the destination name"
 
 export const BUTTON = { NEXT: 'Next', 
                         UNDO: 'Undo', 

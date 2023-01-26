@@ -33,6 +33,7 @@ const NodePlacement = ({photo, windowH, updateGesture, listItems}) => {
             y: newYValue,
             guid: uuid.v4(),
             adjacencyList: [],
+            name: "",
         };
 
         updateGesture(gestureItem);

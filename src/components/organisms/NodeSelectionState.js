@@ -4,6 +4,7 @@ import { View } from 'native-base';
 import { NodeSelectionStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
+import PleaseWait from '../molecules/PleaseWait';
 import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES } from '../../assets/locale/en';
 import {Ellipse, Line} from 'react-native-svg';
@@ -21,12 +22,13 @@ const styles = StyleSheet.create({
 });
 
 
-const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
+const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingName, floorName}) => {
 
     const {state, connectionsArray} = useContext(NodeSelectionStateContext);
     const [stateName, setStateName] = state;
     const [connections, setConnections] = connectionsArray;
     const [selectedNode, setSelectedNode] = useState(null);
+    const [showPleaseWait, setShowPleaseWait] = useState(false);
 
     const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.VIEW_TEXT, BUTTON.NEXT, BUTTON.BACK];
 
@@ -86,13 +88,9 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
     const next = () => {
         console.log("next function");
         
+        setShowPleaseWait(true);
         let gestureArray = []
         
-        let nodeItems = {
-            buildingName: "testBuildingName",
-            floorNumber: "testFloorName",
-            node: []
-        }
         allGestures.forEach(gestureList => {
             gestureList.array.map((item, key) => (
                 gestureArray.push(
@@ -110,15 +108,17 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
         const requestData = JSON.stringify({
             node: 
             {
-                buildingName: "testBuildingName",
-                floorNumber: "testFloorName",
+                buildingName: buildingName,
+                floorName: floorName,
                 nodes: gestureArray
             },
         });
-    
         postGPSData(requestData, 'post-nodes').then(() =>
             // *add a screen to say, map has been generated and post worked later*
-            navigation.navigate('AccessibilityScreen'),
+            {
+                setShowPleaseWait(false);
+                navigation.navigate('AccessibilityScreen');
+            }
         );
         
           
@@ -152,25 +152,12 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
         );
     }
 
-    // node
-    // node.guid = unique
-    //node.adjacecy = [unique, unique]
-
-    //adding
-    //update node1.adjacency add node2.guid
-    //update node2.adjacency add node1.guid
-
-    //removing
-    //take last item from the connections list [[node1, node2]]
-    //node1.guid and node2.guid
-    //node1.adjacency remove node2.guid
-    //node2.adjacency remove node1.guid
-    //remove the item from the connections array
-
     const undo = () => {
         console.log("undo function");
 
+        console.log("adj list before: ", connections[connections.length -1][0].adjacencyList)
         console.log(connections[connections.length -1][0].adjacencyList.pop())
+        console.log("adj list after: ", connections[connections.length -1][0].adjacencyList)
         console.log(connections[connections.length -1][1].adjacencyList.pop())
 
         setConnections((connection) => connection.filter((_, index) => index !== connections.length - 1));
@@ -184,6 +171,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
 
     const viewText = () => {
         // create a text alert for showing text for node selected
+        displayTextAlert("Title", "Node name: " + selectedNode.name);
         console.log("view text function");
     }
 
@@ -198,8 +186,10 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
     }
 
     const doesConnectionExist = (node1, node2) => {
+        console.log("checking connections");
         connections.forEach(connection => {
-            if (connection === [node1, node2] || connection === [node2, node1]) {
+            if ( (JSON.stringify(connection[0].guid) === JSON.stringify(node1.guid)) && (JSON.stringify(connection[1].guid) === JSON.stringify(node2.guid)) 
+             ||  (JSON.stringify(connection[0].guid) === JSON.stringify(node2.guid)) && (JSON.stringify(connection[1].guid) === JSON.stringify(node1.guid)) ){
                 return true;
             }
         });
@@ -275,17 +265,19 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation}) => {
     
     const isDisabled = (buttonName) => {
         return ((buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && connections.length === 0 )
-                || (buttonName === BUTTON.UNSELECT && selectedNode === null);
+                || (buttonName === BUTTON.UNSELECT && selectedNode === null) || (buttonName === BUTTON.VIEW_TEXT && (selectedNode?.name === '' || selectedNode === null));
     }
 
     return ( 
         <>
-            
-            <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItemGen()}/>
-
-            <View style={styles.navBarView}>
-                <SideBar onPress={onPress} stateName={stateName} isDisabled={isDisabled} listOfButtonNames={listOfButtonNames}/>
-            </View>
+            {showPleaseWait ? (<><PleaseWait/></>):
+            (<>
+                <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItemGen()}/>
+                <View style={styles.navBarView}>
+                    <SideBar onPress={onPress} stateName={stateName} isDisabled={isDisabled} listOfButtonNames={listOfButtonNames}/>
+                </View>
+            </>
+            )}
         </>
     );
 };
