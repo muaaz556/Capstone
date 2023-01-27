@@ -30,7 +30,6 @@ export const CLEAR = { TITLE: 'Clear GPS Coordinates',
                     };
 
 export const NEXT_TITLE = "Go to Next State"
-// TODO: Custom next messages for each state
 export const NEXT_MESSAGE = "Please ensure you have completed this state before proceeding."
 
 export const FOUR_CORNERS_STATE = { TITLE: 'Add Corner GPS Coordinates', 

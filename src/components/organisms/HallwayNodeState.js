@@ -4,7 +4,7 @@ import { View } from 'native-base';
 import { HallwayNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
-import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
+import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, STATE_NAMES, CLEAR, HALLWAY_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 
@@ -31,32 +31,26 @@ const HallwayNodeState = ({windowH, photo}) => {
     }, []);
     
     const next = () => {
-        console.log("next function");
-        displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
+        displayTwoButtonTextAlert(NEXT_TITLE, NEXT_MESSAGE, 
             () => {
-                //STUFF to do before moving to next state
                 setStateName(STATE_NAMES.FLOOR_CHANGING_NODE_STATE);
             }
         );
     }
 
     const back = () => {
-        console.log("back function");
         setStateName(STATE_NAMES.DESTINATION_NODE_STATE);
     }
 
     const clear = () => {
-        console.log("clear function invoked");
-        displayTextAlertClear(CLEAR.TITLE, CLEAR.MESSAGE, 
+        displayTwoButtonTextAlert(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
-                console.log("clear function called");
                 setGestureLocations([]);
             }
         );
     }
 
     const undo = () => {
-        console.log("undo function");
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
     }
 

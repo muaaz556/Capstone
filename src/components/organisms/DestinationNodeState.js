@@ -5,7 +5,7 @@ import { DestinationNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import NodeModal from '../molecules/NodeModal';
-import { displayTextAlert, displayTextAlertClear, displayTextAlertNext, displayTextInputPrompt } from '../../helper-functions/textAlert';
+import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES, ENTER_NODE_NAME_TITLE  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 import Dialog from "react-native-dialog";
@@ -36,44 +36,33 @@ const DestinationNodeState = ({windowH, photo}) => {
     }, []);
     
     const next = () => {
-        console.log("next function");
-        displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
+        displayTwoButtonTextAlert(NEXT_TITLE, NEXT_MESSAGE, 
             () => {
-                //STUFF to do before moving to next state
                 setStateName(STATE_NAMES.HALLWAY_NODE_STATE);
             }
         );
     }
 
     const back = () => {
-        console.log("back function");
         setStateName(STATE_NAMES.FOUR_CORNER_STATE);
     }
 
     const clear = () => {
-        console.log("clear function invoked");
-        displayTextAlertClear(CLEAR.TITLE, CLEAR.MESSAGE, 
+        displayTwoButtonTextAlert(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
-                console.log("clear function called");
                 setGestureLocations([]);
             }
         );
     }
 
     const undo = () => {
-        console.log("undo function");
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
     }
 
     const updateGesture = (gestureItem) => {
-
-        //add text prompt
-        //store in a separate array? with the gestures?
-        console.log("trying to place node");
         setCurrentGesture(gestureItem);
         setName("");
         setModalVisible(true);
-        
     }
 
     const modalConfirm = () => {
@@ -81,7 +70,6 @@ const DestinationNodeState = ({windowH, photo}) => {
         currentGesture.name = name;
         console.log(currentGesture);
         setGestureLocations(gestureLocations => [...gestureLocations, currentGesture]);
-        console.log("node placement succeeded");
     }
 
     const onPress = (buttonName) => {
@@ -143,7 +131,6 @@ const DestinationNodeState = ({windowH, photo}) => {
                 </Dialog.Container>
             </View>
             <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItems}/>
-            {/* <NodeModal toggleModal={toggleModal} isVisible={modalVisible}/> */}
             <View style={styles.navBarView}>
                 <SideBar onPress={onPress} stateName={stateName} isDisabled={isDisabled} listOfButtonNames={listOfButtonNames}/>
             </View>

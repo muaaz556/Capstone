@@ -4,7 +4,7 @@ import { View } from 'native-base';
 import { FourCornerStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
-import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
+import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, TOO_MANY_NODES_PLACED, FOUR_CORNERS_STATE, CLEAR,
      STATE_NAMES, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
 import { getGPSData, postGPSData } from '../../helper-functions/gpsFetching';
@@ -40,8 +40,8 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
     const mapGesturesToGPS = async () => {
         getFourGPSCoords = await getGPSData('get-corner-cords', 'buildingName', buildingName);
         for (let i = 0; i < gestureLocations.length; i++) {
-            getFourGPSCoords.cords.cornerCords[i]['gestureLat']  = gestureLocations[i].x;
-            getFourGPSCoords.cords.cornerCords[i]['gestureLong'] = gestureLocations[i].y;
+            getFourGPSCoords.cords.cornerCords[i]['x']  = gestureLocations[i].x;
+            getFourGPSCoords.cords.cornerCords[i]['y'] = gestureLocations[i].y;
         }
         const requestData = JSON.stringify({'gpsCornerCord': [getFourGPSCoords]});
         postGPSData(requestData, 'post-corner-cords');
@@ -59,12 +59,10 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
             displayTextAlert(FOUR_CORNERS_STATE.TITLE, FOUR_CORNERS_STATE.MESSAGE);
             }
         });
-        console.log("upload function");
     }
 
     const next = () => {
-        console.log("next function");
-        displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
+        displayTwoButtonTextAlert(NEXT_TITLE, NEXT_MESSAGE, 
             () => {
                 mapGesturesToGPS();
                 setStateName(STATE_NAMES.DESTINATION_NODE_STATE);
@@ -73,18 +71,15 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
     }
 
     const clear = () => {
-        console.log("clear function invoked");
-        displayTextAlertClear(CLEAR.TITLE, CLEAR.MESSAGE, 
+        displayTwoButtonTextAlert(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
                 setGestureLocations([]);
-                console.log("clear function called");
             }
         );
     }
 
     const undo = () => {
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
-        console.log("undo function");
     }
 
     const updateGesture = (gestureItem) => {

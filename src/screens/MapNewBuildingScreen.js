@@ -56,7 +56,7 @@ const MapNewBuildingScreen = ({navigation}) => {
     let cornerCoordinates = []
 
     for (let i = 0; i < longitude.length; i++) {
-      cornerCoordinates.push({'long': longitude[i], 'lat': latitude[i], 'gestureLong': null, 'gestureLat': null})
+      cornerCoordinates.push({'long': longitude[i], 'lat': latitude[i], 'x': null, 'y': null})
     }
 
     const requestData = JSON.stringify({

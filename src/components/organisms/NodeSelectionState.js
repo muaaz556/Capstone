@@ -5,7 +5,7 @@ import { NodeSelectionStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import PleaseWait from '../molecules/PleaseWait';
-import { displayTextAlert, displayTextAlertClear, displayTextAlertNext } from '../../helper-functions/textAlert';
+import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES } from '../../assets/locale/en';
 import {Ellipse, Line} from 'react-native-svg';
 import { postGPSData, getGPSData } from '../../helper-functions/gpsFetching';
@@ -41,15 +41,6 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     }
     
     const listItemGen = () => {
-
-        //MAKE MORE EFFICIENT, CURRENTLY THE LIST OF ITEMS IS REGENERATED UPON EACH RE-RENDER
-        //returns listItems if we have already generated the list of nodes to be displayed
-        // if(listItems.length !== 0) {
-        //     console.log("listItems already has stuff in it, being reused");
-        //     return listItems;
-        // }
-        // console.log("generating listItems from scratch");
-
         let size = 0;
         let listItems = [];
         let listItem = connections.map((item, key) => (
@@ -97,10 +88,10 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                     {
                         guid: item.guid,
                         type: gestureList.type,
-                        long: item.x,
-                        lat: item.y,
+                        x: item.x,
+                        y: item.y,
                         adjacencyList: item.adjacencyList,
-                        name: "nodeName",
+                        name: item.name,
                     }
                 )
             ));
@@ -114,22 +105,11 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
             },
         });
         postGPSData(requestData, 'post-nodes').then(() =>
-            // *add a screen to say, map has been generated and post worked later*
             {
                 setShowPleaseWait(false);
                 navigation.navigate('AccessibilityScreen');
             }
         );
-        
-          
-        // displayTextAlertNext(NEXT_TITLE, NEXT_MESSAGE, 
-        //     () => {
-                
-        //         //STUFF to do before moving to next state
-        //         setStateName(STATE_NAMES.NODE_SELECTION_STATE);
-        //     }
-        // );
-        
     }
 
     const back = () => {
@@ -138,8 +118,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     }
 
     const clear = () => {
-        console.log("clear function invoked");
-        displayTextAlertClear(CLEAR.TITLE, CLEAR.MESSAGE, 
+        displayTwoButtonTextAlert(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
                 allGestures.forEach(gestureList => {
                     gestureList.array.map((item, key) => (
@@ -147,32 +126,22 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                     ));
                 });
                 setConnections([]);
-                console.log("clear function called");
             }
         );
     }
 
     const undo = () => {
-        console.log("undo function");
-
-        console.log("adj list before: ", connections[connections.length -1][0].adjacencyList)
-        console.log(connections[connections.length -1][0].adjacencyList.pop())
-        console.log("adj list after: ", connections[connections.length -1][0].adjacencyList)
-        console.log(connections[connections.length -1][1].adjacencyList.pop())
-
         setConnections((connection) => connection.filter((_, index) => index !== connections.length - 1));
     }
 
     const unselect = () => {
         // unselect a node (clear the variable)
-        console.log("unselect function");
         setSelectedNode(null);
     }
 
     const viewText = () => {
         // create a text alert for showing text for node selected
         displayTextAlert("Title", "Node name: " + selectedNode.name);
-        console.log("view text function");
     }
 
     const distance = (gesture1, gesture2) => {
@@ -223,7 +192,6 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
             //make a connection
             if(doesConnectionExist(selectedNode, connectingNode)) {
                 // add alert
-                console.log("Duplicate connection")
                 return; 
             }
             if(selectedNode === connectingNode) {

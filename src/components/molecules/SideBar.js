@@ -59,45 +59,6 @@ const SideBar = ({onPress, isDisabled, listOfButtonNames, stateName}) => {
                 style={styles.button}>
                 State
             </Button>
-
-            {/* {stateName!='state1' && (
-                <>
-                    <Button
-                        title="Back"
-                        onPress={() => {
-                            prevState();
-                        }}
-                        style={styles.button}>
-                        Back
-                    </Button>
-                </>
-            )}
-
-            {stateName=='state3' && (
-                <>
-                    <Button
-                        title="Unselect"
-                        onPress={() => {
-                            prevState();
-                        }}
-                        style={styles.button}>
-                        Unselect
-                    </Button>
-                </>
-            )}
-
-            {stateName=='state3' && (
-                <>
-                    <Button
-                        title="View Text"
-                        onPress={() => {
-                            prevState();
-                        }}
-                        style={styles.button}>
-                        View Text
-                    </Button>
-                </>
-            )}  */}
         </View>
     )
 };
