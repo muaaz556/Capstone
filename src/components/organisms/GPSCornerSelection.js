@@ -56,6 +56,14 @@ const styles = StyleSheet.create({
   },
 });
 
+let numTrys = 0;
+let bestAccuracy = 10000;
+let bestLatitude = 0;
+let bestLongitude = 0;
+
+let totalNumPositionsToGet = 4;
+let delayBetweenPositionChecks = 1000; //in milliseconds
+
 const GPSCornerSelection = ({navigation}) => {
   const {long, lat, step, postFunction} = useContext(GPSCornerSelectionContext);
   const [longitude, setLongitude] = long;
@@ -68,17 +76,36 @@ const GPSCornerSelection = ({navigation}) => {
   const getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
       position => {
-        setLatitude(latitude => [...latitude, position.coords.latitude]);
-        setLongitude(longitude => [...longitude, position.coords.longitude]);
-        Alert.alert('SUCCESS', 'Current Location Obtained', [
-          {text: 'OK', onPress: () => setStepName('gps_call')},
-        ]);
+
+        if(position.coords.accuracy < bestAccuracy) {
+          bestAccuracy = position.coords.accuracy;
+          bestLatitude = position.coords.latitude;
+          bestLongitude = position.coords.longitude;
+        }
+
+        if(numTrys == totalNumPositionsToGet - 1) {
+          numTrys = 0;
+          bestAccuracy = 10000;
+          setLatitude(latitude => [...latitude, bestLatitude]);
+          setLongitude(longitude => [...longitude, bestLongitude]);
+
+          Alert.alert('SUCCESS', 'Current Location Obtained', [
+            {text: 'OK', onPress: () => setStepName('gps_call')},
+          ]);
+        } else {
+          numTrys = numTrys + 1;
+          setTimeout(
+            () => { getCurrentPosition() },
+            delayBetweenPositionChecks
+          );
+        }
+        
       },
       error => {
         console.log(error.code, error.message);
         setStepName('gps_call');
       },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      {enableHighAccuracy: true, timeout: 10000, maximumAge: 0},
     );
     setStepName('please_wait');
   };
