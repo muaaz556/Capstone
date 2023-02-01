@@ -11,7 +11,7 @@ export const getGPSData = async (urlPath = "get-gps", query="", value="") => {
         headers: {
             "access-control-allow-origin": "*",
             'Accept': 'application/json',
-            'Content-type': 'application/json'
+            'Content-type': 'application/json',
         },
     }).then(res => {
         if (res.ok) {

@@ -72,21 +72,6 @@ const styles = StyleSheet.create({
 });
 
 const LoginScreen = ({navigation}) => {
-  const postRequest = () => {
-    const requestData = JSON.stringify({
-      gps: [
-        {
-          name: 'names',
-          gpsCord: {
-            x: 10,
-            y: 10,
-          },
-        },
-      ],
-    });
-
-    postGPSData(requestData);
-  };
 
   const handleGuestStudentButtonClick = () => {
     console.log('Fetching data');
