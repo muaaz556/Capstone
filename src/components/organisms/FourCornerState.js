@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+ import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from 'native-base';
 import { FourCornerStateContext } from '../../screens/FloorMappingScreen';
@@ -40,10 +40,10 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
     const mapGesturesToGPS = async () => {
         getFourGPSCoords = await getGPSData('get-corner-cords', 'buildingName', buildingName);
         for (let i = 0; i < gestureLocations.length; i++) {
-            getFourGPSCoords.cords.cornerCords[i]['x']  = gestureLocations[i].x;
-            getFourGPSCoords.cords.cornerCords[i]['y'] = gestureLocations[i].y;
+            getFourGPSCoords.cornerCords[i]['x'] = gestureLocations[i].x;
+            getFourGPSCoords.cornerCords[i]['y'] = gestureLocations[i].y;
         }
-        const requestData = JSON.stringify({'gpsCornerCord': [getFourGPSCoords]});
+        const requestData = JSON.stringify({'gpsCornerCord': getFourGPSCoords});
         postGPSData(requestData, 'post-corner-cords');
     };
 

@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
+import {NEXT_LABEL} from '../assets/locale/en';
 
 const styles = StyleSheet.create({
   view: {
@@ -50,13 +51,33 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#808585',
   },
+  input: {
+    height: 50,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 4,
+    borderColor: '#808585',
+    color: '#000000',
+  },
+  boxCard: {
+    backgroundColor: '#DEDEDE',
+    paddingHorizontal: 18,
+    borderRadius: 15,
+    paddingVertical: 30,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '500',
+  },
 });
+
 let result;
 const MapExistingBuildingScreen = ({navigation}) => {
   const [buildings, setBuildings] = useState([])
   const [stepName, setStepName] = useState('building');
   const [floors, setFloors] = useState([])
   const [selectedBuilding, setselectedBuilding] = useState("")
+  const [floorNameState, setFloorNameState] = useState("");
 
   useEffect(()  => {
     const fetchBuildings = async () => {
@@ -83,7 +104,9 @@ const MapExistingBuildingScreen = ({navigation}) => {
       setStepName('floor');
     }
     else if (stepName == 'floor') {
-      navigation.navigate('FloorMappingScreen', {selectedBuilding, itemName});
+      let buildingName = selectedBuilding;
+      let floorName = itemName;
+      navigation.navigate('FloorMappingScreen', {buildingName, floorName});
     }
   }
 
@@ -108,25 +131,43 @@ const MapExistingBuildingScreen = ({navigation}) => {
           <View style={styles.dividerLine} />
         </View>
         {stepName == 'building' ? (
-          <ListItems list={buildings} updateStep={updateStep}/>
-        ): stepName == 'floor' ? (
-          <ListItems list={floors} updateStep={updateStep}/>
-        ) : (
-          <></>
-        )}
-        {/* <FlatList
+          <FlatList
           data={buildings}
           renderItem={({item}) => (
               <>
                   <Button
-                      title={item.buildingName}
-                      style={styles.button}
-                      >
-                      {item.buildingName}
+                  title={item}
+                  style={styles.button}
+                  onPress={()=> updateStep(item)}>
+                      {item}
                   </Button>
               </>
           )}
-        /> */}
+          />
+        ): stepName == 'floor' ? (
+          <>
+            <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
+              <TextInput
+                style={styles.input}
+                onChangeText={e => setFloorNameState(e)}
+                value={floorNameState}
+                placeholder="Floor name"
+                placeholderTextColor="#808585"
+              />
+            </Box>
+            <Box w="100%" maxWidth="75%" mt="5">
+              <Button
+                mb="2"
+                onPress={() => {
+                  updateStep(floorNameState);
+                }}>
+                <Text style={styles.buttonText}>{NEXT_LABEL}</Text>
+              </Button>
+            </Box>
+          </>
+        ) : (
+          <></>
+        )}
       </Box>
     </View>
   );
