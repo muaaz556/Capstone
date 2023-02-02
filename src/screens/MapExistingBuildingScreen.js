@@ -64,7 +64,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
 
       let buildingArray = []
       result.nodes.forEach(item => {
-        buildingArray.append(item.buildingName);
+        buildingArray.push(item.buildingName);
       });
 
       setBuildings(buildingArray);
