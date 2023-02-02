@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import {StyleSheet} from 'react-native';
 import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
+import ListItems from '../components/molecules/ListItems';
 
 const styles = StyleSheet.create({
   view: {
@@ -50,29 +51,41 @@ const styles = StyleSheet.create({
     backgroundColor: '#808585',
   },
 });
-
+let result;
 const MapExistingBuildingScreen = ({navigation}) => {
-  const [buildings, setBuildings] = useState(null)
-  
+  const [buildings, setBuildings] = useState([])
+  const [stepName, setStepName] = useState('building');
+  const [floors, setFloors] = useState([])
+  const [selectedBuilding, setselectedBuilding] = useState("")
+
   useEffect(() => {
     const fetchBuildings = async () => {
-      const result = await getGPSData('get-nodes');
-      // console.log(result);
-      setBuildings(result.nodes);
+      result = await getGPSData('get-nodes');
+
+      let buildingArray = []
+      result.nodes.forEach(item => {
+        buildingArray.append(item.buildingName);
+      });
+
+      setBuildings(buildingArray);
     }
     fetchBuildings();
-
-
-    // getGPSData.then((data) => setBuildings(data));
-    // console.log(buildings);
-
-    // (async () => {
-    //   const result = await getGPSData('get-nodes');
-    //   console.log('result', result);
-    //   setBuildings(result);
-    // })();
-
   }, []);
+
+  const updateStep = (itemName) => {
+    if (stepName == 'building') {
+      setselectedBuilding(itemName)
+      result.nodes.forEach(item => {
+        if (item.buildingName == itemName){
+          setFloors(item.floorName);
+        }
+      });
+      setStepName('floor');
+    }
+    else if (stepName == 'floor') {
+      navigation.navigate('FloorMappingScreen', {selectedBuilding, itemName}),
+    }
+  }
 
   return (
     <View style={styles.view}>
@@ -94,7 +107,14 @@ const MapExistingBuildingScreen = ({navigation}) => {
           </View>
           <View style={styles.dividerLine} />
         </View>
-        <FlatList
+        {stepName == 'building' ? (
+          <ListItems list={buildings} updateStep={updateState}/>
+        ): stepName == 'floor' ? (
+          <ListItems list={floors} updateStep={updateState}/>
+        ) : (
+          <></>
+        )}
+        {/* <FlatList
           data={buildings}
           renderItem={({item}) => (
               <>
@@ -106,7 +126,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
                   </Button>
               </>
           )}
-        />
+        /> */}
       </Box>
     </View>
   );
