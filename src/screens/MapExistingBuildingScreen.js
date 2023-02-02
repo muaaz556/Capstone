@@ -58,7 +58,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
   const [floors, setFloors] = useState([])
   const [selectedBuilding, setselectedBuilding] = useState("")
 
-  useEffect(() => {
+  useEffect(()  => {
     const fetchBuildings = async () => {
       result = await getGPSData('get-nodes');
 
@@ -83,7 +83,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
       setStepName('floor');
     }
     else if (stepName == 'floor') {
-      navigation.navigate('FloorMappingScreen', {selectedBuilding, itemName}),
+      navigation.navigate('FloorMappingScreen', {selectedBuilding, itemName});
     }
   }
 
@@ -108,9 +108,9 @@ const MapExistingBuildingScreen = ({navigation}) => {
           <View style={styles.dividerLine} />
         </View>
         {stepName == 'building' ? (
-          <ListItems list={buildings} updateStep={updateState}/>
+          <ListItems list={buildings} updateStep={updateStep}/>
         ): stepName == 'floor' ? (
-          <ListItems list={floors} updateStep={updateState}/>
+          <ListItems list={floors} updateStep={updateStep}/>
         ) : (
           <></>
         )}

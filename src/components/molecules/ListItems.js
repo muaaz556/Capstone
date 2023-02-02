@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     },
   });
 
-const ListItems = ({list, updateState}) => {
+const ListItems = ({list, updateStep}) => {
     return (
         <FlatList
             data={list}
@@ -23,7 +23,7 @@ const ListItems = ({list, updateState}) => {
                     <Button
                     title={item}
                     style={styles.button}
-                    onPress={()=> updateState(item)}>
+                    onPress={()=> updateStep(item)}>
                         {item}
                     </Button>
                 </>
