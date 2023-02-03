@@ -81,7 +81,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
 
   useEffect(()  => {
     const fetchBuildings = async () => {
-      result = await getGPSData('get-nodes');
+      result = await getGPSData('get-nodes', 'getType=get-buildings');
 
       let buildingArray = []
       result.nodes.forEach(item => {
