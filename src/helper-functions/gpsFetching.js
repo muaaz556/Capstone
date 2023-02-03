@@ -1,7 +1,12 @@
 import { NGROK_URL } from '@env'
 
-export const getGPSData = async () => {
-    await fetch(`${NGROK_URL}/api/get-gps`, {
+export const getGPSData = async (urlPath = "get-gps", query="", value="") => {
+    let queryString = "";
+    let response;
+    if(query != ""){
+        queryString += "?" + query + "=" + value
+    }
+    await fetch(`${NGROK_URL}/api/${urlPath}${queryString}`, {
         method: 'GET',
         headers: {
             "access-control-allow-origin": "*",
@@ -15,12 +20,13 @@ export const getGPSData = async () => {
             throw res.json()
         }
     }).then(json => {
-        console.log("Good JSON")
-        console.log(json)
+        console.log("Good JSON ", json)
+        response = json;
     }).catch(error => {
-        console.log("Bad JSON")
-        console.log(error)
+        console.log("Bad JSON ", error)
     })
+    
+    return response;
 }
 
 export const postGPSData = async (requestData, urlPath = "post-gps") => {
@@ -33,7 +39,6 @@ export const postGPSData = async (requestData, urlPath = "post-gps") => {
         },
         body: requestData,
     }).catch(error => {
-        console.log("Bad JSON")
-        console.log(error)
+        console.log("Bad JSON", error)
     })
 }
