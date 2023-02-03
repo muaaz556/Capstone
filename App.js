@@ -15,6 +15,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {NativeBaseProvider} from 'native-base';
+import NavigationScreen from './src/screens/NavigationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,7 @@ const App = () => {
           <Stack.Screen name="AccessibilityScreen" component={AccessibilityScreen}/>
           <Stack.Screen name="MapExistingBuildingScreen" component={MapExistingBuildingScreen}/>
           <Stack.Screen name="MapNewBuildingScreen" component={MapNewBuildingScreen}/>
+          <Stack.Screen name="NavigationScreen" component={NavigationScreen}/>
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>

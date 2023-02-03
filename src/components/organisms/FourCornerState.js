@@ -38,7 +38,7 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
     }
 
     const mapGesturesToGPS = async () => {
-        getFourGPSCoords = await getGPSData('get-corner-cords', 'getType=get-route&buildingName=' + buildingName);
+        getFourGPSCoords = await getGPSData('get-corner-cords', `getType=get-route&buildingName=${buildingName}`);
         for (let i = 0; i < gestureLocations.length; i++) {
             getFourGPSCoords.cornerCords[i]['x'] = gestureLocations[i].x;
             getFourGPSCoords.cornerCords[i]['y'] = gestureLocations[i].y;
