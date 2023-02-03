@@ -106,45 +106,26 @@ const NavigationScreen = ({navigation}) => {
           setFloors(item.floorNames)
           currentNodeData = item.destinationNodes;
           return false;
-          // item.floorData.forEach(item => currentFloors.push(item.floorName))
-          // currentFloorData = item.floorData
         }
         return true;
       });
-      // setFloors(currentFloors)
       setStepName('floor');
     }
     else if (stepName == 'floor') {
       setFloorNameState(itemName)
       let currentDestNodes = [];
 
-      // currentFloorData.forEach(item => {
-      //   if (item.floorName == itemName){
-      //     item.destinationNodes.forEach(item => currentDestNodes.push(item.name))
-      //   }
-      // })
-      // setDestinations(currentDestNodes);
-
       let nodeName = []
       for (let i = 0; i < floors.length; i++ ) {
         if (floors[i] == itemName) {
           setDestinations(currentNodeData[i])
-          // currentNodeData[i].forEach(destinationNode => {
-          //   nodeName.push(destinationNode.name);
-          // })
           break;
         }
       }
-      // setDestinations(nodeName)
       setStepName('currentLocation');
     }
     else if (stepName == 'currentLocation') {
       setCurrentLocation(itemName);
-      // result.nodes.forEach(item => {
-      //   if (item.floorNameState == itemName){
-      //     item.floorData.forEach(item => setDestinations([...destinations, item.destinationNodes]))
-      //   }
-      // });
       setStepName('destination');
     }
     else if (stepName == 'destination') {
@@ -180,42 +161,9 @@ const NavigationScreen = ({navigation}) => {
           <View style={styles.dividerLine} />
         </View>
         {stepName == 'building' ? (
-          // <FlatList
-          // data={buildings}
-          // renderItem={({item}) => (
-          //     <>
-          //         <Button
-          //         title={item}
-          //         style={styles.button}
-          //         onPress={()=> updateStep(item)}>
-          //             {item}
-          //         </Button>
-          //     </>
-          // )}
-          // />
           <ListItems list={buildings} updateStep={updateStep} />
         ): stepName == 'floor' ? (
           <ListItems list={floors} updateStep={updateStep} />
-          // <>
-          //   <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
-          //     <TextInput
-          //       style={styles.input}
-          //       onChangeText={e => setFloorNameState(e)}
-          //       value={floorNameState}
-          //       placeholder="Floor name"
-          //       placeholderTextColor="#808585"
-          //     />
-          //   </Box>
-          //   <Box w="100%" maxWidth="75%" mt="5">
-          //     <Button
-          //       mb="2"
-          //       onPress={() => {
-          //         updateStep(floorNameState);
-          //       }}>
-          //       <Text style={styles.buttonText}>{NEXT_LABEL}</Text>
-          //     </Button>
-          //   </Box>
-          // </>
         ): stepName == 'currentLocation' ? (
           <ListItems list={destinations} updateStep={updateStep} />
         ): stepName == 'destination' ? (
