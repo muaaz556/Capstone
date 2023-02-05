@@ -29,17 +29,18 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     const [connections, setConnections] = connectionsArray;
     const [selectedNode, setSelectedNode] = useState(null);
     const [showPleaseWait, setShowPleaseWait] = useState(false);
+    const [makingHallwayConnections, setMakingHallwayConnections] = useState(true);
 
     const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.VIEW_TEXT, BUTTON.NEXT, BUTTON.BACK];
 
     useEffect(() => {
-        displayTextAlert(NODE_SELECTION_STATE.TITLE, NODE_SELECTION_STATE.MESSAGE); 
+        displayTextAlert(NODE_SELECTION_STATE.HALLWAY_TITLE, NODE_SELECTION_STATE.HALLWAY_MESSAGE);
     }, []);
 
     const nodeCurrentlySelected = (item) => {
         return item.x === selectedNode?.x && item.y === selectedNode?.y;
-    }
-    
+    };
+
     const listItemGen = () => {
         let size = 0;
         let listItems = [];
@@ -77,11 +78,17 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     }
 
     const next = () => {
-        console.log("next function");
-        
+        console.log('next function');
+
+        if (makingHallwayConnections) {
+            displayTextAlert(NODE_SELECTION_STATE.DESTINATION_TITLE, NODE_SELECTION_STATE.DESTINATION_MESSAGE);
+            setMakingHallwayConnections(false);
+            return;
+        }
+
         setShowPleaseWait(true);
-        let gestureArray = []
-        
+        let gestureArray = [];
+
         allGestures.forEach(gestureList => {
             gestureList.array.map((item, key) => (
                 gestureArray.push(
@@ -97,7 +104,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
             ));
         })
         const requestData = JSON.stringify({
-            node: 
+            node:
             {
                 buildingName: buildingName,
                 floorName: floorName,
@@ -200,9 +207,9 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                 return; 
             }
             createConnection(selectedNode, connectingNode);
-            setSelectedNode(null);
+            setSelectedNode(connectingNode);
         }
-        
+
     }
 
     const onPress = (buttonName) => {
@@ -230,7 +237,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
 
         }
     }
-    
+
     const isDisabled = (buttonName) => {
         return ((buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && connections.length === 0 )
                 || (buttonName === BUTTON.UNSELECT && selectedNode === null) || (buttonName === BUTTON.VIEW_TEXT && (selectedNode?.name === '' || selectedNode === null));

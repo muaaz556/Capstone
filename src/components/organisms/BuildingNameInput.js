@@ -3,7 +3,7 @@ import React, {useContext} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
 import {Box, Button, Center, Text} from 'native-base';
 import {BuildingNameInputContext} from '../../screens/MapNewBuildingScreen';
-import {BUILDING_NAME_TITLE, NEXT_LABEL} from '../../assets/locale/en';
+import {BUILDING_NAME_TITLE, NEXT_LABEL, BUTTON} from '../../assets/locale/en';
 
 const styles = StyleSheet.create({
   input: {
@@ -60,6 +60,13 @@ const BuildingNameInput = () => {
             setStepNameState('floor_name');
           }}>
           <Text style={styles.buttonText}>{NEXT_LABEL}</Text>
+        </Button>
+        <Button
+          mb="2"
+          onPress={() => {
+            setStepNameState('overview');
+          }}>
+          <Text style={styles.buttonText}>{BUTTON.BACK}</Text>
         </Button>
       </Box>
     </>

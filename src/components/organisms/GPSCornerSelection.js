@@ -1,7 +1,7 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 
 import {StyleSheet, Alert, TouchableOpacity} from 'react-native';
-import {Box, Button, Center, Text} from 'native-base';
+import {Box, Button, Text} from 'native-base';
 import Geolocation from 'react-native-geolocation-service';
 
 import {GPSCornerSelectionContext} from '../../screens/MapNewBuildingScreen';
@@ -11,8 +11,9 @@ import {
   GET_CURRENT_LOCATION_LABEL,
   LOCATION_OF_CORNER_TITLE,
   NEXT_LOCATION_MESSAGE,
-  SAVE_UPLOAD_MAP_LABEL,
+  SAVE_UPLOAD_FLOOR_PLAN_LABEL,
   DESCRIPTION,
+  BUTTON,
 } from '../../assets/locale/en';
 
 const styles = StyleSheet.create({
@@ -61,7 +62,7 @@ let bestAccuracy = 10000;
 let bestLatitude = 0;
 let bestLongitude = 0;
 
-let totalNumPositionsToGet = 4;
+let numOfGPSSamples = 3; //not number of corners
 let delayBetweenPositionChecks = 1000; //in milliseconds
 
 const GPSCornerSelection = ({navigation}) => {
@@ -71,19 +72,17 @@ const GPSCornerSelection = ({navigation}) => {
   const [stepName, setStepName] = step;
   const [postCoordinates] = postFunction;
 
-  const [gpsObtained, setGpsObtained] = useState(false);
-
   const getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
       position => {
 
-        if(position.coords.accuracy < bestAccuracy) {
+        if (position.coords.accuracy < bestAccuracy) {
           bestAccuracy = position.coords.accuracy;
           bestLatitude = position.coords.latitude;
           bestLongitude = position.coords.longitude;
         }
 
-        if(numTrys == totalNumPositionsToGet - 1) {
+        if (numTrys === numOfGPSSamples - 1) {
           numTrys = 0;
           bestAccuracy = 10000;
           setLatitude(latitude => [...latitude, bestLatitude]);
@@ -95,11 +94,10 @@ const GPSCornerSelection = ({navigation}) => {
         } else {
           numTrys = numTrys + 1;
           setTimeout(
-            () => { getCurrentPosition() },
+            () => { getCurrentPosition(); },
             delayBetweenPositionChecks
           );
         }
-        
       },
       error => {
         console.log(error.code, error.message);
@@ -146,7 +144,14 @@ const GPSCornerSelection = ({navigation}) => {
           onPress={() => {
             postCoordinates();
           }}>
-          <Text style={styles.buttonText}>{SAVE_UPLOAD_MAP_LABEL}</Text>
+          <Text style={styles.buttonText}>{SAVE_UPLOAD_FLOOR_PLAN_LABEL}</Text>
+        </Button>
+        <Button
+          mb="2"
+          onPress={() => {
+            setStepName('floor_name');
+          }}>
+          <Text style={styles.buttonText}>{BUTTON.BACK}</Text>
         </Button>
         <TouchableOpacity
           onPress={() => {

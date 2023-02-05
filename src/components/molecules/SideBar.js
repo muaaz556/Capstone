@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     },
   });
 
+let debugging = true;
 const SideBar = ({onPress, isDisabled, listOfButtonNames, stateName}) => {
 
     return (
@@ -50,17 +51,20 @@ const SideBar = ({onPress, isDisabled, listOfButtonNames, stateName}) => {
                     </>
                 )}
             />
-
-            <Button
-                title="State"
-                onPress={() => {
-                    console.log(stateName);
-                }}
-                style={styles.button}>
-                State
-            </Button>
+            { debugging === true ? (
+                <Button
+                    title="State"
+                    onPress={() => {
+                        console.log(stateName);
+                    }}
+                    style={styles.button}>
+                    State
+                </Button>
+            ) : (
+                <></>
+            )}
         </View>
-    )
+    );
 };
 
 export default SideBar;

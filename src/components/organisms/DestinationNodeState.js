@@ -4,7 +4,6 @@ import { View } from 'native-base';
 import { DestinationNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
-import NodeModal from '../molecules/NodeModal';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES, ENTER_NODE_NAME_TITLE  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
@@ -44,7 +43,7 @@ const DestinationNodeState = ({windowH, photo}) => {
     }
 
     const back = () => {
-        setStateName(STATE_NAMES.FOUR_CORNER_STATE);
+        setStateName(STATE_NAMES.CORNER_NODE_STATE);
     }
 
     const clear = () => {

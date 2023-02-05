@@ -1,17 +1,17 @@
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from 'native-base';
-import { FourCornerStateContext } from '../../screens/FloorMappingScreen';
+import { CornerNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
-import { BUTTON, TOO_MANY_NODES_PLACED, FOUR_CORNERS_STATE, CLEAR,
+import { BUTTON, TOO_MANY_NODES_PLACED, CORNERS_STATE, CLEAR,
      STATE_NAMES, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
 import { getGPSData, postGPSData } from '../../helper-functions/gpsFetching';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {Ellipse} from 'react-native-svg';
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
     navBarView: {
         flex: 0.1,
         alignItems: 'center',
@@ -21,29 +21,29 @@ const styles = StyleSheet.create({
       },
 });
 
-let getFourGPSCoords;
+let getCornerGPSCoords;
 
-const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
+const CornerNodeState = ({buildingName, windowH, clearAllNodes, numOfCorners}) => {
 
-    const {state, photoState, fourCornerGestures} = useContext(FourCornerStateContext);
+    const {state, photoState, cornerNodeGestures} = useContext(CornerNodeStateContext);
     const [stateName, setStateName] = state;
     const [photo, setPhoto] = photoState;
-    const [gestureLocations, setGestureLocations] = fourCornerGestures;
+    const [gestureLocations, setGestureLocations] = cornerNodeGestures;
 
     const listOfButtonNames = [BUTTON.UPLOAD, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT];
 
-    if (gestureLocations.length > 4) {
+    if (gestureLocations.length > numOfCorners) {
         displayTextAlert(TOO_MANY_NODES_PLACED.TITLE, TOO_MANY_NODES_PLACED.MESSAGE);
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1));
     }
 
     const mapGesturesToGPS = async () => {
-        getFourGPSCoords = await getGPSData('get-corner-cords', 'buildingName', buildingName);
+        getCornerGPSCoords = await getGPSData('get-corner-cords', 'buildingName', buildingName);
         for (let i = 0; i < gestureLocations.length; i++) {
-            getFourGPSCoords.cords.cornerCords[i]['x']  = gestureLocations[i].x;
-            getFourGPSCoords.cords.cornerCords[i]['y'] = gestureLocations[i].y;
+            getCornerGPSCoords.cords.cornerCords[i]['x']  = gestureLocations[i].x;
+            getCornerGPSCoords.cords.cornerCords[i]['y'] = gestureLocations[i].y;
         }
-        const requestData = JSON.stringify({'gpsCornerCord': [getFourGPSCoords]});
+        const requestData = JSON.stringify({'gpsCornerCord': [getCornerGPSCoords]});
         postGPSData(requestData, 'post-corner-cords');
     };
 
@@ -51,40 +51,40 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
         const options = {
             noData: true,
         };
-    
+
         launchImageLibrary(options, response => {
             if (response.assets && response.assets[0].uri) {
             setPhoto(response.assets[0]);
             clearAllNodes();
-            displayTextAlert(FOUR_CORNERS_STATE.TITLE, FOUR_CORNERS_STATE.MESSAGE);
+            displayTextAlert(CORNERS_STATE.TITLE, CORNERS_STATE.MESSAGE);
             }
         });
-    }
+    };
 
     const next = () => {
-        displayTwoButtonTextAlert(NEXT_TITLE, NEXT_MESSAGE, 
+        displayTwoButtonTextAlert(NEXT_TITLE, NEXT_MESSAGE,
             () => {
                 mapGesturesToGPS();
                 setStateName(STATE_NAMES.DESTINATION_NODE_STATE);
             }
         );
-    }
+    };
 
     const clear = () => {
-        displayTwoButtonTextAlert(CLEAR.TITLE, CLEAR.MESSAGE, 
+        displayTwoButtonTextAlert(CLEAR.TITLE, CLEAR.MESSAGE,
             () => {
                 setGestureLocations([]);
             }
         );
-    }
+    };
 
     const undo = () => {
-        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
-    }
+        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1));
+    };
 
     const updateGesture = (gestureItem) => {
         setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
-    }
+    };
 
     const onPress = (buttonName) => {
         switch (buttonName) {
@@ -101,15 +101,15 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
                 undo();
                 break;
             default:
-                console.log("invalid button name");
+                console.log('invalid button name');
 
         }
-    }
-    
+    };
+
     const isDisabled = (buttonName) => {
         return (buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && gestureLocations.length === 0;
-    }
-    
+    };
+
     const listItems = gestureLocations.map((item, key) => (
         <View key={key}>
             <Ellipse
@@ -125,7 +125,7 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
     ));
 
     console.log(listItems);
-    return ( 
+    return (
         <>
             <NodePlacement photo={photo} windowH={windowH} updateGesture={updateGesture} listItems={listItems}/>
 
@@ -136,4 +136,4 @@ const FourCornerState = ({buildingName, windowH, clearAllNodes}) => {
     );
 };
 
-export default FourCornerState;
+export default CornerNodeState;

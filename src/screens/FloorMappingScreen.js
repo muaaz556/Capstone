@@ -1,6 +1,6 @@
 import React, {useState, createContext} from 'react';
 import {View} from 'native-base';
-import FourCornerState from '../components/organisms/FourCornerState';
+import CornerNodeState from '../components/organisms/CornerNodeState';
 import DestinationNodeState from '../components/organisms/DestinationNodeState';
 import HallwayNodeState from '../components/organisms/HallwayNodeState';
 import FloorChangingNodeState from '../components/organisms/FloorChangingNodeState';
@@ -8,7 +8,7 @@ import BathroomNodeState from '../components/organisms/BathroomNodeState';
 import NodeSelectionState from '../components/organisms/NodeSelectionState';
 import { STATE_NAMES } from '../assets/locale/en';
 
-export const FourCornerStateContext = createContext();
+export const CornerNodeStateContext = createContext();
 export const DestinationNodeStateContext = createContext();
 export const HallwayNodeStateContext = createContext();
 export const BathroomNodeStateContext = createContext();
@@ -16,8 +16,8 @@ export const FloorChangingNodeStateContext = createContext();
 export const NodeSelectionStateContext = createContext();
 
 const FloorMappingScreen = ({route, navigation}) => {
-  
-  const [fourCornerGestures, setFourCornerGestures] = useState([]);
+
+  const [cornerNodeGestures, setCornerNodeGestures] = useState([]);
   const [destinationGestures, setDestinationGestures] = useState([]);
   const [hallwayGestures, setHallwayGestures] = useState([]);
   const [bathroomGestures, setBathroomGestures] = useState([]);
@@ -25,39 +25,39 @@ const FloorMappingScreen = ({route, navigation}) => {
   const [connections, setConnections] = useState([]);
 
   const [windowH, setWindowH] = useState(0);
-  const [stateName, setStateName] = useState(STATE_NAMES.FOUR_CORNER_STATE);
+  const [stateName, setStateName] = useState(STATE_NAMES.CORNER_NODE_STATE);
   const [photo, setPhoto] = useState(null);
 
   const onLayout = (event) => {
     if (event.nativeEvent.layout.height < event.nativeEvent.layout.width) {
-        setWindowH(event.nativeEvent.layout.height)
+        setWindowH(event.nativeEvent.layout.height);
     }
-  }
+  };
 
   const clearAllNodes = () => {
-    setFourCornerGestures([]);
+    setCornerNodeGestures([]);
     setDestinationGestures([]);
     setHallwayGestures([]);
     setBathroomGestures([]);
     setFloorChangingGestures([]);
-  }
+  };
 
   return (
-    <View style={{ flex: 1, flexDirection: 'row' }} onLayout={( (event) => { onLayout(event) } )}>
-      {stateName === STATE_NAMES.FOUR_CORNER_STATE ? (
+    <View style={ { flex: 1, flexDirection: 'row' } } onLayout={( (event) => { onLayout(event); } )}>
+      {stateName === STATE_NAMES.CORNER_NODE_STATE ? (
         //initial state component
         <>
-          <FourCornerStateContext.Provider value={{ 
+          <CornerNodeStateContext.Provider value={{
             state: [stateName, setStateName],
             photoState: [photo, setPhoto],
-            fourCornerGestures: [fourCornerGestures, setFourCornerGestures],
+            cornerNodeGestures: [cornerNodeGestures, setCornerNodeGestures],
             }}>
-            <FourCornerState buildingName={route.params.buildingName} windowH={windowH} clearAllNodes={clearAllNodes}/>
-          </FourCornerStateContext.Provider>
+            <CornerNodeState buildingName={route.params.buildingName} windowH={windowH} clearAllNodes={clearAllNodes} numOfCorners={route.params.numOfCorners}/>
+          </CornerNodeStateContext.Provider>
         </>
       ) : stateName === STATE_NAMES.DESTINATION_NODE_STATE ? (
         <>
-          <DestinationNodeStateContext.Provider value={{ 
+          <DestinationNodeStateContext.Provider value={{
             state: [stateName, setStateName],
             destinationGestures: [destinationGestures, setDestinationGestures],
             }}>
@@ -66,7 +66,7 @@ const FloorMappingScreen = ({route, navigation}) => {
         </>
       ) : stateName === STATE_NAMES.HALLWAY_NODE_STATE ? (
         <>
-          <HallwayNodeStateContext.Provider value={{ 
+          <HallwayNodeStateContext.Provider value={{
             state: [stateName, setStateName],
             hallwayGestures: [hallwayGestures, setHallwayGestures],
             }}>
@@ -75,7 +75,7 @@ const FloorMappingScreen = ({route, navigation}) => {
         </>
       ) : stateName === STATE_NAMES.FLOOR_CHANGING_NODE_STATE ? (
         <>
-          <FloorChangingNodeStateContext.Provider value={{ 
+          <FloorChangingNodeStateContext.Provider value={{
             state: [stateName, setStateName],
             floorChangingGestures: [floorChangingGestures, setFloorChangingGestures],
             }}>
@@ -84,7 +84,7 @@ const FloorMappingScreen = ({route, navigation}) => {
         </>
       ) : stateName === STATE_NAMES.BATHROOM_NODE_STATE ? (
         <>
-          <BathroomNodeStateContext.Provider value={{ 
+          <BathroomNodeStateContext.Provider value={{
             state: [stateName, setStateName],
             bathroomGestures: [bathroomGestures, setBathroomGestures],
             }}>
@@ -93,18 +93,18 @@ const FloorMappingScreen = ({route, navigation}) => {
         </>
       ) : stateName === STATE_NAMES.NODE_SELECTION_STATE ? (
         <>
-          <NodeSelectionStateContext.Provider value={{ 
+          <NodeSelectionStateContext.Provider value={{
             state: [stateName, setStateName],
-            connectionsArray: [connections, setConnections] 
+            connectionsArray: [connections, setConnections],
             }}>
-            <NodeSelectionState 
-              windowH={windowH} 
-              photo={photo} 
+            <NodeSelectionState
+              windowH={windowH}
+              photo={photo}
               navigation={navigation}
               buildingName={route.params.buildingName}
               floorName={route.params.floorName}
               allGestures={[{color: 'red', array: destinationGestures, type: STATE_NAMES.DESTINATION_NODE_STATE},
-                          {color: 'green', array: hallwayGestures,  type: STATE_NAMES.HALLWAY_NODE_STATE}, 
+                          {color: 'green', array: hallwayGestures,  type: STATE_NAMES.HALLWAY_NODE_STATE},
                           {color: '#FFC0CB', array: bathroomGestures, type: STATE_NAMES.BATHROOM_NODE_STATE},
                           {color: 'purple', array: floorChangingGestures, type: STATE_NAMES.FLOOR_CHANGING_NODE_STATE}]}
               />
