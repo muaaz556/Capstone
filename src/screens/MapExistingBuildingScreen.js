@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {StyleSheet, TextInput} from 'react-native';
+import {StyleSheet, TextInput, ScrollView, SafeAreaView} from 'react-native';
 import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
@@ -7,7 +7,7 @@ import {NEXT_LABEL} from '../assets/locale/en';
 
 const styles = StyleSheet.create({
   view: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     flexDirection: 'column',
   },
@@ -121,8 +121,6 @@ const MapExistingBuildingScreen = ({navigation}) => {
       <Text style={styles.title} fontSize="2xl">
         Accessibility
       </Text>
-
-      <Box w="100%" maxWidth="75%" mt="5">
         <View style={styles.dividerView}>
           <View style={styles.dividerLine} />
           <View>
@@ -147,13 +145,13 @@ const MapExistingBuildingScreen = ({navigation}) => {
         ): stepName == 'floor' ? (
           <>
             <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
-              <TextInput
-                style={styles.input}
-                onChangeText={e => setFloorNameState(e)}
-                value={floorNameState}
-                placeholder="Floor name"
-                placeholderTextColor="#808585"
-              />
+                <TextInput
+                  style={styles.input}
+                  onChangeText={e => setFloorNameState(e)}
+                  value={floorNameState}
+                  placeholder="Floor name"
+                  placeholderTextColor="#808585"
+                />
             </Box>
             <Box w="100%" maxWidth="75%" mt="5">
               <Button
@@ -168,7 +166,6 @@ const MapExistingBuildingScreen = ({navigation}) => {
         ) : (
           <></>
         )}
-      </Box>
     </View>
   );
 };
