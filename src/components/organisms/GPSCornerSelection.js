@@ -1,7 +1,9 @@
+
 import React, {useContext} from 'react';
 
 import {StyleSheet, Alert, TouchableOpacity} from 'react-native';
 import {Box, Button, Text} from 'native-base';
+
 import Geolocation from 'react-native-geolocation-service';
 
 import {GPSCornerSelectionContext} from '../../screens/MapNewBuildingScreen';

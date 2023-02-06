@@ -3,6 +3,7 @@ import React, {useContext} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
 import {Box, Button, Center, Text} from 'native-base';
 import {BuildingNameInputContext} from '../../screens/MapNewBuildingScreen';
+
 import {BUILDING_NAME_TITLE, NEXT_LABEL, BUTTON} from '../../assets/locale/en';
 
 const styles = StyleSheet.create({
@@ -72,5 +73,4 @@ const BuildingNameInput = () => {
     </>
   );
 };
-
 export default BuildingNameInput;
