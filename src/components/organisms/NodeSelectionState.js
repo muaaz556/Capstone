@@ -31,7 +31,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     const [showPleaseWait, setShowPleaseWait] = useState(false);
     const [makingHallwayConnections, setMakingHallwayConnections] = useState(true);
 
-    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.VIEW_TEXT, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.NEXT, BUTTON.BACK];
 
     useEffect(() => {
         displayTextAlert(NODE_SELECTION_STATE.HALLWAY_TITLE, NODE_SELECTION_STATE.HALLWAY_MESSAGE);
