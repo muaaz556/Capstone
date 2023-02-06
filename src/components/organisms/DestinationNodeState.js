@@ -6,7 +6,7 @@ import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES,
-        ENTER_NODE_NAME_TITLE, INVALID, DIALOG  } from '../../assets/locale/en';
+        ENTER_NODE_NAME_TITLE, DIALOG  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 import Dialog from "react-native-dialog";
 
@@ -66,7 +66,7 @@ const DestinationNodeState = ({windowH, photo}) => {
     const updateGesture = (gestureItem) => {
 
         if (nodeUnnamed) {
-            displayTextAlert(INVALID.TITLE, INVALID.MESSAGE)
+            displayTextAlert(DESTINATION_NODE_STATE.INVALID_TITLE, DESTINATION_NODE_STATE.INVALID_MESSAGE)
             return
         }
         setCurrentGesture(gestureItem);

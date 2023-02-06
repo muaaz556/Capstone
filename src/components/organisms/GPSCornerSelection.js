@@ -100,6 +100,9 @@ const GPSCornerSelection = ({navigation}) => {
         }
       },
       error => {
+        Alert.alert('FAIL', 'Location could not be obtained', [
+          {text: 'OK', onPress: () => setStepName('gps_call')},
+        ]);
         console.log(error.code, error.message);
         setStepName('gps_call');
       },
@@ -146,13 +149,6 @@ const GPSCornerSelection = ({navigation}) => {
           }}>
           <Text style={styles.buttonText}>{SAVE_UPLOAD_FLOOR_PLAN_LABEL}</Text>
         </Button>
-        <Button
-          mb="2"
-          onPress={() => {
-            setStepName('floor_name');
-          }}>
-          <Text style={styles.buttonText}>{BUTTON.BACK}</Text>
-        </Button>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('AccessibilityScreen');
@@ -160,6 +156,13 @@ const GPSCornerSelection = ({navigation}) => {
           style={styles.discardButton}>
           <Text style={styles.buttonText}>{DISCARD_GPS_LOCATIONS_LABEL}</Text>
         </TouchableOpacity>
+        <Button
+          mb="2"
+          onPress={() => {
+            setStepName('floor_name');
+          }}>
+          <Text style={styles.buttonText}>{BUTTON.BACK}</Text>
+        </Button>
       </Box>
     </>
   );

@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     },
   });
 
-let debugging = true;
+let debugging = false;
 const SideBar = ({onPress, isDisabled, listOfButtonNames, stateName}) => {
 
     return (

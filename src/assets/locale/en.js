@@ -30,17 +30,12 @@ export const CLEAR = { TITLE: 'Clear Dots',
                         MESSAGE: 'This action will clear all of the dots on the screen.',
                     };
 
+export const FINISH_TITLE = 'Finish Mapping';
 export const NEXT_TITLE = 'Go to Next Step';
 export const NEXT_MESSAGE = 'Please ensure you have completed this step before proceeding.';
 
-// TODO: PLS CONNOR REWRITE THE MESSAGES
-// look for synonyms to the word "add" in this context
-// need a better way to explain that we want hallway nodes placed on either side of a room
-export const INVALID = {TITLE: 'Invalid',
-                        MESSAGE: 'Please enter room name before adding another dot.',}
-
-export const DIALOG = {DESTINATION_TITLE: 'Set Room Name',
-                        DESTINATION_DESCRIPTION: 'Please provide a name for the selected room.',
+export const DIALOG = {DESTINATION_TITLE: 'Set Room Name/Number',
+                        DESTINATION_DESCRIPTION: 'Please provide a name or number for the selected room.',
                         BATHROOM_TITLE: 'Set Bathroom Gender',
                         BATHROOM_DESCRIPTION: 'Please provide a gender for the selected bathroom.'
 
@@ -54,29 +49,30 @@ export const CORNERS_STATE = { TITLE: 'Specify Corners',
 export const DESTINATION_NODE_STATE = { TITLE: 'Place Rooms',
                                     MESSAGE: 'Please place dots on the entrances to each room. '
                                     + 'If a room has multiple doors or entrances, please place dots on all of them. '
-                                    + 'After placing a dot, press the label button to add a room name. '
+                                    + 'After placing a dot, press the label button to add a room name/number. '
                                     + 'You cannot place another dot until you label the previous one.',
-                                    INVALID_TITLE: 'Invalid',
+                                    INVALID_TITLE: 'Missing Room Name/Number',
                                     INVALID_MESSAGE: 'Please enter room name before adding another dot.',
                                     };
 
 export const HALLWAY_NODE_STATE = { TITLE: 'Add Hallways',
                                     MESSAGE: 'Please place dots throughout all hallways. '
                                     + 'Each dot should be at most 2m apart from one another. '
-                                    + 'Place Hallway dots on either side of every entrance to a room.',
+                                    + 'Place hallway dots on either side of every entrance to a room '
+                                    + 'and on the corners and intersections of hallways. ',
                                     };
 
-export const BATHROOM_NODE_STATE = { TITLE: 'Identify Bathrooms',
+export const BATHROOM_NODE_STATE = { TITLE: 'Place Bathrooms',
                                     MESSAGE: 'Please place dots on each bathroom entrance. '
                                     + 'After placing a dot, press the label button to specify bathroom gender. '
                                     + 'You cannot place another dot until you label the previous one.',
-                                    INVALID_TITLE: 'Invalid',
-                                    INVALID_MESSAGE: 'Please enter room name before adding another dot.',
+                                    INVALID_TITLE: 'Missing Bathroom Gender Identification',
+                                    INVALID_MESSAGE: 'Please specify bathroom gender before adding another dot.',
                                     };
 
-export const FLOOR_CHANGING_NODE_STATE = { TITLE: 'Designate Stairways and Elevators',
+export const FLOOR_CHANGING_NODE_STATE = { TITLE: 'Place Stairways and Elevators',
                                         MESSAGE: 'Please place dots on the entrances to any location '
-                                        + 'that could be used to change floors ex: stairs, elevators, etc.',
+                                        + 'that could be used to change floors',
                                         };
 
 export const NODE_SELECTION_STATE = { HALLWAY_TITLE: 'Connect Hallways',

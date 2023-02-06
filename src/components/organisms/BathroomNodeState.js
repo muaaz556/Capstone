@@ -5,8 +5,7 @@ import { BathroomNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
-import { BUTTON, STATE_NAMES, CLEAR, BATHROOM_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE,
-        INVALID, DIALOG  } from '../../assets/locale/en';
+import { BUTTON, STATE_NAMES, CLEAR, BATHROOM_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, DIALOG  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 import Dialog from "react-native-dialog";
 
@@ -46,7 +45,7 @@ const BathroomNodeState = ({windowH, photo}) => {
     }
 
     const back = () => {
-        setStateName(STATE_NAMES.HALLWAY_NODE_STATE);
+        setStateName(STATE_NAMES.FLOOR_CHANGING_NODE_STATE);
     }
 
     const clear = () => {
@@ -66,7 +65,7 @@ const BathroomNodeState = ({windowH, photo}) => {
     const updateGesture = (gestureItem) => {
         
         if (nodeUnnamed) {
-            displayTextAlert(INVALID.TITLE, INVALID.MESSAGE)
+            displayTextAlert(BATHROOM_NODE_STATE.INVALID_TITLE, BATHROOM_NODE_STATE.INVALID_MESSAGE)
             return
         }
         setCurrentGesture(gestureItem);
