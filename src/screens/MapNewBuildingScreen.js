@@ -53,7 +53,7 @@ const MapNewBuildingScreen = ({navigation}) => {
   const [stepName, setStepName] = useState('overview');
 
   const postCoordinates = () => {
-    let cornerCoordinates = []
+    let cornerCoordinates = [];
 
     for (let i = 0; i < longitude.length; i++) {
       cornerCoordinates.push({'long': longitude[i], 'lat': latitude[i], 'x': null, 'y': null})
@@ -67,9 +67,10 @@ const MapNewBuildingScreen = ({navigation}) => {
       }
     });
 
-    postGPSData(requestData, 'post-corner-cords').then(() =>
-      navigation.navigate('FloorMappingScreen', {buildingName, floorName}),
-    );
+    postGPSData(requestData, 'post-corner-cords').then(() => {
+      let numOfCorners = longitude.length;
+      navigation.navigate('FloorMappingScreen', {buildingName, floorName, numOfCorners});
+    });
   };
 
   return (
@@ -91,7 +92,8 @@ const MapNewBuildingScreen = ({navigation}) => {
           long: [longitude, setLongitude],
           lat: [latitude, setLatitude],
           step: [stepName, setStepName],
-          postFunction: [postCoordinates]
+          postFunction: [postCoordinates],
+          stepName: [stepName, setStepName]
         }}>
           <GPSCornerSelection navigation={navigation}/>
         </GPSCornerSelectionContext.Provider>

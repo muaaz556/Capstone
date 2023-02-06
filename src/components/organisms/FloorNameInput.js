@@ -3,7 +3,7 @@ import React, {useContext} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
 import {Box, Button, Center, Text} from 'native-base';
 import {FloorNameInputContext} from '../../screens/MapNewBuildingScreen';
-import {FLOOR_NAME_TITLE, NEXT_LABEL} from '../../assets/locale/en';
+import {FLOOR_NAME_TITLE, NEXT_LABEL, FLOOR_NAME_EXAMPLES, BUTTON} from '../../assets/locale/en';
 
 const styles = StyleSheet.create({
   input: {
@@ -49,7 +49,7 @@ const FloorNameInput = () => {
           style={styles.input}
           onChangeText={e => setFloorNameState(e)}
           value={floorNameState}
-          placeholder="Floor name"
+          placeholder={FLOOR_NAME_EXAMPLES}
           placeholderTextColor="#808585"
         />
       </Box>
@@ -60,6 +60,13 @@ const FloorNameInput = () => {
             setStepNameState('gps_call');
           }}>
           <Text style={styles.buttonText}>{NEXT_LABEL}</Text>
+        </Button>
+        <Button
+          mb="2"
+          onPress={() => {
+            setStepNameState('building_name');
+          }}>
+          <Text style={styles.buttonText}>{BUTTON.BACK}</Text>
         </Button>
       </Box>
     </>

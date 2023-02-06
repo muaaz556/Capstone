@@ -6,7 +6,7 @@ import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import PleaseWait from '../molecules/PleaseWait';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
-import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES } from '../../assets/locale/en';
+import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_MESSAGE, STATE_NAMES, FINISH_TITLE } from '../../assets/locale/en';
 import {Ellipse, Line} from 'react-native-svg';
 import { postGPSData, getGPSData } from '../../helper-functions/gpsFetching';
 import uuid from 'react-native-uuid';
@@ -29,17 +29,18 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     const [connections, setConnections] = connectionsArray;
     const [selectedNode, setSelectedNode] = useState(null);
     const [showPleaseWait, setShowPleaseWait] = useState(false);
+    const [makingHallwayConnections, setMakingHallwayConnections] = useState(true);
 
-    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.VIEW_TEXT, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.NEXT, BUTTON.BACK];
 
     useEffect(() => {
-        displayTextAlert(NODE_SELECTION_STATE.TITLE, NODE_SELECTION_STATE.MESSAGE); 
+        displayTextAlert(NODE_SELECTION_STATE.HALLWAY_TITLE, NODE_SELECTION_STATE.HALLWAY_MESSAGE);
     }, []);
 
     const nodeCurrentlySelected = (item) => {
         return item.x === selectedNode?.x && item.y === selectedNode?.y;
-    }
-    
+    };
+
     const listItemGen = () => {
         let size = 0;
         let listItems = [];
@@ -77,37 +78,46 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     }
 
     const next = () => {
-        console.log("next function");
-        
-        setShowPleaseWait(true);
-        let gestureArray = []
-        
-        allGestures.forEach(gestureList => {
-            gestureList.array.map((item, key) => (
-                gestureArray.push(
+        if (makingHallwayConnections) {
+            displayTextAlert(NODE_SELECTION_STATE.DESTINATION_TITLE, NODE_SELECTION_STATE.DESTINATION_MESSAGE);
+            setMakingHallwayConnections(false);
+            return;
+        }
+        displayTwoButtonTextAlert(FINISH_TITLE, NEXT_MESSAGE, 
+            () => {
+                console.log('next function');
+
+                setShowPleaseWait(true);
+                let gestureArray = [];
+
+                allGestures.forEach(gestureList => {
+                    gestureList.array.map((item, key) => (
+                        gestureArray.push(
+                            {
+                                guid: item.guid,
+                                type: gestureList.type,
+                                x: item.x,
+                                y: item.y,
+                                adjacencyList: item.adjacencyList,
+                                name: item.name,
+                            }
+                        )
+                    ));
+                })
+                const requestData = JSON.stringify({
+                    node:
                     {
-                        guid: item.guid,
-                        type: gestureList.type,
-                        x: item.x,
-                        y: item.y,
-                        adjacencyList: item.adjacencyList,
-                        name: item.name,
+                        buildingName: buildingName,
+                        floorName: floorName,
+                        nodes: gestureArray
+                    },
+                });
+                postGPSData(requestData, 'post-nodes').then(() =>
+                    {
+                        setShowPleaseWait(false);
+                        navigation.navigate('AccessibilityScreen');
                     }
-                )
-            ));
-        })
-        const requestData = JSON.stringify({
-            node: 
-            {
-                buildingName: buildingName,
-                floorName: floorName,
-                nodes: gestureArray
-            },
-        });
-        postGPSData(requestData, 'post-nodes').then(() =>
-            {
-                setShowPleaseWait(false);
-                navigation.navigate('AccessibilityScreen');
+                );
             }
         );
     }
@@ -200,9 +210,9 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                 return; 
             }
             createConnection(selectedNode, connectingNode);
-            setSelectedNode(null);
+            setSelectedNode(connectingNode);
         }
-        
+
     }
 
     const onPress = (buttonName) => {
@@ -230,7 +240,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
 
         }
     }
-    
+
     const isDisabled = (buttonName) => {
         return ((buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && connections.length === 0 )
                 || (buttonName === BUTTON.UNSELECT && selectedNode === null) || (buttonName === BUTTON.VIEW_TEXT && (selectedNode?.name === '' || selectedNode === null));
