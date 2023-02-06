@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { View } from 'native-base';
-import Svg, {Ellipse} from 'react-native-svg';
-import { NodePlacementContext } from '../organisms/FourCornerState';
+import Svg from 'react-native-svg';
+import uuid from 'react-native-uuid';
 
 const styles = StyleSheet.create({ 
     touchableOpacity: {
@@ -14,11 +14,7 @@ const styles = StyleSheet.create({
     }
 });
 
-const NodePlacement = ({photo}) => {
-
-    const {windowH, gestures} = useContext(NodePlacementContext);
-    const [gestureLocations, setGestureLocations] = gestures;
-    const [windowHState, setWindowHState] = windowH;
+const NodePlacement = ({photo, windowH, updateGesture, listItems}) => {
 
     const windowWidth = Dimensions.get('window').width;
 
@@ -28,30 +24,20 @@ const NodePlacement = ({photo}) => {
         let newXRange = 100;
         let newXValue = (evt.nativeEvent.pageX / oldXRange * newXRange);
 
-        let oldYRange = windowHState;
+        let oldYRange = windowH;
         let newYRange = 100;
         let newYValue = (evt.nativeEvent.pageY / oldYRange * newYRange) ;
 
         let gestureItem = {
             x: newXValue,
             y: newYValue,
+            guid: uuid.v4(),
+            adjacencyList: [],
+            name: "",
         };
 
-        setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
+        updateGesture(gestureItem);
     };
-
-    const listItems = gestureLocations.map((item, key) => (
-        <View key={key}>
-            <Ellipse
-                cx={item.x}
-                cy={item.y}
-                rx="0.2"
-                ry="1.1"
-                stroke="blue"
-                fill="blue"
-            />
-        </View>
-    ));
 
    return ( 
     <>

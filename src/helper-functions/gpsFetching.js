@@ -6,6 +6,7 @@ export const getGPSData = async (urlPath = "get-gps", query="", value="") => {
     if(query != ""){
         queryString += "?" + query + "=" + value
     }
+    console.log("here")
     await fetch(`${NGROK_URL}/api/${urlPath}${queryString}`, {
         method: 'GET',
         headers: {
