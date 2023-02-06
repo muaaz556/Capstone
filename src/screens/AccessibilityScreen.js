@@ -68,6 +68,11 @@ const AccessibilityScreen = ({navigation}) => {
           onPress={() => navigation.navigate('MapNewBuildingScreen')}>
           <Text style={styles.buttonText}>Map New Building</Text>
         </Button>
+        <Button
+          mb="2"
+          onPress={() => navigation.navigate('MapExistingBuildingScreen')}>
+          <Text style={styles.buttonText}>Map Existing Building</Text>
+        </Button>
       </Box>
     </View>
   );

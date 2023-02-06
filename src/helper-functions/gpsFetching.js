@@ -1,18 +1,16 @@
 import { NGROK_URL } from '@env'
 
-export const getGPSData = async (urlPath = "get-gps", query="", value="") => {
-    let queryString = "";
+export const getGPSData = async (urlPath = "get-gps", queryString = "") => {
     let response;
-    if(query != ""){
-        queryString += "?" + query + "=" + value
+    if(queryString != ""){
+        queryString = "?" + queryString
     }
-    console.log("here")
     await fetch(`${NGROK_URL}/api/${urlPath}${queryString}`, {
         method: 'GET',
         headers: {
             "access-control-allow-origin": "*",
             'Accept': 'application/json',
-            'Content-type': 'application/json'
+            'Content-type': 'application/json',
         },
     }).then(res => {
         if (res.ok) {

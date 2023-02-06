@@ -72,21 +72,6 @@ const styles = StyleSheet.create({
 });
 
 const LoginScreen = ({navigation}) => {
-  const postRequest = () => {
-    const requestData = JSON.stringify({
-      gps: [
-        {
-          name: 'names',
-          gpsCord: {
-            x: 10,
-            y: 10,
-          },
-        },
-      ],
-    });
-
-    postGPSData(requestData);
-  };
 
   const handleGuestStudentButtonClick = () => {
     console.log('Fetching data');
@@ -109,12 +94,12 @@ const LoginScreen = ({navigation}) => {
           <Stack mx="0">
             <Button
               style={styles.button}
-              onPress={() => navigation.navigate('AdminHomeScreen')}>
+              onPress={() => {}/*() => navigation.navigate('AdminHomeScreen')*/}>
               <Text style={styles.buttonText}>Guest Admin</Text>
             </Button>
             <Button
               style={styles.button}
-              onPress={handleGuestStudentButtonClick}>
+              onPress={() => navigation.navigate('NavigationScreen')}>
               <Text style={styles.buttonText}>Guest Student</Text>
             </Button>
             <Button

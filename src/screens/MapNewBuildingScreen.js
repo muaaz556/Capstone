@@ -60,15 +60,11 @@ const MapNewBuildingScreen = ({navigation}) => {
     }
 
     const requestData = JSON.stringify({
-      gpsCornerCord: [
-        {
+      gpsCornerCord: {
           buildingName: buildingName,
           floorName: floorName,
-          cornerCords: {
-            cornerCords: cornerCoordinates,
-          },
-        },
-      ],
+          cornerCords: cornerCoordinates,
+      }
     });
 
     postGPSData(requestData, 'post-corner-cords').then(() => {
