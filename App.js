@@ -12,6 +12,7 @@ const App = () => {
   const [kLongitude, kSetLongitude] = useState([]);
   const [kLatitude, kSetLatitude] = useState([]);
 
+  //
   const [indexTracker, setIndexTracker] = useState([]);
   const [pointTracker, setPointTracker] = useState([]);
 
@@ -80,23 +81,33 @@ const App = () => {
   //   }
 
   let closestPoint = (coordinateX, coordinateY) => {
+
+    //array = gps coordinate of all nodes
     let distanceArray = [];
     array.forEach(point => {
+
+      //add distances between current location and node to distance array
       distanceArray.push(
         distance(point[0], point[1], coordinateX, coordinateY),
       );
     });
+
+    //find min distance
     let minVal = 100;
     distanceArray.forEach(val => {
       if (val < minVal) minVal = val;
     });
 
+    //find node that is min distance from curr location
     let point = distanceArray.indexOf(minVal);
 
+    //if current or next location is the min point and the value is within the pre-calculated boundary
     if (
       (currentIndex === point || currentIndex + 1 === point) &&
       minVal < maxBoundary
     ) {
+
+      //update current point to be either current or next
       currentIndex = point;
       setIndexTracker(indexTracker => [...indexTracker, currentIndex]);
       setIndexTracker(indexTracker => [
@@ -110,6 +121,9 @@ const App = () => {
     console.log('point: ' + point);
     console.log('currentIndex: ' + currentIndex);
   };
+
+  //point tracker, constantly tracks current point
+  //index tracker, only tracks changes in nodes
 
   useEffect(() => {
     const interval = setInterval(() => {
