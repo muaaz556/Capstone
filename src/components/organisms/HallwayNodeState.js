@@ -79,7 +79,7 @@ const HallwayNodeState = ({windowH, photo}) => {
     }
     
     const isDisabled = (buttonName) => {
-        return (buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && gestureLocations.length === 0;
+        return (buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR || buttonName === BUTTON.NEXT) && gestureLocations.length === 0;
     }
     
     const listItems = gestureLocations.map((item, key) => (

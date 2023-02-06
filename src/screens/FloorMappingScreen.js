@@ -52,7 +52,11 @@ const FloorMappingScreen = ({route, navigation}) => {
             photoState: [photo, setPhoto],
             cornerNodeGestures: [cornerNodeGestures, setCornerNodeGestures],
             }}>
-            <CornerNodeState buildingName={route.params.buildingName} windowH={windowH} clearAllNodes={clearAllNodes} numOfCorners={route.params.numOfCorners}/>
+            <CornerNodeState 
+              buildingName={route.params.buildingName} 
+              windowH={windowH} 
+              clearAllNodes={clearAllNodes} 
+              numOfCorners={route.params.numOfCorners} />
           </CornerNodeStateContext.Provider>
         </>
       ) : stateName === STATE_NAMES.DESTINATION_NODE_STATE ? (

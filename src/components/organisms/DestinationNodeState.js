@@ -5,7 +5,8 @@ import { DestinationNodeStateContext } from '../../screens/FloorMappingScreen';
 import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
-import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES, ENTER_NODE_NAME_TITLE  } from '../../assets/locale/en';
+import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES,
+        ENTER_NODE_NAME_TITLE, INVALID, DIALOG  } from '../../assets/locale/en';
 import {Ellipse} from 'react-native-svg';
 import Dialog from "react-native-dialog";
 
@@ -27,14 +28,16 @@ const DestinationNodeState = ({windowH, photo}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState("");
     const [currentGesture, setCurrentGesture] = useState(null);
+    const [nodeUnnamed, setNodeUnnamed] = useState(false);
 
-    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.LABEL, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
 
     useEffect(() => {
         displayTextAlert(DESTINATION_NODE_STATE.TITLE, DESTINATION_NODE_STATE.MESSAGE);
     }, []);
     
     const next = () => {
+
         displayTwoButtonTextAlert(NEXT_TITLE, NEXT_MESSAGE, 
             () => {
                 setStateName(STATE_NAMES.HALLWAY_NODE_STATE);
@@ -50,25 +53,36 @@ const DestinationNodeState = ({windowH, photo}) => {
         displayTwoButtonTextAlert(CLEAR.TITLE, CLEAR.MESSAGE, 
             () => {
                 setGestureLocations([]);
+                setNodeUnnamed(false);
             }
         );
     }
 
     const undo = () => {
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
+        setNodeUnnamed(false);
     }
 
     const updateGesture = (gestureItem) => {
+
+        if (nodeUnnamed) {
+            displayTextAlert(INVALID.TITLE, INVALID.MESSAGE)
+            return
+        }
         setCurrentGesture(gestureItem);
-        setName("");
-        setModalVisible(true);
+        setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
+        setNodeUnnamed(true);
     }
 
     const modalConfirm = () => {
-        console.log(currentGesture);
+        setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
         currentGesture.name = name;
-        console.log(currentGesture);
         setGestureLocations(gestureLocations => [...gestureLocations, currentGesture]);
+    }
+
+    const label = () => {
+        setName("");
+        setModalVisible(true);
     }
 
     const onPress = (buttonName) => {
@@ -85,6 +99,9 @@ const DestinationNodeState = ({windowH, photo}) => {
             case BUTTON.BACK:
                 back();
                 break;
+            case BUTTON.LABEL:
+                label();
+                break;
             default:
                 console.log("invalid button name");
 
@@ -92,7 +109,9 @@ const DestinationNodeState = ({windowH, photo}) => {
     }
     
     const isDisabled = (buttonName) => {
-        return (buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR) && gestureLocations.length === 0;
+        return ((buttonName === BUTTON.UNDO || buttonName === BUTTON.CLEAR || buttonName === BUTTON.NEXT) && gestureLocations.length === 0) || 
+                (buttonName === BUTTON.LABEL && !nodeUnnamed) || 
+                ((buttonName === BUTTON.NEXT || buttonName === BUTTON.BACK) && nodeUnnamed);
     }
     
     const listItems = gestureLocations.map((item, key) => (
@@ -117,15 +136,16 @@ const DestinationNodeState = ({windowH, photo}) => {
         <>
             <View>
                 <Dialog.Container visible={modalVisible}>
-                    <Dialog.Title>Set Destination Name</Dialog.Title>
+                    <Dialog.Title>{DIALOG.DESTINATION_TITLE}</Dialog.Title>
                     <Dialog.Description>
-                        Please provide a name for the selected destination.
+                        {DIALOG.DESTINATION_DESCRIPTION}
                     </Dialog.Description>
                     <Dialog.Input onChangeText={(input) => {setName(input)}} value={name} />
                     <Dialog.Button label="Cancel" onPress={() => toggleModal()}/>
                     <Dialog.Button label="Ok" onPress={() => {
                         modalConfirm();
                         toggleModal();
+                        setNodeUnnamed(false);
                         }}/>
                 </Dialog.Container>
             </View>

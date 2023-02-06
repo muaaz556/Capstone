@@ -36,43 +36,56 @@ export const NEXT_MESSAGE = 'Please ensure you have completed this step before p
 // TODO: PLS CONNOR REWRITE THE MESSAGES
 // look for synonyms to the word "add" in this context
 // need a better way to explain that we want hallway nodes placed on either side of a room
-export const CORNERS_STATE = { TITLE: 'Add Corners',
-                                    MESSAGE: 'Please click on the corners of the building '
-                                    + 'in the same order that you visited them previously.',
+export const INVALID = {TITLE: 'Invalid',
+                        MESSAGE: 'Please enter room name before adding another dot.',}
+
+export const DIALOG = {DESTINATION_TITLE: 'Set Room Name',
+                        DESTINATION_DESCRIPTION: 'Please provide a name for the selected room.',
+                        BATHROOM_TITLE: 'Set Bathroom Gender',
+                        BATHROOM_DESCRIPTION: 'Please provide a gender for the selected bathroom.'
+
+}
+
+export const CORNERS_STATE = { TITLE: 'Specify Corners',
+                                    MESSAGE: 'Please tap the corners of the building '
+                                    + 'in the same order they were visited previously.',
                                     };
 
-export const DESTINATION_NODE_STATE = { TITLE: 'Add Rooms',
-                                    MESSAGE: 'Please place dots on the entrances of all the rooms. '
-                                    + 'If a room has multiple doors, please place dots on all of them. '
+export const DESTINATION_NODE_STATE = { TITLE: 'Place Rooms',
+                                    MESSAGE: 'Please place dots on the entrances to each room. '
+                                    + 'If a room has multiple doors or entrances, please place dots on all of them. '
                                     + 'After placing a dot, press the label button to add a room name. '
                                     + 'You cannot place another dot until you label the previous one.',
+                                    INVALID_TITLE: 'Invalid',
+                                    INVALID_MESSAGE: 'Please enter room name before adding another dot.',
                                     };
 
 export const HALLWAY_NODE_STATE = { TITLE: 'Add Hallways',
-                                    MESSAGE: 'Please place dots on the hallways. '
-                                    + 'These dots should be placed on all hallways that lead to rooms '
-                                    + 'and be approximately 2m apart from one another. '
-                                    + 'Hallway dots should be placed on either side of every entrance to a room.',
+                                    MESSAGE: 'Please place dots throughout all hallways. '
+                                    + 'Each dot should be at most 2m apart from one another. '
+                                    + 'Place Hallway dots on either side of every entrance to a room.',
                                     };
 
-export const BATHROOM_NODE_STATE = { TITLE: 'Add Bathrooms',
-                                    MESSAGE: 'Please place dots on the bathroom entrances. '
-                                    + 'After placing a dot, press the label button to specify bathroom type. '
+export const BATHROOM_NODE_STATE = { TITLE: 'Identify Bathrooms',
+                                    MESSAGE: 'Please place dots on each bathroom entrance. '
+                                    + 'After placing a dot, press the label button to specify bathroom gender. '
                                     + 'You cannot place another dot until you label the previous one.',
+                                    INVALID_TITLE: 'Invalid',
+                                    INVALID_MESSAGE: 'Please enter room name before adding another dot.',
                                     };
 
-export const FLOOR_CHANGING_NODE_STATE = { TITLE: 'Add Stairways and Elevators',
+export const FLOOR_CHANGING_NODE_STATE = { TITLE: 'Designate Stairways and Elevators',
                                         MESSAGE: 'Please place dots on the entrances to any location '
                                         + 'that could be used to change floors ex: stairs, elevators, etc.',
                                         };
 
 export const NODE_SELECTION_STATE = { HALLWAY_TITLE: 'Connect Hallways',
                                         HALLWAY_MESSAGE: 'Please create connections between hallway dots. '
-                                        + 'To create a connection, first click on a dot to select it. '
-                                        + 'Then click on another dot to create a connection between the two. '
+                                        + 'To create a connection, tap a dot to select it. '
+                                        + 'Then, tap the dot you would like to connect to. A connection will be drawn between the two. ' 
                                         + 'Connections are used to show the path a user can walk.',
 
-                                        DESTINATION_TITLE: 'Connect Hallways to Rooms',
+                                        DESTINATION_TITLE: 'Attach Rooms to Hallways',
                                         DESTINATION_MESSAGE: 'Please connect the hallways to the rooms, bathrooms, etc. '
                                         + 'Each of the room dots must be connected to the two closest hallways dots. '
                                         + 'The user must be able to walk from the hallway dot to the entrance of the room '
@@ -80,7 +93,7 @@ export const NODE_SELECTION_STATE = { HALLWAY_TITLE: 'Connect Hallways',
                                         };
 
 export const TOO_MANY_NODES_PLACED = { TITLE: 'Too Many Corners Detected',
-                                        MESSAGE: 'You have already placed the total number of corners. Please undo if '
+                                        MESSAGE: 'You have already placed the total number of corners. Please press undo if '
                                         + 'you need to replace any poorly placed dots.',
                                         };
 
@@ -91,6 +104,7 @@ export const BUTTON = { NEXT: 'Next',
                         CLEAR: 'Clear',
                         UPLOAD: 'Upload',
                         BACK: 'Back',
+                        LABEL: 'Label',
                         UNSELECT: 'Unselect',
                         VIEW_TEXT: 'View Text',
                         };
