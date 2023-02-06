@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import {StyleSheet, TextInput, ScrollView, SafeAreaView} from 'react-native';
-import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
+import React, { useEffect, useState } from 'react';
+import {StyleSheet, TextInput} from 'react-native';
+import {Box, Button, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
-import ListItems from '../components/molecules/ListItems';
 import {NEXT_LABEL} from '../assets/locale/en';
 
 const styles = StyleSheet.create({
@@ -129,19 +128,21 @@ const MapExistingBuildingScreen = ({navigation}) => {
           <View style={styles.dividerLine} />
         </View>
         {stepName == 'building' ? (
-          <FlatList
-          data={buildings}
-          renderItem={({item}) => (
-              <>
-                  <Button
-                  title={item}
-                  style={styles.button}
-                  onPress={()=> updateStep(item)}>
-                      {item}
-                  </Button>
-              </>
-          )}
-          />
+          <View maxHeight="65%">
+            <FlatList
+            data={buildings}
+            renderItem={({item}) => (
+                <>
+                    <Button
+                    title={item}
+                    style={styles.button}
+                    onPress={()=> updateStep(item)}>
+                        {item}
+                    </Button>
+                </>
+            )}
+            />
+          </View>
         ): stepName == 'floor' ? (
           <>
             <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
