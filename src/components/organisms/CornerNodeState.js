@@ -38,21 +38,12 @@ const CornerNodeState = ({buildingName, windowH, clearAllNodes, numOfCorners}) =
     }
 
     const mapGesturesToGPS = async () => {
-<<<<<<< HEAD:src/components/organisms/FourCornerState.js
-        getFourGPSCoords = await getGPSData('get-corner-cords', `getType=get-route&buildingName=${buildingName}`);
+        getCornerGPSCoords = await getGPSData('get-corner-cords', `getType=get-route&buildingName=${buildingName}`);
         for (let i = 0; i < gestureLocations.length; i++) {
-            getFourGPSCoords.cornerCords[i]['x'] = gestureLocations[i].x;
-            getFourGPSCoords.cornerCords[i]['y'] = gestureLocations[i].y;
+            getCornerGPSCoords.cornerCords[i]['x'] = gestureLocations[i].x;
+            getCornerGPSCoords.cornerCords[i]['y'] = gestureLocations[i].y;
         }
-        const requestData = JSON.stringify({'gpsCornerCord': getFourGPSCoords});
-=======
-        getCornerGPSCoords = await getGPSData('get-corner-cords', 'buildingName', buildingName);
-        for (let i = 0; i < gestureLocations.length; i++) {
-            getCornerGPSCoords.cords.cornerCords[i]['x']  = gestureLocations[i].x;
-            getCornerGPSCoords.cords.cornerCords[i]['y'] = gestureLocations[i].y;
-        }
-        const requestData = JSON.stringify({'gpsCornerCord': [getCornerGPSCoords]});
->>>>>>> 604dd9b7c4abeffed2cdf8c9cb7cd1fb4a6edeff:src/components/organisms/CornerNodeState.js
+        const requestData = JSON.stringify({'gpsCornerCord': getCornerGPSCoords});
         postGPSData(requestData, 'post-corner-cords');
     };
 
