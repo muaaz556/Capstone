@@ -9,10 +9,10 @@ export const SIDEBAR_BUTTONS = {
 export const NODES = {
     CORNER_NODE: "blue",
     DESTINATION_NODE: "red",
-    HALLWAY_NODE: "green",
+    HALLWAY_NODE: "#13d12c",
     FLOOR_CHANGING_NODE: "purple",
     BATHROOM_NODE: "pink",
     SELECTED_NODE: "yellow",
     CONNECTING_NODE: "#0f1cd6",
-    CONNECTING_HALLWAYS: "#98891a"
+    CONNECTING_HALLWAYS: "#033007"
 }
