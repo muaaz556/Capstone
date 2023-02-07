@@ -6,7 +6,7 @@ import uuid from 'react-native-uuid';
 
 const styles = StyleSheet.create({ 
     touchableOpacity: {
-        flex: 0.9,
+        flex: 0.84,
         width: '100%',
         height: '100%',
         alignItems: 'center',
@@ -20,7 +20,7 @@ const NodePlacement = ({photo, windowH, updateGesture, listItems}) => {
 
     const handleGestureClick = (evt) => {
 
-        let oldXRange = windowWidth*0.9;
+        let oldXRange = windowWidth*0.84;
         let newXRange = 100;
         let newXValue = (evt.nativeEvent.pageX / oldXRange * newXRange);
 

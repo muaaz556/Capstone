@@ -7,17 +7,14 @@ import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, TOO_MANY_NODES_PLACED, CORNERS_STATE, CLEAR,
      STATE_NAMES, NEXT_TITLE, NEXT_MESSAGE  } from '../../assets/locale/en';
+import {NODES} from '../../assets/colors/Colors.js';
 import { getGPSData, postGPSData } from '../../helper-functions/gpsFetching';
 import { launchImageLibrary } from 'react-native-image-picker';
 import {Ellipse} from 'react-native-svg';
 
 const styles = StyleSheet.create({
     navBarView: {
-        flex: 0.1,
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-        borderColor: 'black',
-        borderLeftWidth: 5,
+        flex: 0.16,
       },
 });
 
@@ -119,8 +116,8 @@ const CornerNodeState = ({buildingName, windowH, clearAllNodes, numOfCorners}) =
                 rx="0.7"
                 ry="1.3"
                 strokeWidth="0.2"
-                stroke="blue"
-                fill="blue"
+                stroke={NODES.CORNER_NODE}
+                fill={NODES.CORNER_NODE}
             />
         </View>
     ));

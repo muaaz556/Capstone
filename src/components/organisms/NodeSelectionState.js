@@ -7,20 +7,16 @@ import SideBar from '../molecules/SideBar';
 import PleaseWait from '../molecules/PleaseWait';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_MESSAGE, STATE_NAMES, FINISH_TITLE } from '../../assets/locale/en';
+import {NODES} from '../../assets/colors/Colors.js';
 import {Ellipse, Line} from 'react-native-svg';
 import { postGPSData, getGPSData } from '../../helper-functions/gpsFetching';
 import uuid from 'react-native-uuid';
 
 const styles = StyleSheet.create({ 
     navBarView: {
-        flex: 0.1,
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-        borderColor: 'black',
-        borderLeftWidth: 5,
+        flex: 0.16,
       },
 });
-
 
 const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingName, floorName}) => {
 
@@ -51,8 +47,8 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                     y1={item[0].y}
                     x2={item[1].x}
                     y2={item[1].y}
-                    stroke="black"
-                    strokeWidth="0.5"
+                    stroke={isHallwayType(item[0]) && isHallwayType(item[1])? NODES.CONNECTING_HALLWAYS : NODES.CONNECTING_NODE}
+                    strokeWidth="0.75"
                 />
             </View>
         ));
@@ -65,8 +61,8 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                         cy={item.y}
                         rx="0.7"
                         ry="1.3"
-                        strokeWidth="0.2"
-                        stroke={nodeCurrentlySelected(item) ? "black" : gestureList.color}
+                        strokeWidth="0.3"
+                        stroke={nodeCurrentlySelected(item) ? NODES.SELECTED_NODE : gestureList.color}
                         fill={gestureList.color}
                     />
                 </View>
@@ -75,6 +71,16 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
             size += listItems.length;
         });
         return listItems;
+    }
+
+    const isHallwayType = (testItem) => {
+        let flag = false;
+        allGestures.forEach(gestureList => {
+            if (gestureList.array.includes(testItem) && gestureList.type === STATE_NAMES.HALLWAY_NODE_STATE){
+                flag = true;
+            }
+        });
+        return flag;
     }
 
     const next = () => {

@@ -6,15 +6,12 @@ import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, FLOOR_CHANGING_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES } from '../../assets/locale/en';
+import {NODES} from '../../assets/colors/Colors.js';
 import {Ellipse} from 'react-native-svg';
 
 const styles = StyleSheet.create({ 
     navBarView: {
-        flex: 0.1,
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-        borderColor: 'black',
-        borderLeftWidth: 5,
+        flex: 0.16,
       },
 });
 
@@ -90,8 +87,8 @@ const FloorChangingNodeState = ({windowH, photo}) => {
                 rx="0.7"
                 ry="1.3"
                 strokeWidth="0.2"
-                stroke="purple"
-                fill="purple"
+                stroke={NODES.FLOOR_CHANGING_NODE}
+                fill={NODES.FLOOR_CHANGING_NODE}
             />
         </View>
     ));
