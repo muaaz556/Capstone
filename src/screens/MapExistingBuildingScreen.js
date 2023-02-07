@@ -92,7 +92,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
     fetchBuildings();
   }, []);
 
-  const updateStep = (itemName) => {
+  const updateStep = async (itemName) => {
     if (stepName == 'building') {
       setselectedBuilding(itemName)
       result.nodes.forEach(item => {
@@ -104,8 +104,10 @@ const MapExistingBuildingScreen = ({navigation}) => {
     }
     else if (stepName == 'floor') {
       let buildingName = selectedBuilding;
+      let getCornerGPSCoords = await getGPSData('get-corner-cords', `getType=get-route&buildingName=${buildingName}`);
+      let numOfCorners = getCornerGPSCoords.cornerCords.length;
       let floorName = itemName;
-      navigation.navigate('FloorMappingScreen', {buildingName, floorName});
+      navigation.navigate('FloorMappingScreen', {buildingName, floorName, numOfCorners});
     }
   }
 
