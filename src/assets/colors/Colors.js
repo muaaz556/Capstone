@@ -1,0 +1,17 @@
+export const SIDEBAR_BUTTONS = {
+    DISABLED: "#414547",
+    ENABLED: "#2298b3",
+    BACKGROUND: "#202124",
+    ENABLED_TEXT: "#ffffff",
+    DISABLED_TEXT: "#99a3a4",
+}
+
+export const NODES = {
+    CORNER_NODE: "#ff4081",
+    DESTINATION_NODE: "#7c4dff",
+    HALLWAY_NODE: "#26a69a",
+    FLOOR_CHANGING_NODE: "#59981A",
+    BATHROOM_NODE: "#B51C74",
+    SELECTED_NODE: "#76ff03",
+    CONNECTING_NODE: "#795548",
+}

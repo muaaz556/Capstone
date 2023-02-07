@@ -1,32 +1,50 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {Button, FlatList, View} from 'native-base';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+import {Button, FlatList, View, Text} from 'native-base';
+import {SIDEBAR_BUTTONS} from '../../assets/colors/Colors.js';
 
 const styles = StyleSheet.create({
-    button: {
-      marginTop: 10,
-      flex: 1,
-      width: '100%',
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignContent: 'center',
-      textAlign: 'center',
-    },
-    disabledButton: {
-      marginTop: 10,
-      flex: 1,
-      width: '100%',
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignContent: 'center',
-      textAlign: 'center',
-      backgroundColor: 'grey'
-    },
     optionBar: {
       flex: 1,
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: SIDEBAR_BUTTONS.BACKGROUND,
+      width: "100%",
+      paddingVertical: 12,
+      marginRight: -4,
+      borderTopLeftRadius: 16,
+      borderBottomLeftRadius: 16,
+    },
+    button: {
+        alignItems: 'center',
+        backgroundColor: SIDEBAR_BUTTONS.ENABLED,
+        paddingVertical: 6,
+        paddingHorizontal: 20,
+        borderRadius: 14,
+        marginVertical: 8,
+    },
+    disabledButton: {
+        alignItems: 'center',
+        backgroundColor: SIDEBAR_BUTTONS.DISABLED,
+        paddingVertical: 6,
+        paddingHorizontal: 20,
+        borderRadius: 14,
+        marginVertical: 8,
+    },
+    buttonText: {
+        color: SIDEBAR_BUTTONS.ENABLED_TEXT,  
+        fontWeight: '500',
+        fontSize: 14,
+        minWidth: "70%",
+        textAlign:"center",
+    },
+    diabledButtonText: {
+        color: SIDEBAR_BUTTONS.DISABLED_TEXT,  
+        fontWeight: '500',
+        fontSize: 14,
+        minWidth: "70%",
+        textAlign:"center"
     },
   });
 
@@ -41,13 +59,13 @@ const SideBar = ({onPress, isDisabled, listOfButtonNames, stateName}) => {
                 data={listOfButtonNames}
                 renderItem={({item}) => (
                     <>
-                        <Button
-                            title={item}
-                            onPress={() => onPress(item)}
-                            style={(isDisabled(item)) ? styles.disabledButton : styles.button }
-                            disabled={isDisabled(item) ? true : false }>
-                            {item}
-                        </Button>
+                        <TouchableOpacity
+                        onPress={() => onPress(item)}
+                        style={(isDisabled(item)) ? styles.disabledButton : styles.button}
+                        disabled={isDisabled(item) ? true : false }
+                        >
+                        <Text style={(isDisabled(item)) ? styles.diabledButtonText : styles.buttonText}>{item}</Text>
+                        </TouchableOpacity>
                     </>
                 )}
             />

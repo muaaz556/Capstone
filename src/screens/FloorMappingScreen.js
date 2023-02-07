@@ -7,6 +7,7 @@ import FloorChangingNodeState from '../components/organisms/FloorChangingNodeSta
 import BathroomNodeState from '../components/organisms/BathroomNodeState';
 import NodeSelectionState from '../components/organisms/NodeSelectionState';
 import { STATE_NAMES } from '../assets/locale/en';
+import {NODES} from '../assets/colors/Colors.js';
 
 export const CornerNodeStateContext = createContext();
 export const DestinationNodeStateContext = createContext();
@@ -107,10 +108,10 @@ const FloorMappingScreen = ({route, navigation}) => {
               navigation={navigation}
               buildingName={route.params.buildingName}
               floorName={route.params.floorName}
-              allGestures={[{color: 'red', array: destinationGestures, type: STATE_NAMES.DESTINATION_NODE_STATE},
-                          {color: 'green', array: hallwayGestures,  type: STATE_NAMES.HALLWAY_NODE_STATE},
-                          {color: '#FFC0CB', array: bathroomGestures, type: STATE_NAMES.BATHROOM_NODE_STATE},
-                          {color: 'purple', array: floorChangingGestures, type: STATE_NAMES.FLOOR_CHANGING_NODE_STATE}]}
+              allGestures={[{color: NODES.DESTINATION_NODE, array: destinationGestures, type: STATE_NAMES.DESTINATION_NODE_STATE},
+                          {color: NODES.HALLWAY_NODE, array: hallwayGestures,  type: STATE_NAMES.HALLWAY_NODE_STATE},
+                          {color: NODES.BATHROOM_NODE, array: bathroomGestures, type: STATE_NAMES.BATHROOM_NODE_STATE},
+                          {color: NODES.FLOOR_CHANGING_NODE, array: floorChangingGestures, type: STATE_NAMES.FLOOR_CHANGING_NODE_STATE}]}
               />
           </NodeSelectionStateContext.Provider>
         </>

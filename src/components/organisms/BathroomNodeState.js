@@ -6,17 +6,14 @@ import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, STATE_NAMES, CLEAR, BATHROOM_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, DIALOG  } from '../../assets/locale/en';
+import {NODES} from '../../assets/colors/Colors.js';
 import {Ellipse} from 'react-native-svg';
 import Dialog from "react-native-dialog";
 
 
 const styles = StyleSheet.create({ 
     navBarView: {
-        flex: 0.1,
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-        borderColor: 'black',
-        borderLeftWidth: 5,
+        flex: 0.16,
       },
 });
 
@@ -125,8 +122,8 @@ const BathroomNodeState = ({windowH, photo}) => {
                 rx="0.7"
                 ry="1.3"
                 strokeWidth="0.2"
-                stroke="#FFC0CB"
-                fill="#FFC0CB"
+                stroke={NODES.BATHROOM_NODE}
+                fill={NODES.BATHROOM_NODE}
             />
         </View>
     ));

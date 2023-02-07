@@ -7,16 +7,13 @@ import SideBar from '../molecules/SideBar';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
 import { BUTTON, CLEAR, DESTINATION_NODE_STATE, NEXT_TITLE, NEXT_MESSAGE, STATE_NAMES,
         ENTER_NODE_NAME_TITLE, DIALOG  } from '../../assets/locale/en';
+import {NODES} from '../../assets/colors/Colors.js';
 import {Ellipse} from 'react-native-svg';
 import Dialog from "react-native-dialog";
 
 const styles = StyleSheet.create({ 
     navBarView: {
-        flex: 0.1,
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-        borderColor: 'black',
-        borderLeftWidth: 5,
+        flex: 0.16,
       },
 });
 
@@ -122,8 +119,8 @@ const DestinationNodeState = ({windowH, photo}) => {
                 rx="0.7"
                 ry="1.3"
                 strokeWidth="0.2"
-                stroke="red"
-                fill="red"
+                stroke={NODES.DESTINATION_NODE}
+                fill={NODES.DESTINATION_NODE}
             />
         </View>
     ));
