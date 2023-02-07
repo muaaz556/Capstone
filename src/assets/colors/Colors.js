@@ -7,11 +7,12 @@ export const SIDEBAR_BUTTONS = {
 }
 
 export const NODES = {
-    CORNER_NODE: "#ff4081",
-    DESTINATION_NODE: "#7c4dff",
-    HALLWAY_NODE: "#26a69a",
-    FLOOR_CHANGING_NODE: "#59981A",
-    BATHROOM_NODE: "#B51C74",
-    SELECTED_NODE: "#76ff03",
-    CONNECTING_NODE: "#795548",
+    CORNER_NODE: "blue",
+    DESTINATION_NODE: "red",
+    HALLWAY_NODE: "green",
+    FLOOR_CHANGING_NODE: "purple",
+    BATHROOM_NODE: "pink",
+    SELECTED_NODE: "yellow",
+    CONNECTING_NODE: "#0f1cd6",
+    CONNECTING_HALLWAYS: "#98891a"
 }

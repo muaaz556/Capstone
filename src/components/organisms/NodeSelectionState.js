@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
       },
 });
 
-
 const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingName, floorName}) => {
 
     const {state, connectionsArray} = useContext(NodeSelectionStateContext);
@@ -48,7 +47,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                     y1={item[0].y}
                     x2={item[1].x}
                     y2={item[1].y}
-                    stroke={NODES.CONNECTING_NODE}
+                    stroke={isHallwayType(item[0]) && isHallwayType(item[1])? NODES.CONNECTING_HALLWAYS : NODES.CONNECTING_NODE}
                     strokeWidth="0.75"
                 />
             </View>
@@ -72,6 +71,16 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
             size += listItems.length;
         });
         return listItems;
+    }
+
+    const isHallwayType = (testItem) => {
+        let flag = false;
+        allGestures.forEach(gestureList => {
+            if (gestureList.array.includes(testItem) && gestureList.type === STATE_NAMES.HALLWAY_NODE_STATE){
+                flag = true;
+            }
+        });
+        return flag;
     }
 
     const next = () => {
