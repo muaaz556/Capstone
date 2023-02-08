@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {StyleSheet} from 'react-native';
-import {Button, FlatList} from 'native-base';
+import {Button, FlatList, Box, View, Text} from 'native-base';
 
 const styles = StyleSheet.create({
     button: {

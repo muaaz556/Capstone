@@ -58,7 +58,7 @@ let result;
 let currentNodeData;
 const NavigationScreen = ({navigation}) => {
   const [buildings, setBuildings] = useState([])
-  const [stepName, setStepName] = useState('building');
+  const [stepName, setStepName] = useState('');
   const [floors, setFloors] = useState([])
   const [destinations, setDestinations] = useState([])
   const [selectedBuilding, setSelectedBuilding] = useState("")
@@ -69,12 +69,15 @@ const NavigationScreen = ({navigation}) => {
     const fetchBuildings = async () => {
       result = await getGPSData('get-nodes', 'getType=get-building-data');
 
+
+      console.log("buildings received ", result);
       let building = []
       result.nodes.forEach(item => {
         building.push(item.buildingName);
       });
 
       setBuildings(building);
+      setStepName('building');
     }
     fetchBuildings();
   }, []);
@@ -110,7 +113,7 @@ const NavigationScreen = ({navigation}) => {
 
   const destination = async (dest) => {
     console.log("Building: " + selectedBuilding + " Floor: " + selectedFloor + " Current Location: " + startingNode + " Destination: " + dest );
-    let response = await getGPSData('get-nodes', `getType=get-route&buildingName=${selectedBuilding}&floorName=${selectedFloor}&startingNode=${currestartingNodentLoc}&destination=${dest}`);
+    let response = await getGPSData('get-nodes', `getType=get-route&buildingName=${selectedBuilding}&floorName=${selectedFloor}&startingNode=${startingNode}&destination=${dest}`);
     
     // response returns an object with 3 items
     // the path (list of guids), the list of nodes, and the tts (list of guid:string pairs)

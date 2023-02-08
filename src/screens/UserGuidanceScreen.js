@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import {StyleSheet, TextInput} from 'react-native';
 import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
@@ -70,10 +70,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 30,
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '500',
-  },
 });
 
 const maxBoundary = 0.000196;
@@ -93,10 +89,103 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const [pointTracker, setPointTracker] = useState([]);
   
     const [mapState, setMapState] = useState(false);
-  
+
+    const [coordinates, setCoordinates] = useState([]);
+
+    const [stepName, setStepName] = useState('');
+    
+    const watchId = useRef(null);
+    
     const kflat = new KalmanFilter();
     const kflong = new KalmanFilter();
+    
+    useEffect(() => {
+      getLocationUpdates();
+      setStepName('start');
+    }, []);
+
+    const getLocationUpdates = async () => {
+      console.log('watch Id: ' + watchId.current);
+      if (watchId.current === null) {
+        watchId.current = Geolocation.watchPosition(
+          position => {
+            setCoordinates(coordinates => [...coordinates, [position.coords.latitude, position.coords.longitude]]);
+            // console.log(
+            //   position.coords.latitude +
+            //     ',' +
+            //     position.coords.longitude
+            // );
   
+            // setLatitude(latitude => [...latitude, position.coords.latitude]);
+            // setLongitude(longitude => [
+            //   ...longitude,
+            //   position.coords.longitude,
+            // ]);
+          },
+          error => {
+            setCoordinates(null);
+            console.log(error);
+          },
+          {
+            enableHighAccuracy: true,
+            distanceFilter: 0,
+            interval: 1000,
+            fastestInterval: 200,
+            showLocationDialog: true,
+          },
+        );
+        //setWatchId(watchIdRef);
+        console.log('watch Id: ' + watchId.current);
+      }
+    };
+    
+    const stop = () => {
+      if (watchId.current !== null) {
+        console.log('watch is not null');
+        Geolocation.clearWatch(watchId.current);
+        watchId.current = null;
+      }
+    }
+  
+    // useEffect(() => {
+    //   const interval = setInterval(() => {
+    //     if (mapState === true) {
+    //       GetLocation.getCurrentPosition({
+    //         enableHighAccuracy: true,
+    //         //timeout: 15000,
+    //       })
+    //         .then(location => {
+    //           console.log(
+    //             JSON.stringify(kflat.filter(location.latitude)) +
+    //               ',' +
+    //               JSON.stringify(kflong.filter(location.longitude)),
+    //           );
+    //           closestPoint(location.latitude, location.longitude);
+    //           kSetLatitude(kLatitude => [
+    //             ...kLatitude,
+    //             JSON.stringify(kflat.filter(location.latitude)),
+    //           ]);
+    //           kSetLongitude(kLongitude => [
+    //             ...kLongitude,
+    //             JSON.stringify(kflong.filter(location.longitude)),
+    //           ]);
+    //           setLatitude(latitude => [
+    //             ...latitude,
+    //             JSON.stringify(location.latitude),
+    //           ]);
+    //           setLongitude(longitude => [
+    //             ...longitude,
+    //             JSON.stringify(location.longitude),
+    //           ]);
+    //         })
+    //         .catch(error => {
+    //           console.log('Got an error : ' + error.message);
+    //         });
+    //     }
+    //   }, 3000);
+  
+    //   return () => clearInterval(interval);
+    // }, [mapState]);
 
   
     const distance = (x1, y1, x2, y2) => {
@@ -168,45 +257,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
       );
     };
   
-    useEffect(() => {
-      const interval = setInterval(() => {
-        if (mapState === true) {
-          GetLocation.getCurrentPosition({
-            enableHighAccuracy: true,
-            //timeout: 15000,
-          })
-            .then(location => {
-              console.log(
-                JSON.stringify(kflat.filter(location.latitude)) +
-                  ',' +
-                  JSON.stringify(kflong.filter(location.longitude)),
-              );
-              closestPoint(location.latitude, location.longitude);
-              kSetLatitude(kLatitude => [
-                ...kLatitude,
-                JSON.stringify(kflat.filter(location.latitude)),
-              ]);
-              kSetLongitude(kLongitude => [
-                ...kLongitude,
-                JSON.stringify(kflong.filter(location.longitude)),
-              ]);
-              setLatitude(latitude => [
-                ...latitude,
-                JSON.stringify(location.latitude),
-              ]);
-              setLongitude(longitude => [
-                ...longitude,
-                JSON.stringify(location.longitude),
-              ]);
-            })
-            .catch(error => {
-              console.log('Got an error : ' + error.message);
-            });
-        }
-      }, 3000);
-  
-      return () => clearInterval(interval);
-    }, [mapState]);
+
   
     const _getLocation = () => {
       setMapState(true);
@@ -256,6 +307,29 @@ const UserGuidanceScreen = ({route, navigation}) => {
         <Text style={styles.title} fontSize="2xl">
           User Guidance Screen
         </Text>
+        <Button
+          title="Stop"
+          style={styles.button}
+          onPress={stop}>
+            <Text style={styles.buttonText}>Stop</Text>
+        </Button>
+        {stepName == 'start' ? (
+          <View maxHeight="65%">
+            <FlatList
+            data={coordinates}
+            renderItem={({item}) => (
+              <>
+                <Text style={styles.dividerText}>
+                  {item}
+                </Text>
+              </>
+              )}
+            />
+          </View>
+        ) : (
+          <></>
+        )}
+        
       </View>
     );
 
