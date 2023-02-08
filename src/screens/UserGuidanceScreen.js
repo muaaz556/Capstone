@@ -76,8 +76,9 @@ const styles = StyleSheet.create({
   },
 });
 
-let result;
-let currentNodeData;
+const maxBoundary = 0.000196;
+let currentIndex = 0;
+
 const UserGuidanceScreen = ({route, navigation}) => {
   //calculate the path the user will follow, and assign TTS values to turns/going straight
   //have module for getting current gps location
@@ -96,8 +97,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const kflat = new KalmanFilter();
     const kflong = new KalmanFilter();
   
-    const maxBoundary = 0.000196;
-    var currentIndex = 0;
+
   
     const distance = (x1, y1, x2, y2) => {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -118,7 +118,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
       });
   
       //if the closest node is the next node in the path
-      if (minNode.guid === route.params.hash[path[currentIndex + 1]].guid && minVal < maxBoundary) {
+      if (minNode.guid === route.params.path[currentIndex + 1] && minVal < maxBoundary) {
   
         //update current index
         currentIndex++;
@@ -254,7 +254,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
           alt="Logo image"
         />
         <Text style={styles.title} fontSize="2xl">
-          Analfuck
+          User Guidance Screen
         </Text>
       </View>
     );

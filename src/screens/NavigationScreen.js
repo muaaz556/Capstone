@@ -34,22 +34,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '500',
   },
-  dividerView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 0,
-    marginBottom: 20,
-  },
-  dividerText: {
-    textAlign: 'center',
-    color: '#808585',
-    paddingHorizontal: 10,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#808585',
-  },
   input: {
     height: 50,
     borderWidth: 1,
@@ -78,8 +62,8 @@ const NavigationScreen = ({navigation}) => {
   const [floors, setFloors] = useState([])
   const [destinations, setDestinations] = useState([])
   const [selectedBuilding, setSelectedBuilding] = useState("")
-  const [floorNameState, setFloorNameState] = useState("");
-  const [currentLocation, setCurrentLocation] = useState("");
+  const [selectedFloor, setSelectedFloor] = useState("");
+  const [startingNode, setStartingNode] = useState("");
 
   useEffect(()  => {
     const fetchBuildings = async () => {
@@ -95,48 +79,64 @@ const NavigationScreen = ({navigation}) => {
     fetchBuildings();
   }, []);
 
-  const updateStep = async (itemName) => {
-    if (stepName == 'building') {
-      setSelectedBuilding(itemName)
-      result.nodes.every(item => {
-        if (item.buildingName == itemName){
-          setFloors(item.floorNames)
-          currentNodeData = item.destinationNodes;
-          return false;
-        }
-        return true;
-      });
-      setStepName('floor');
-    }
-    else if (stepName == 'floor') {
-      setFloorNameState(itemName)
-      for (let i = 0; i < floors.length; i++ ) {
-        if (floors[i] == itemName) {
-          setDestinations(currentNodeData[i])
-          break;
-        }
+  const building = (selectedItem) => {
+    setSelectedBuilding(selectedItem)
+    result.nodes.every(item => {
+      if (item.buildingName == selectedItem){
+        setFloors(item.floorNames)
+        currentNodeData = item.destinationNodes;
+        return false;
       }
-      setStepName('currentLocation');
-    }
-    else if (stepName == 'currentLocation') {
-      setCurrentLocation(itemName);
-      setStepName('destination');
-    }
-    else if (stepName == 'destination') {
-      let buildingName = selectedBuilding;
-      let floorName = floorNameState;
-      let currentLoc = currentLocation;
-      let dest = itemName;
-      console.log("Building: " + buildingName + " Floor: " + floorName + " Current Location: " + currentLoc + " Destination: " + dest );
-      let response = await getGPSData('get-nodes', `getType=get-route&buildingName=${buildingName}&floorName=${floorName}&currentLocation=${currentLoc}&destination=${dest}`);
-      
-      console.log("response: ",response);
+      return true;
+    });
+    setStepName('floor');
+  }
 
-      let pathData = response?.path;
-      let nodeList = response?.nodeList;
-      let tts = response?.tts;
+  const floor = (selectedItem) => {
+    setSelectedFloor(selectedItem)
+    for (let i = 0; i < floors.length; i++ ) {
+      if (floors[i] == selectedItem) {
+        setDestinations(currentNodeData[i])
+        break;
+      }
+    }
+    setStepName('start');
+  }
 
-      navigation.navigate('UserGuidanceScreen', {pathData, nodeList, tts});
+  const start = (selectedItem) => {
+    setStartingNode(selectedItem);
+    setStepName('destination');
+  }
+
+  const destination = async (dest) => {
+    console.log("Building: " + selectedBuilding + " Floor: " + selectedFloor + " Current Location: " + startingNode + " Destination: " + dest );
+    let response = await getGPSData('get-nodes', `getType=get-route&buildingName=${selectedBuilding}&floorName=${selectedFloor}&startingNode=${currestartingNodentLoc}&destination=${dest}`);
+    
+    // response returns an object with 3 items
+    // the path (list of guids), the list of nodes, and the tts (list of guid:string pairs)
+    console.log("response: ",response);
+
+    let path = response?.path;
+    let nodeList = response?.nodeList;
+    let tts = response?.tts;
+
+    navigation.navigate('UserGuidanceScreen', {path, nodeList, tts});
+  }
+
+  const updateStep = (selectedItem) => {
+    switch(stepName) {
+      case 'building':
+        building(selectedItem);
+        break;
+      case 'floor':
+        floor(selectedItem);
+        break;
+      case 'start':
+        start(selectedItem);
+        break;
+      case 'destination':
+        destination(selectedItem);
+        break;
     }
   }
 
@@ -152,26 +152,17 @@ const NavigationScreen = ({navigation}) => {
         Accessibility
       </Text>
 
-      <Box w="100%" maxWidth="75%" mt="5">
-        <View style={styles.dividerView}>
-          <View style={styles.dividerLine} />
-          <View>
-            <Text style={styles.dividerText}>Choose a building</Text>
-          </View>
-          <View style={styles.dividerLine} />
-        </View>
-        {stepName == 'building' ? (
-          <ListItems list={buildings} updateStep={updateStep} />
-        ): stepName == 'floor' ? (
-          <ListItems list={floors} updateStep={updateStep} />
-        ): stepName == 'currentLocation' ? (
-          <ListItems list={destinations} updateStep={updateStep} />
-        ): stepName == 'destination' ? (
-          <ListItems list={destinations} updateStep={updateStep} />
-        ) : (
-          <></>
-        )}
-      </Box>
+      {stepName == 'building' ? (
+        <ListItems list={buildings} updateStep={updateStep} titleText="Choose a building" />
+      ): stepName == 'floor' ? (
+        <ListItems list={floors} updateStep={updateStep} titleText="Choose a floor" />
+      ): stepName == 'start' ? (
+        <ListItems list={destinations} updateStep={updateStep} titleText="Choose your starting location" />
+      ): stepName == 'destination' ? (
+        <ListItems list={destinations} updateStep={updateStep} titleText="Choose your final destination"/>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
