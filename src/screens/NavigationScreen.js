@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
-import {StyleSheet, TextInput} from 'react-native';
-import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
+import React, { useEffect, useState } from 'react';
+import {StyleSheet} from 'react-native';
+import {Box, Text, View, Image} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
-import {NEXT_LABEL} from '../assets/locale/en';
 
 const styles = StyleSheet.create({
   view: {
@@ -80,7 +79,6 @@ const NavigationScreen = ({navigation}) => {
   const [destinations, setDestinations] = useState([])
   const [selectedBuilding, setSelectedBuilding] = useState("")
   const [floorNameState, setFloorNameState] = useState("");
-  const [selectedDestination, setSelectedDestination] = useState("")
   const [currentLocation, setCurrentLocation] = useState("");
 
   useEffect(()  => {
@@ -100,7 +98,6 @@ const NavigationScreen = ({navigation}) => {
   const updateStep = async (itemName) => {
     if (stepName == 'building') {
       setSelectedBuilding(itemName)
-      let currentFloors = []
       result.nodes.every(item => {
         if (item.buildingName == itemName){
           setFloors(item.floorNames)
@@ -113,9 +110,6 @@ const NavigationScreen = ({navigation}) => {
     }
     else if (stepName == 'floor') {
       setFloorNameState(itemName)
-      let currentDestNodes = [];
-
-      let nodeName = []
       for (let i = 0; i < floors.length; i++ ) {
         if (floors[i] == itemName) {
           setDestinations(currentNodeData[i])
@@ -134,9 +128,15 @@ const NavigationScreen = ({navigation}) => {
       let currentLoc = currentLocation;
       let dest = itemName;
       console.log("Building: " + buildingName + " Floor: " + floorName + " Current Location: " + currentLoc + " Destination: " + dest );
-      let pathData = await getGPSData('get-nodes', `getType=get-route&buildingName=${buildingName}&floorName=${floorName}&currentLocation=${currentLoc}&destination=${dest}`);
-      console.log(pathData);
-      navigation.navigate('Login');
+      let response = await getGPSData('get-nodes', `getType=get-route&buildingName=${buildingName}&floorName=${floorName}&currentLocation=${currentLoc}&destination=${dest}`);
+      
+      console.log("response: ",response);
+
+      let pathData = response?.path;
+      let nodeList = response?.nodeList;
+      let tts = response?.tts;
+
+      navigation.navigate('UserGuidanceScreen', {pathData, nodeList, tts});
     }
   }
 
