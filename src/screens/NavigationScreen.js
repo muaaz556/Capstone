@@ -166,7 +166,9 @@ const NavigationScreen = ({navigation}) => {
         <DistanceSensingComponent
         enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
         distanceLimit={DISTANCE_LIMIT}
-        vibrationDuration={VIBRATION_DURATION}></DistanceSensingComponent>
+        vibrationDuration={VIBRATION_DURATION}
+        navigation={navigation}
+        ></DistanceSensingComponent>
         {stepName == 'building' ? (
           <ListItems list={buildings} updateStep={updateStep} />
         ): stepName == 'floor' ? (
