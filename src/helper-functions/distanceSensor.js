@@ -17,7 +17,7 @@ export function connectAndReceive(bleManager, connectorDevice) {
           console.log(error.message);
           return;
         }
-        // console.log(device.name, device.localName)
+        console.log(device.name, device.localName)
         //find the device named NanoBLE (this is the name set in the arduino code)
         if (
           device != null &&
