@@ -4,6 +4,9 @@ import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
 import {NEXT_LABEL} from '../assets/locale/en';
+import DistanceSensingComponent from '../components/atoms/distanceSensorComponent';
+import {DISTANCE_LIMIT, ENABLE_DISTANCE_SENSOR_VIBRATION, 
+        VIBRATION_DURATION} from '../assets/locale/en';
 
 const styles = StyleSheet.create({
   view: {
@@ -160,6 +163,10 @@ const NavigationScreen = ({navigation}) => {
           </View>
           <View style={styles.dividerLine} />
         </View>
+        <DistanceSensingComponent
+        enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
+        distanceLimit={DISTANCE_LIMIT}
+        vibrationDuration={VIBRATION_DURATION}></DistanceSensingComponent>
         {stepName == 'building' ? (
           <ListItems list={buildings} updateStep={updateStep} />
         ): stepName == 'floor' ? (

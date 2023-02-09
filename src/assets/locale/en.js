@@ -115,3 +115,9 @@ export const STATE_NAMES = { CORNER_NODE_STATE: 'CornerNodeState',
                             FLOOR_CHANGING_NODE_STATE : 'FloorChangingNodeState',
                             NODE_SELECTION_STATE : 'NodeSelectionState',
                             };
+
+export const DISTANCE_LIMIT = 100
+export const ENABLE_DISTANCE_SENSOR_VIBRATION = true
+export const VIBRATION_DURATION = 100
+export const SERVICE_UUID = '19b10000-e8f2-537e-4f6c-d104768a1214'
+export const CHARACTERISTIC_UUID = '1A3AC131-31EF-758B-BC51-54A61958EF82'
