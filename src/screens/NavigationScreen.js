@@ -161,13 +161,14 @@ const NavigationScreen = ({navigation}) => {
   //   ["335efb30-c164-4773-a4b0-5312409db4ec", "You have arrived at 116"]
   // ];
 
-    console.log(path);
+    // console.log(path);
 
-    console.log(nodeList);
+    // console.log(nodeList);
 
-    // tts = [{guid: "str to say"}, ...]
+    // // tts = [{guid: "str to say"}, ...]
 
-    console.log(tts);
+    // console.log(tts);
+    console.log("navigation screen ending");
 
     navigation.navigate('UserGuidanceScreen', {path, nodeList, tts});
   }

@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
 const maxBoundary = 0.000196;
 let pathIndex = 0;
 let ttsIndex = 0;
+let firstGPSLocation = true;
 // let count = 0;
 
 const UserGuidanceScreen = ({route, navigation}) => {
@@ -84,11 +85,43 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const [coordinates, setCoordinates] = useState([]);
     const [stepName, setStepName] = useState('');
     const watchId = useRef(null);
+    const [latDrift, setLatDrift] = useState(0);
+    const [longDrift, setLongDrift] = useState(0);
     
     useEffect(() => {
+      // for (node in route.params.path) {
+      //   console.log(node)
+      // }
+      console.log(route.params.path)
       getLocationUpdates();
       setStepName('start');
+      checkTTS();
     }, []);
+
+    const updateDrifts = (lat, long) => {
+      let currentNode = null
+      console.log(route.params.nodeList);
+      for (let i = 0; i < route.params.nodeList.length; i++) {
+        console.log(route.params.nodeList[i]['guid']);
+        console.log(route.params.path[pathIndex]);
+        console.log(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]);
+        if(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]) {
+          currentNode = route.params.nodeList[i];
+          break;
+        }
+      }
+      console.log(currentNode)
+      // console.log("coord length:" + coordinates.length);
+      // const currentLat = coordinates[coordinates.length - 1][0]
+      // const currentLong = coordinates[coordinates.length - 1][1]
+
+      setLatDrift(lat - currentNode['lat'])
+      setLongDrift(long - currentNode['long'])
+      // take latest position
+      // compare it to current node in our path
+      // take the difference
+      // set equal to latdrift and longdrift
+    }
 
     const getLocationUpdates = async () => {
       console.log('watch Id: ' + watchId.current);
@@ -98,8 +131,15 @@ const UserGuidanceScreen = ({route, navigation}) => {
             // if (count % 10 == 0) {
             //   checkTTS();
             // }
-            closestPoint(position.coords.latitude, position.coords.longitude)
-            setCoordinates(coordinates => [...coordinates, [position.coords.latitude, position.coords.longitude]]);
+            const percievedLat = position.coords.latitude + latDrift;
+            const percievedLong = position.coords.longitude + longDrift;
+            console.log("got gps")
+            setCoordinates(coordinates => [...coordinates, [percievedLat, percievedLong]]);
+            closestPoint(percievedLat, percievedLong)
+            // if(firstGPSLocation) {
+            //   updateDrifts(percievedLat, percievedLong);
+            //   firstGPSLocation = false;
+            // }
             // count++;
           },
           error => {
@@ -151,16 +191,19 @@ const UserGuidanceScreen = ({route, navigation}) => {
         nodeDistance = distance(node['lat'], node['long'], lat, long);
         if (nodeDistance < minVal) {
           minVal = nodeDistance;
-          minNode = node;
+          minNode = node; 
         }
+        
       });
-  
+      console.log("min node=" + minNode["guid"])
       //if the closest node is the next node in the path
       if (minNode["guid"] === route.params.path[pathIndex + 1] && minVal < maxBoundary) {
-
         //update current index
         pathIndex++;
-        checkTTS();
+        console.log("checking tts, path index=" + pathIndex)
+        checkTTS(minNode['lat'], minNode['long']);
+
+        // updateDrifts();
 
         setIndexTracker(indexTracker => [...indexTracker, pathIndex]);
         setIndexTracker(indexTracker => [
