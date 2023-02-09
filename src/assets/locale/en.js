@@ -32,6 +32,14 @@ export const CLEAR = { TITLE: 'Clear Dots',
                     };
 
 export const FINISH_TITLE = 'Finish Mapping';
+export const FINISH_MESSAGE = 'Please ensure you have completed the following items:' +
+                                '\n\u2022 Placed and labeled all room dots' + 
+                                '\n\u2022 Placed and labeled all bathroom dots' +
+                                '\n\u2022 Placed hallway dots' + 
+                                '\n\u2022 Placed stairway and elevator dots' +
+                                '\n\u2022 Connected all hallway dots to each other' +
+                                '\n\u2022 Connected hallway dots to other relevant dots';
+
 export const NEXT_TITLE = 'Go to Next Step';
 export const NEXT_MESSAGE = 'Please ensure you have completed this step before proceeding.';
 

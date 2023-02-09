@@ -6,7 +6,7 @@ import NodePlacement from '../molecules/NodePlacement';
 import SideBar from '../molecules/SideBar';
 import PleaseWait from '../molecules/PleaseWait';
 import { displayTextAlert, displayTwoButtonTextAlert } from '../../helper-functions/textAlert';
-import { BUTTON, CLEAR, NODE_SELECTION_STATE, NEXT_MESSAGE, STATE_NAMES, FINISH_TITLE } from '../../assets/locale/en';
+import { BUTTON, CLEAR, NODE_SELECTION_STATE, FINISH_MESSAGE, STATE_NAMES, FINISH_TITLE } from '../../assets/locale/en';
 import {NODES} from '../../assets/colors/Colors.js';
 import {Ellipse, Line} from 'react-native-svg';
 import { postGPSData, getGPSData } from '../../helper-functions/gpsFetching';
@@ -89,7 +89,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
             setMakingHallwayConnections(false);
             return;
         }
-        displayTwoButtonTextAlert(FINISH_TITLE, NEXT_MESSAGE, 
+        displayTwoButtonTextAlert(FINISH_TITLE, FINISH_MESSAGE, 
             () => {
                 console.log('next function');
 
