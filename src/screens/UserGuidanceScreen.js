@@ -6,7 +6,7 @@ import ListItems from '../components/molecules/ListItems';
 import {NEXT_LABEL} from '../assets/locale/en';
 import {ScrollView} from 'react-native';
 import GetLocation from 'react-native-get-location';
-import KalmanFilter from 'kalmanjs';
+// import KalmanFilter from 'kalmanjs';
 import Geolocation from 'react-native-geolocation-service';
 import Tts from 'react-native-tts';
 
@@ -73,31 +73,17 @@ const styles = StyleSheet.create({
 });
 
 const maxBoundary = 0.000196;
-let currentIndex = 0;
+let pathIndex = 0;
+let ttsIndex = 0;
+// let count = 0;
 
 const UserGuidanceScreen = ({route, navigation}) => {
-  //calculate the path the user will follow, and assign TTS values to turns/going straight
-  //have module for getting current gps location
-  //use muaaz/amio's algorithm for comparing the current gps location to the list of nodes to determine which node user is currently at
-  
-    const [longitude, setLongitude] = useState([]);
-    const [latitude, setLatitude] = useState([]);
-    const [kLongitude, kSetLongitude] = useState([]);
-    const [kLatitude, kSetLatitude] = useState([]);
   
     const [indexTracker, setIndexTracker] = useState([]);
     const [pointTracker, setPointTracker] = useState([]);
-  
-    const [mapState, setMapState] = useState(false);
-
     const [coordinates, setCoordinates] = useState([]);
-
     const [stepName, setStepName] = useState('');
-    
     const watchId = useRef(null);
-    
-    const kflat = new KalmanFilter();
-    const kflong = new KalmanFilter();
     
     useEffect(() => {
       getLocationUpdates();
@@ -109,18 +95,12 @@ const UserGuidanceScreen = ({route, navigation}) => {
       if (watchId.current === null) {
         watchId.current = Geolocation.watchPosition(
           position => {
+            // if (count % 10 == 0) {
+            //   checkTTS();
+            // }
+            closestPoint(position.coords.latitude, position.coords.longitude)
             setCoordinates(coordinates => [...coordinates, [position.coords.latitude, position.coords.longitude]]);
-            // console.log(
-            //   position.coords.latitude +
-            //     ',' +
-            //     position.coords.longitude
-            // );
-  
-            // setLatitude(latitude => [...latitude, position.coords.latitude]);
-            // setLongitude(longitude => [
-            //   ...longitude,
-            //   position.coords.longitude,
-            // ]);
+            // count++;
           },
           error => {
             setCoordinates(null);
@@ -134,7 +114,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
             showLocationDialog: true,
           },
         );
-        //setWatchId(watchIdRef);
+        // setWatchId(watchIdRef);
         console.log('watch Id: ' + watchId.current);
       }
     };
@@ -147,49 +127,18 @@ const UserGuidanceScreen = ({route, navigation}) => {
       }
     }
   
-    // useEffect(() => {
-    //   const interval = setInterval(() => {
-    //     if (mapState === true) {
-    //       GetLocation.getCurrentPosition({
-    //         enableHighAccuracy: true,
-    //         //timeout: 15000,
-    //       })
-    //         .then(location => {
-    //           console.log(
-    //             JSON.stringify(kflat.filter(location.latitude)) +
-    //               ',' +
-    //               JSON.stringify(kflong.filter(location.longitude)),
-    //           );
-    //           closestPoint(location.latitude, location.longitude);
-    //           kSetLatitude(kLatitude => [
-    //             ...kLatitude,
-    //             JSON.stringify(kflat.filter(location.latitude)),
-    //           ]);
-    //           kSetLongitude(kLongitude => [
-    //             ...kLongitude,
-    //             JSON.stringify(kflong.filter(location.longitude)),
-    //           ]);
-    //           setLatitude(latitude => [
-    //             ...latitude,
-    //             JSON.stringify(location.latitude),
-    //           ]);
-    //           setLongitude(longitude => [
-    //             ...longitude,
-    //             JSON.stringify(location.longitude),
-    //           ]);
-    //         })
-    //         .catch(error => {
-    //           console.log('Got an error : ' + error.message);
-    //         });
-    //     }
-    //   }, 3000);
-  
-    //   return () => clearInterval(interval);
-    // }, [mapState]);
-
-  
     const distance = (x1, y1, x2, y2) => {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    };
+
+    const checkTTS = () => {
+      let guid = route.params.path[pathIndex];
+
+      while(ttsIndex < route.params.tts.length && route.params.tts[ttsIndex][0] == guid) {
+        Tts.speak(route.params.tts[ttsIndex][1]);
+        ttsIndex++;
+      }
+      // pathIndex++;
     };
   
     const closestPoint = (lat, long) => {
@@ -207,95 +156,27 @@ const UserGuidanceScreen = ({route, navigation}) => {
       });
   
       //if the closest node is the next node in the path
-      if (minNode.guid === route.params.path[currentIndex + 1] && minVal < maxBoundary) {
-  
+      if (minNode["guid"] === route.params.path[pathIndex + 1] && minVal < maxBoundary) {
+
         //update current index
-        currentIndex++;
-        setIndexTracker(indexTracker => [...indexTracker, currentIndex]);
+        pathIndex++;
+        checkTTS();
+
+        setIndexTracker(indexTracker => [...indexTracker, pathIndex]);
         setIndexTracker(indexTracker => [
           ...indexTracker,
           'update coordinates: ' + lat + ', ' + long
         ]);
+
+        if(pathIndex === route.params.path.length) {
+          stop();
+          setStepName('Done');
+        }
       }
 
-      setPointTracker(pointTracker => [...pointTracker, 'POINT3: ' + currentIndex]);
+      setPointTracker(pointTracker => [...pointTracker, 'POINT3: ' + pathIndex]);
     };
   
-    //point tracker, constantly tracks current point
-    //index tracker, only tracks changes in nodes
-
-    let numTrys = 0;
-    let numOfGPSSamples = 3;
-    let bestAccuracy = 10000;
-    let bestLatitude = 0;
-    let bestLongitude = 0;
-    let delayBetweenPositionChecks = 1000;
-
-    const getCurrentPosition = () => {
-      Geolocation.getCurrentPosition(
-        position => {
-  
-          if (position.coords.accuracy < bestAccuracy) {
-            bestAccuracy = position.coords.accuracy;
-            bestLatitude = position.coords.latitude;
-            bestLongitude = position.coords.longitude;
-          }
-  
-          if (numTrys === numOfGPSSamples - 1) {
-            numTrys = 0;
-            bestAccuracy = 10000;
-            closestPoint(bestLatitude, bestLongitude);
-          } else {
-            numTrys++;
-            setTimeout(
-              () => { getCurrentPosition(); },
-              delayBetweenPositionChecks
-            );
-          }
-        },
-        {enableHighAccuracy: true, timeout: 10000, maximumAge: 0},
-      );
-    };
-  
-
-  
-    const _getLocation = () => {
-      setMapState(true);
-    };
-  
-    const _stopLocation = () => {
-      setMapState(false);
-  
-      console.log('Latitude: ');
-      latitude.forEach(function (item, index) {
-        console.log(item);
-      });
-  
-      console.log('Longitude: ');
-  
-      longitude.forEach(function (item, index) {
-        console.log(item);
-      });
-  
-      console.log('Kalman Latitude: ');
-      kLatitude.forEach(function (item, index) {
-        console.log(item);
-      });
-  
-      console.log('Kalman Longitude: ');
-  
-      kLongitude.forEach(function (item, index) {
-        console.log(item);
-      });
-    };
-  
-    const _clearLocation = () => {
-      setLatitude([]);
-      setLongitude([]);
-      setIndexTracker([]);
-      setPointTracker([]);
-    };
-
     return (
       <View style={styles.view}>
         <Image
@@ -307,29 +188,35 @@ const UserGuidanceScreen = ({route, navigation}) => {
         <Text style={styles.title} fontSize="2xl">
           User Guidance Screen
         </Text>
-        <Button
+        {/* <Button
           title="Stop"
           style={styles.button}
           onPress={stop}>
             <Text style={styles.buttonText}>Stop</Text>
-        </Button>
+        </Button> */}
         {stepName == 'start' ? (
           <View maxHeight="65%">
             <FlatList
-            data={coordinates}
-            renderItem={({item}) => (
-              <>
-                <Text style={styles.dividerText}>
-                  {item}
-                </Text>
-              </>
+              data={coordinates}
+              renderItem={({item}) => (
+                <>
+                  <Text style={styles.dividerText}>
+                    {item}
+                  </Text>
+                </>
               )}
             />
           </View>
+        ) : stepName == 'Done' ? (
+          <Button
+            title="Stop"
+            style={styles.button}
+            onPress={() => navigation.navigate('Login')}>
+              <Text style={styles.buttonText}>Go back to Login</Text>
+          </Button>
         ) : (
           <></>
         )}
-        
       </View>
     );
 
