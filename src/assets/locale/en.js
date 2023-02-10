@@ -31,6 +31,16 @@ export const CLEAR = { TITLE: 'Clear Dots',
                         MESSAGE: 'This action will clear all of the dots on the screen.',
                     };
 
+export const NANO_BLE = 'NanoBLE';
+
+export const BLUETOOTH_PERMISSION = {
+    TITLE: 'Location permission for bluetooth scanning',
+    MESSAGE: 'Please provide permission in order to connect to the distance sensor',
+    CANCEL: 'Cancel',
+    ASK_LATER: 'Ask me later',
+    OK: 'OK'
+}
+
 export const FINISH_TITLE = 'Finish Mapping';
 export const NEXT_TITLE = 'Go to Next Step';
 export const NEXT_MESSAGE = 'Please ensure you have completed this step before proceeding.';

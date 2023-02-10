@@ -4,7 +4,7 @@ import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
 import {NEXT_LABEL} from '../assets/locale/en';
-import DistanceSensingComponent from '../components/atoms/distanceSensorComponent';
+import DistanceSensingComponent from '../components/organisms/DistanceSensorComponent';
 import {DISTANCE_LIMIT, ENABLE_DISTANCE_SENSOR_VIBRATION, 
         VIBRATION_DURATION} from '../assets/locale/en';
 
