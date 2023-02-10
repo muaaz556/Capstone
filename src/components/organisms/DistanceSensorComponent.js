@@ -10,31 +10,33 @@ const DistanceSensorComponent = ({
   vibrationDuration,
   navigation,
 }) => {
-  
-  var [displayDistanceValue, setDisplayDistanceValue] = useState('Not connected');
-  
+  var [displayDistanceValue, setDisplayDistanceValue] =
+    useState('Not connected');
+
   //this variable holds the connected bluetooth device info
   let connectorDevice = null;
   let scanInProgress = false;
   var distanceValue = 0;
-  
+
   // disconnects device after navigating backward from current screen
   const handleBackButton = () => {
-    if(connectorDevice != null){
-      connectorDevice.cancelConnection().then(() => navigation.navigate('Login'))
+    if (connectorDevice != null) {
+      connectorDevice
+        .cancelConnection()
+        .then(() => navigation.navigate('Login'));
     } else {
-      navigation.navigate('Login')
+      navigation.navigate('Login');
     }
-  }
+  };
 
   // helper function updates value of device and scanStatus
   const updateDevice = (device, scanStatus) => {
     connectorDevice = device;
     scanInProgress = scanStatus;
-  }
-  
+  };
+
   // Reads data from arduino and updates value of distance
-  const updateSensorReading = (characteristic) => {
+  const updateSensorReading = characteristic => {
     //convert the received data in base64 (basically if not decoded the data looks like random stuff)
     console.log(base64.decode(characteristic.value));
     setDisplayDistanceValue(base64.decode(characteristic.value) + 'cm');
@@ -42,10 +44,13 @@ const DistanceSensorComponent = ({
     //if the distance is less than 100cm then make the phone vibrate
     if (distanceValue < distanceLimit && enableVibration)
       Vibration.vibrate(vibrationDuration);
-  }
+  };
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackButton,
+    );
 
     // set the connected device to null and then attempt to connect to a new device
     connectorDevice = null;
@@ -57,41 +62,38 @@ const DistanceSensorComponent = ({
     //When not connected this function sets connected device to null.
     const interval = setInterval(() => {
       if (connectorDevice == null) {
-        if(scanInProgress == false){
-          connectAndReceive(updateDevice)
+        if (scanInProgress == false) {
+          connectAndReceive(updateDevice);
         }
         return;
       }
-      
+
       //The service and characteristic UUID is set in the arduino code
-      connectorDevice.isConnected().then((isConnected)=> {
-        if(isConnected) {
+      connectorDevice.isConnected().then(isConnected => {
+        if (isConnected) {
           connectorDevice
-          .readCharacteristicForService(SERVICE_UUID, CHARACTERISTIC_UUID)
-          .then(
-            characteristic => {
-              updateSensorReading(characteristic);
-            },
-            error => {
-              console.log('Failed to read characteristic. ', "Error:", error);
-            },
-          );
+            .readCharacteristicForService(SERVICE_UUID, CHARACTERISTIC_UUID)
+            .then(
+              characteristic => {
+                updateSensorReading(characteristic);
+              },
+              error => {
+                console.log('Failed to read characteristic. ', 'Error:', error);
+              },
+            );
         } else {
-          connectorDevice = null
+          connectorDevice = null;
         }
       });
     }, 500);
-    
+
     return () => {
       clearInterval(interval);
-      backHandler.remove()
+      backHandler.remove();
     };
   }, []);
 
-  return (
-    <>
-    </>
-  );
+  return <></>;
 };
 
 export default DistanceSensorComponent;

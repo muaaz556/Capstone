@@ -2,15 +2,14 @@ import {PermissionsAndroid} from 'react-native';
 import {BleManager} from 'react-native-ble-plx';
 import {NANO_BLE, BLUETOOTH_PERMISSION} from '../assets/locale/en';
 
-
 const bleManager = new BleManager();
 
 //this function searches and then sets up the bluetooth connection with a device
 export function connectAndReceive(updateDevice) {
   updateDevice(null, true);
-  
+
   //get permission to use phone location (needed for bluetooth)
-  const permission = requestLocationPermission().then((permission) => {
+  const permission = requestLocationPermission().then(permission => {
     //if permission given then continue
     if (permission) {
       //scan for devices
@@ -18,13 +17,12 @@ export function connectAndReceive(updateDevice) {
         null,
         {allowDuplicates: false},
         (error, device) => {
-  
           //if error occurs then stop the scan
           if (error) {
             console.log(error.message);
             return;
           }
-          
+
           //find the device named NanoBLE (this is the name set in the arduino code)
           if (
             device != null &&
@@ -32,7 +30,7 @@ export function connectAndReceive(updateDevice) {
           ) {
             //the device has been found so we stop searching
             bleManager.stopDeviceScan();
-  
+
             //connect to the device
             device
               .connect()
@@ -47,7 +45,7 @@ export function connectAndReceive(updateDevice) {
               )
               .then(
                 device => {
-                  updateDevice(device, false)
+                  updateDevice(device, false);
                   return;
                 },
                 error => {
@@ -60,7 +58,6 @@ export function connectAndReceive(updateDevice) {
       );
     }
   });
-  
 }
 
 //this function searches and then sets up the bluetooth connection with a device
