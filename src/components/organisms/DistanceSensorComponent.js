@@ -10,13 +10,13 @@ const DistanceSensorComponent = ({
   vibrationDuration,
   navigation,
 }) => {
-  var [displayDistanceValue, setDisplayDistanceValue] =
+  const [displayDistanceValue, setDisplayDistanceValue] =
     useState('Not connected');
 
   //this variable holds the connected bluetooth device info
   let connectorDevice = null;
   let scanInProgress = false;
-  var distanceValue = 0;
+  let distanceValue = 0;
 
   // disconnects device after navigating backward from current screen
   const handleBackButton = () => {
