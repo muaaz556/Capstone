@@ -8,6 +8,7 @@ import FloorMappingScreen from './src/screens/FloorMappingScreen';
 import AccessibilityScreen from './src/screens/AccessibilityScreen';
 import MapNewBuildingScreen from './src/screens/MapNewBuildingScreen';
 import MapExistingBuildingScreen from './src/screens/MapExistingBuildingScreen';
+import UserGuidanceScreen from './src/screens/UserGuidanceScreen';
 
 import SplashScreen from 'react-native-splash-screen';
 
@@ -35,6 +36,7 @@ const App = () => {
           <Stack.Screen name="MapExistingBuildingScreen" component={MapExistingBuildingScreen}/>
           <Stack.Screen name="MapNewBuildingScreen" component={MapNewBuildingScreen}/>
           <Stack.Screen name="NavigationScreen" component={NavigationScreen}/>
+          <Stack.Screen name="UserGuidanceScreen" component={UserGuidanceScreen}/>
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>
