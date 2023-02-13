@@ -31,6 +31,16 @@ export const CLEAR = { TITLE: 'Clear Dots',
                         MESSAGE: 'This action will clear all of the dots on the screen.',
                     };
 
+export const NANO_BLE = 'NanoBLE';
+
+export const BLUETOOTH_PERMISSION = {
+    TITLE: 'Location permission for bluetooth scanning',
+    MESSAGE: 'Please provide permission in order to connect to the distance sensor',
+    CANCEL: 'Cancel',
+    ASK_LATER: 'Ask me later',
+    OK: 'OK'
+}
+
 export const FINISH_TITLE = 'Finish Mapping';
 export const FINISH_MESSAGE = 'Please ensure you have completed the following items:' +
                                 '\n\u2022 Placed all corner locations on the map' +
@@ -124,3 +134,9 @@ export const STATE_NAMES = { CORNER_NODE_STATE: 'CornerNodeState',
                             FLOOR_CHANGING_NODE_STATE : 'FloorChangingNodeState',
                             NODE_SELECTION_STATE : 'NodeSelectionState',
                             };
+
+export const DISTANCE_LIMIT = 100
+export const ENABLE_DISTANCE_SENSOR_VIBRATION = true
+export const VIBRATION_DURATION = 100
+export const SERVICE_UUID = '19b10000-e8f2-537e-4f6c-d104768a1214'
+export const CHARACTERISTIC_UUID = '1A3AC131-31EF-758B-BC51-54A61958EF82'

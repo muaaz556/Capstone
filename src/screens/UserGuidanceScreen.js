@@ -133,7 +133,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
             // }
             const percievedLat = position.coords.latitude + latDrift;
             const percievedLong = position.coords.longitude + longDrift;
-            console.log("got gps")
+            // console.log("got gps")
             setCoordinates(coordinates => [...coordinates, [percievedLat, percievedLong]]);
             closestPoint(percievedLat, percievedLong)
             // if(firstGPSLocation) {
@@ -195,7 +195,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
         }
         
       });
-      console.log("min node=" + minNode["guid"])
+      // console.log("min node=" + minNode["guid"])
       //if the closest node is the next node in the path
       if (minNode["guid"] === route.params.path[pathIndex + 1] && minVal < maxBoundary) {
         //update current index

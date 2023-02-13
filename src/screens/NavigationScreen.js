@@ -1,3 +1,15 @@
+// import React, {useContext, useEffect, useState} from 'react';
+// import {StyleSheet, TextInput} from 'react-native';
+// import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
+// import {getGPSData} from '../helper-functions/gpsFetching';
+// import ListItems from '../components/molecules/ListItems';
+// import {NEXT_LABEL} from '../assets/locale/en';
+import DistanceSensorComponent from '../components/organisms/DistanceSensorComponent';
+import {
+  DISTANCE_LIMIT,
+  ENABLE_DISTANCE_SENSOR_VIBRATION,
+  VIBRATION_DURATION,
+} from '../assets/locale/en';
 import React, { useEffect, useState } from 'react';
 import {StyleSheet} from 'react-native';
 import {Box, Text, View, Image} from 'native-base';
@@ -65,7 +77,7 @@ const NavigationScreen = ({navigation}) => {
   const [selectedFloor, setSelectedFloor] = useState("");
   const [startingNode, setStartingNode] = useState("");
 
-  useEffect(()  => {
+  useEffect(() => {
     const fetchBuildings = async () => {
       result = await getGPSData('get-nodes', 'getType=get-building-data');
 
@@ -188,7 +200,7 @@ const NavigationScreen = ({navigation}) => {
         destination(selectedItem);
         break;
     }
-  }
+  };
 
   return (
     <View style={styles.view}>
@@ -201,7 +213,11 @@ const NavigationScreen = ({navigation}) => {
       <Text style={styles.title} fontSize="2xl">
         Accessibility
       </Text>
-
+      <DistanceSensorComponent
+          enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
+          distanceLimit={DISTANCE_LIMIT}
+          vibrationDuration={VIBRATION_DURATION}
+          navigation={navigation}></DistanceSensorComponent>
       {stepName == 'building' ? (
         <ListItems list={buildings} updateStep={updateStep} titleText="Choose a building" />
       ): stepName == 'floor' ? (

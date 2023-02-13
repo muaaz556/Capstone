@@ -5,8 +5,9 @@ export const getGPSData = async (urlPath = "get-gps", queryString = "") => {
     if(queryString != ""){
         queryString = "?" + queryString
     }
-     // If you are getting bad json, put a console.log here
-     console.log("add/remove me to fix fetching issues") 
+     
+    // If you are getting bad json, add a console log here (cannot be an existing one)
+    console.log("add/remove me to fix fetching issues") 
     await fetch(`${NGROK_URL}/api/${urlPath}${queryString}`, {
         method: 'GET',
         headers: {
