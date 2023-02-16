@@ -95,7 +95,12 @@ const UserGuidanceScreen = ({route, navigation}) => {
       //   console.log(node)
       // }
       console.log(route.params.path)
-      getLocationUpdates();
+      
+      // watch position
+      // getLocationUpdates();
+      
+      // getlocation
+      getLocation();
       setStepName('start');
       checkTTS();
     }, []);
@@ -132,8 +137,26 @@ const UserGuidanceScreen = ({route, navigation}) => {
       })
       .then(location => {
           console.log(location);
+          
+          // regular long lat
           setCoordinates(coordinates => [...coordinates, ["cur:", location.latitude, ", "+ location.longitude, ", "+ location.accuracy]]);
-          closestPoint(location.latitude, location.longitude);
+          // for regular long lat
+          // closestPoint(location.latitude, location.longitude);
+
+          // averaged long lat 
+          averagelats = [location.latitude, ...averagelats]
+          averagelongs = [location.longitude, ...averagelongs]
+          if(averagelats.length == 5){
+            averagelats.pop()
+            averagelongs.pop()
+
+          }
+          const calculatedAverageLat = averagelats.reduce((partialSum, a) => partialSum + a, 0)/averagelats.length
+          const calculatedAverageLong = averagelongs.reduce((partialSum, a) => partialSum + a, 0)/averagelongs.length
+
+          setCoordinates(coordinates => [...coordinates, ["cur:", location.latitude, ", "+ location.longitude, ", "+ location.accuracy]]);
+          setCoordinates(coordinates => [...coordinates, ["avg:", calculatedAverageLat, ", "+ calculatedAverageLong, ", "+ location.accuracy]]);
+          closestPoint(calculatedAverageLat, calculatedAverageLong);
       })
       .catch(error => {
           const { code, message } = error;
@@ -268,6 +291,10 @@ const UserGuidanceScreen = ({route, navigation}) => {
         <Text style={styles.title} fontSize="2xl">
           User Guidance Screen
         </Text>
+        <Button 
+          title="Get Location"
+          style={styles.button}
+          onPress={getLocation} />
         {/* <Button
           title="Stop"
           style={styles.button}
