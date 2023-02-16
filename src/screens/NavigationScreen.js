@@ -213,11 +213,11 @@ const NavigationScreen = ({navigation}) => {
       <Text style={styles.title} fontSize="2xl">
         Accessibility
       </Text>
-      <DistanceSensorComponent
+      {/* <DistanceSensorComponent
           enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
           distanceLimit={DISTANCE_LIMIT}
           vibrationDuration={VIBRATION_DURATION}
-          navigation={navigation}></DistanceSensorComponent>
+          navigation={navigation}></DistanceSensorComponent> */}
       {stepName == 'building' ? (
         <ListItems list={buildings} updateStep={updateStep} titleText="Choose a building" />
       ): stepName == 'floor' ? (

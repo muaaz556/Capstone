@@ -72,11 +72,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const maxBoundary = 0.000196;
+const maxBoundary = 0.000140;
 let pathIndex = 0;
 let ttsIndex = 0;
 let firstGPSLocation = true;
-// let count = 0;
+let count = 0;
+let averagelats = [];
+let averagelongs = [];
 
 const UserGuidanceScreen = ({route, navigation}) => {
   
@@ -131,11 +133,26 @@ const UserGuidanceScreen = ({route, navigation}) => {
             // if (count % 10 == 0) {
             //   checkTTS();
             // }
+            averagelats = [position.coords.latitude, ...averagelats]
+            averagelongs = [position.coords.longitude, ...averagelongs]
+            if(averagelats.length == 5){
+              averagelats.pop()
+              averagelongs.pop()
+
+            }
+            const calculatedAverageLat = averagelats.reduce((partialSum, a) => partialSum + a, 0)/averagelats.length
+            const calculatedAverageLong = averagelongs.reduce((partialSum, a) => partialSum + a, 0)/averagelongs.length
+
             const percievedLat = position.coords.latitude + latDrift;
             const percievedLong = position.coords.longitude + longDrift;
-            // console.log("got gps")
-            setCoordinates(coordinates => [...coordinates, [percievedLat, percievedLong]]);
-            closestPoint(percievedLat, percievedLong)
+            console.log("got gps", position.coords.latitude, position.coords.longitude, position.coords.accuracy, position.provider, position.coords.heading, position.coords.speed)
+            // console.log(position)
+            setCoordinates(coordinates => [...coordinates, ["cur:", percievedLat, ", "+ percievedLong, ", "+position.coords.accuracy]]);
+            setCoordinates(coordinates => [...coordinates, ["avg:", calculatedAverageLat, ", "+ calculatedAverageLong, ", "+position.coords.accuracy]]);
+            // closestPoint(percievedLat, percievedLong)
+            console.log("avg:", calculatedAverageLat, calculatedAverageLong)
+            closestPoint(calculatedAverageLat, calculatedAverageLong)
+
             // if(firstGPSLocation) {
             //   updateDrifts(percievedLat, percievedLong);
             //   firstGPSLocation = false;
@@ -193,8 +210,8 @@ const UserGuidanceScreen = ({route, navigation}) => {
           minVal = nodeDistance;
           minNode = node; 
         }
-        
       });
+
       // console.log("min node=" + minNode["guid"])
       //if the closest node is the next node in the path
       if (minNode["guid"] === route.params.path[pathIndex + 1] && minVal < maxBoundary) {
@@ -204,6 +221,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
         checkTTS(minNode['lat'], minNode['long']);
 
         // updateDrifts();
+        console.log("IndexTracker", indexTracker);
 
         setIndexTracker(indexTracker => [...indexTracker, pathIndex]);
         setIndexTracker(indexTracker => [
@@ -216,7 +234,10 @@ const UserGuidanceScreen = ({route, navigation}) => {
           setStepName('Done');
         }
       }
-
+      setCoordinates(coordinates => [...coordinates, [pathIndex + " " + indexTracker]]);
+      console.log("minNode", minNode)
+      console.log("minDistance", minVal)
+      console.log("PathIndex", pathIndex);
       setPointTracker(pointTracker => [...pointTracker, 'POINT3: ' + pathIndex]);
     };
   
@@ -241,6 +262,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
           <View maxHeight="65%">
             <FlatList
               data={coordinates}
+              selectable={true}
               renderItem={({item}) => (
                 <>
                   <Text style={styles.dividerText}>
