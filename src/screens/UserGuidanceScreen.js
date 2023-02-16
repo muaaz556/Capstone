@@ -125,6 +125,22 @@ const UserGuidanceScreen = ({route, navigation}) => {
       // set equal to latdrift and longdrift
     }
 
+    const getLocation = () =>{
+      GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 15000,
+      })
+      .then(location => {
+          console.log(location);
+          setCoordinates(coordinates => [...coordinates, ["cur:", location.latitude, ", "+ location.longitude, ", "+ location.accuracy]]);
+          closestPoint(location.latitude, location.longitude);
+      })
+      .catch(error => {
+          const { code, message } = error;
+          console.warn(code, message);
+      })
+    }
+
     const getLocationUpdates = async () => {
       console.log('watch Id: ' + watchId.current);
       if (watchId.current === null) {
