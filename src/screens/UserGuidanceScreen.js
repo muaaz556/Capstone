@@ -234,6 +234,10 @@ const UserGuidanceScreen = ({route, navigation}) => {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     };
 
+    const calculateDistance = (lat1, long1, lat2, long2) => {
+      return Math.acos(Math.sin(lat1)*Math.sin(lat2)+Math.cos(lat1)*Math.cos(lat2)*Math.cos(long2-long1))*6371*1000;
+    }
+
     const checkTTS = () => {
       let guid = route.params.path[pathIndex];
 
@@ -251,7 +255,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
       let minNode = null;
       let nodeDistance = 0
       route.params.nodeList.forEach(node => {
-        nodeDistance = distance(node['lat'], node['long'], lat, long);
+        nodeDistance = calculateDistance(node['lat'], node['long'], lat, long);
         if (nodeDistance < minVal) {
           minVal = nodeDistance;
           minNode = node; 
