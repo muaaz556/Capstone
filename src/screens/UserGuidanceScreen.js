@@ -102,10 +102,10 @@ const UserGuidanceScreen = ({route, navigation}) => {
       console.log(route.params.path)
       
       // watch position
-      getLocationUpdates();
+      // getLocationUpdates();
       
       // getlocation
-      // getLocation();
+      getLocation();
       setStepName('start');
       checkTTS();
     }, []);
@@ -141,7 +141,8 @@ const UserGuidanceScreen = ({route, navigation}) => {
         timeout: 15000,
       })
       .then(location => {
-          console.log(location);
+          // console.log(location);
+          // console.log("******* Get location running ***********")
           
           // regular long lat
           setCoordinates(coordinates => [...coordinates, ["cur:", location.latitude, ", "+ location.longitude, ", "+ location.accuracy]]);
@@ -156,11 +157,17 @@ const UserGuidanceScreen = ({route, navigation}) => {
             averagelongs.pop()
 
           }
-          const calculatedAverageLat = averagelats.reduce((partialSum, a) => partialSum + a, 0)/averagelats.length
-          const calculatedAverageLong = averagelongs.reduce((partialSum, a) => partialSum + a, 0)/averagelongs.length
+          let calculatedAverageLat = averagelats.reduce((partialSum, a) => partialSum + a, 0)/averagelats.length
+          let calculatedAverageLong = averagelongs.reduce((partialSum, a) => partialSum + a, 0)/averagelongs.length
+          calculatedAverageLat = kflat.filter(calculatedAverageLat)
+          calculatedAverageLong = kflong.filter(calculatedAverageLong)
+          // console.log("Coordinates:", location.latitude, location.longitude, "Accuracy:", location.accuracy)
+          console.log("Coordinates:", calculatedAverageLat, calculatedAverageLong, "Accuracy:", location.accuracy)
+
 
           setCoordinates(coordinates => [...coordinates, ["cur:", location.latitude, ", "+ location.longitude, ", "+ location.accuracy]]);
           setCoordinates(coordinates => [...coordinates, ["avg:", calculatedAverageLat, ", "+ calculatedAverageLong, ", "+ location.accuracy]]);
+          // console.log("avg with get location:", calculatedAverageLat, calculatedAverageLong)
           closestPoint(calculatedAverageLat, calculatedAverageLong);
       })
       .catch(error => {
@@ -186,17 +193,21 @@ const UserGuidanceScreen = ({route, navigation}) => {
             }
             let calculatedAverageLat = averagelats.reduce((partialSum, a) => partialSum + a, 0)/averagelats.length
             let calculatedAverageLong = averagelongs.reduce((partialSum, a) => partialSum + a, 0)/averagelongs.length
+            // console.log("no kal:",calculatedAverageLat)
             calculatedAverageLat = kflat.filter(calculatedAverageLat)
+            // console.log("yes kal:",calculatedAverageLat)
             calculatedAverageLong = kflong.filter(calculatedAverageLong)
 
             const percievedLat = position.coords.latitude + latDrift;
             const percievedLong = position.coords.longitude + longDrift;
-            console.log("got gps", position.coords.latitude, position.coords.longitude, position.coords.accuracy, position.provider, position.coords.heading, position.coords.speed)
+            // console.log("Coordinates:", position.coords.latitude, position.coords.longitude, "Accuracy:", position.coords.accuracy)
+            console.log("Coordinates:", calculatedAverageLat, calculatedAverageLong, "Accuracy:", position.coords.accuracy)
+
             // console.log(position)
             setCoordinates(coordinates => [...coordinates, ["cur:", percievedLat, ", "+ percievedLong, ", "+position.coords.accuracy]]);
             setCoordinates(coordinates => [...coordinates, ["avg:", calculatedAverageLat, ", "+ calculatedAverageLong, ", "+position.coords.accuracy]]);
             // closestPoint(percievedLat, percievedLong)
-            console.log("avg with kal:", calculatedAverageLat, calculatedAverageLong)
+            // console.log("avg with kal:", calculatedAverageLat, calculatedAverageLong)
             closestPoint(calculatedAverageLat, calculatedAverageLong)
 
             // if(firstGPSLocation) {
@@ -251,11 +262,12 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const closestPoint = (lat, long) => {
   
       //finds node closest to currently obtained GPS location
-      let minVal = 100;
+      let minVal = 100000000;
       let minNode = null;
       let nodeDistance = 0
       route.params.nodeList.forEach(node => {
         nodeDistance = calculateDistance(node['lat'], node['long'], lat, long);
+        //console.log("nodeDist", nodeDistance)
         if (nodeDistance < minVal) {
           minVal = nodeDistance;
           minNode = node; 
@@ -285,9 +297,9 @@ const UserGuidanceScreen = ({route, navigation}) => {
         }
       }
       setCoordinates(coordinates => [...coordinates, [pathIndex + " " + indexTracker]]);
-      console.log("minNode", minNode)
-      console.log("minDistance", minVal)
-      console.log("PathIndex", pathIndex);
+      // console.log("minNode", minNode)
+      // console.log("minDistance", minVal)
+      // console.log("PathIndex", pathIndex);
       setPointTracker(pointTracker => [...pointTracker, 'POINT3: ' + pathIndex]);
     };
   
