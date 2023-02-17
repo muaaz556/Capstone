@@ -9,6 +9,7 @@ import GetLocation from 'react-native-get-location';
 // import KalmanFilter from 'kalmanjs';
 import Geolocation from 'react-native-geolocation-service';
 import Tts from 'react-native-tts';
+import KalmanFilter from 'kalmanjs';
 
 const styles = StyleSheet.create({
   view: {
@@ -89,6 +90,10 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const watchId = useRef(null);
     const [latDrift, setLatDrift] = useState(0);
     const [longDrift, setLongDrift] = useState(0);
+
+
+    const kflat = new KalmanFilter();
+    const kflong = new KalmanFilter();
     
     useEffect(() => {
       // for (node in route.params.path) {
@@ -97,10 +102,10 @@ const UserGuidanceScreen = ({route, navigation}) => {
       console.log(route.params.path)
       
       // watch position
-      // getLocationUpdates();
+      getLocationUpdates();
       
       // getlocation
-      getLocation();
+      // getLocation();
       setStepName('start');
       checkTTS();
     }, []);
@@ -179,8 +184,10 @@ const UserGuidanceScreen = ({route, navigation}) => {
               averagelongs.pop()
 
             }
-            const calculatedAverageLat = averagelats.reduce((partialSum, a) => partialSum + a, 0)/averagelats.length
-            const calculatedAverageLong = averagelongs.reduce((partialSum, a) => partialSum + a, 0)/averagelongs.length
+            let calculatedAverageLat = averagelats.reduce((partialSum, a) => partialSum + a, 0)/averagelats.length
+            let calculatedAverageLong = averagelongs.reduce((partialSum, a) => partialSum + a, 0)/averagelongs.length
+            calculatedAverageLat = kflat.filter(calculatedAverageLat)
+            calculatedAverageLong = kflong.filter(calculatedAverageLong)
 
             const percievedLat = position.coords.latitude + latDrift;
             const percievedLong = position.coords.longitude + longDrift;
@@ -189,7 +196,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
             setCoordinates(coordinates => [...coordinates, ["cur:", percievedLat, ", "+ percievedLong, ", "+position.coords.accuracy]]);
             setCoordinates(coordinates => [...coordinates, ["avg:", calculatedAverageLat, ", "+ calculatedAverageLong, ", "+position.coords.accuracy]]);
             // closestPoint(percievedLat, percievedLong)
-            console.log("avg:", calculatedAverageLat, calculatedAverageLong)
+            console.log("avg with kal:", calculatedAverageLat, calculatedAverageLong)
             closestPoint(calculatedAverageLat, calculatedAverageLong)
 
             // if(firstGPSLocation) {
