@@ -11,10 +11,12 @@ import {
   VIBRATION_DURATION,
 } from '../assets/locale/en';
 import React, { useEffect, useState } from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import {Box, Text, View, Image} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
+import { startCounter, stopCounter } from 'react-native-accurate-step-counter';
+const haversine = require('haversine')
 
 const styles = StyleSheet.create({
   view: {
@@ -68,6 +70,10 @@ const styles = StyleSheet.create({
 
 let result;
 let currentNodeData;
+let stepCountOverall = 0;
+let enableCount = false;
+let distanceCountInMeters = 0;
+
 const NavigationScreen = ({navigation}) => {
   const [buildings, setBuildings] = useState([])
   const [stepName, setStepName] = useState('');
@@ -91,7 +97,37 @@ const NavigationScreen = ({navigation}) => {
       setBuildings(building);
       setStepName('building');
     }
-    fetchBuildings();
+    // fetchBuildings();
+
+    const config = {
+      default_threshold: 10.0, //sensitivity lower is more sensative
+      default_delay: 600000000, //0.6 sec interval between each step count
+      cheatInterval: 3000,
+      onStepCountChange: (stepCount) => { 
+        // console.log("step count", stepCount) 
+        if(enableCount){
+          stepCountOverall = stepCountOverall + 1
+          console.log(stepCountOverall)
+          // distanceCountInMeters = distanceCountInMeters + 0.4572; //meters
+          distanceCountInMeters = distanceCountInMeters + 1.5; //feet
+          console.log("distance:", distanceCountInMeters);
+          // const start = {
+          //   latitude: 43.41056100772335,
+          //   longitude: -80.27945118444076
+          // }
+          
+          // const end = {
+          //   latitude: 43.41050255313412,
+          //   longitude: -80.27954036788451
+          // }
+          
+          // console.log(haversine(start, end, {unit: 'meter'}))
+        }
+      },
+      onCheat: () => { console.log("User is Cheating") }
+    }
+    startCounter(config);
+    return () => { stopCounter() }
   }, []);
 
   const building = (selectedItem) => {
@@ -213,6 +249,15 @@ const NavigationScreen = ({navigation}) => {
       <Text style={styles.title} fontSize="2xl">
         Accessibility
       </Text>
+      <TouchableOpacity
+        onPressIn={() => {enableCount = true}}
+        onPressOut={() => {enableCount = false}}
+      style={{height: 100, backgroundColor: 'red', width: 100}}>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {stepCountOverall = 0; distanceCountInMeters = 0;}}
+      style={{height: 100, backgroundColor: 'blue', width: 100, marginTop:100}}>
+      </TouchableOpacity>
       <DistanceSensorComponent
           enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
           distanceLimit={DISTANCE_LIMIT}
