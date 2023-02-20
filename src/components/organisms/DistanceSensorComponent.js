@@ -47,14 +47,17 @@ const DistanceSensorComponent = ({
   };
 
   useEffect(() => {
+    console.log("Hello");
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackButton,
     );
 
+    console.log("Here");
     // set the connected device to null and then attempt to connect to a new device
     connectorDevice = null;
     connectAndReceive(updateDevice);
+    console.log("Over here now : ". connectorDevice);
 
     //This function runs every 0.5 seconds.
     //The job of this function is to read data
@@ -68,6 +71,8 @@ const DistanceSensorComponent = ({
         return;
       }
 
+      console.log("Connection message : ", isConnected);
+
       //The service and characteristic UUID is set in the arduino code
       connectorDevice.isConnected().then(isConnected => {
         if (isConnected) {
@@ -75,6 +80,7 @@ const DistanceSensorComponent = ({
             .readCharacteristicForService(SERVICE_UUID, CHARACTERISTIC_UUID)
             .then(
               characteristic => {
+                console.log("Connected!!!!");
                 updateSensorReading(characteristic);
               },
               error => {

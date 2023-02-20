@@ -94,7 +94,7 @@ const LoginScreen = ({navigation}) => {
           <Stack mx="0">
             <Button
               style={styles.button}
-              onPress={() => {}/*() => navigation.navigate('AdminHomeScreen')*/}>
+              onPress={() => navigation.navigate('NavigationScreen')}>
               <Text style={styles.buttonText}>Guest Admin</Text>
             </Button>
             <Button
