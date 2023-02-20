@@ -18,6 +18,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NativeBaseProvider} from 'native-base';
 import NavigationScreen from './src/screens/NavigationScreen';
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {

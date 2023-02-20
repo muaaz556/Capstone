@@ -8,8 +8,11 @@ const bleManager = new BleManager();
 export function connectAndReceive(updateDevice) {
   updateDevice(null, true);
 
+  console.log("updateDevice completed");
+
   //get permission to use phone location (needed for bluetooth)
   const permission = requestLocationPermission().then(permission => {
+    console.log("permission : ", permission);
     //if permission given then continue
     if (permission) {
       //scan for devices
@@ -19,7 +22,7 @@ export function connectAndReceive(updateDevice) {
         (error, device) => {
           //if error occurs then stop the scan
           if (error) {
-            console.log(error.message);
+            console.log("Start device scan error message : ", error.message);
             return;
           }
 
