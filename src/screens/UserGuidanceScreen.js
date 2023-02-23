@@ -4,6 +4,7 @@ import {Button, Center, Text, View, Image} from 'native-base';
 import Tts from 'react-native-tts';
 import { startCounter, stopCounter } from 'react-native-accurate-step-counter';
 const haversine = require('haversine')
+import CompassHeading from 'react-native-compass-heading';
 
 const styles = StyleSheet.create({
   view: {
@@ -76,18 +77,29 @@ let distanceCountInFeet = 0;
 let stepSize = 1.5; //in feet
 let targetDistance = null;
 
+let targetBear = null;
+let currentBear = null;
+
 const UserGuidanceScreen = ({route, navigation}) => {
 
     const [stepName, setStepName] = useState('');
     
     useEffect(() => {
-      console.log(route.params.path)
-      if(targetDistance == null){
-        findTargetDistance();
-        checkTTS();
-        pathIndex++;
-      }
-      setStepName('start');
+      const degree_update_rate = 3;
+      CompassHeading.start(degree_update_rate, ({heading, accuracy}) => {
+        console.log('CompassHeading: ', heading, accuracy);
+        currentBear = heading;
+
+        console.log(route.params.path)
+        if(targetDistance == null){
+          findTargetDistance();
+          checkTTS();
+          pathIndex++;
+        }
+        setStepName('start');
+        CompassHeading.stop(); 
+      });
+      
 
       const config = {
         default_threshold: 10.0, //sensitivity lower is more sensative
@@ -107,6 +119,9 @@ const UserGuidanceScreen = ({route, navigation}) => {
               } else {
                 checkTTS();
                 enableCount = false;
+                distanceCountInFeet = 0;
+                stepCountOverall = 0;
+                targetDistance = null;
                 setStepName('Done');
               }
             }
@@ -115,7 +130,12 @@ const UserGuidanceScreen = ({route, navigation}) => {
         },
       }
       startCounter(config);
-      return () => { stopCounter() }
+
+      
+      return () => { 
+        stopCounter(); 
+        CompassHeading.stop(); 
+      }
     }, []);
 
     const findTargetDistance = () => {
@@ -130,10 +150,52 @@ const UserGuidanceScreen = ({route, navigation}) => {
         }
       }
       targetDistance = distance(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
-      console.log("target distance is", targetDistance)
+      targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+      getShortestTurn(currentBear, targetBear)
+      console.log("***!!!! target distance is", targetDistance)
+      console.log("Calculated bearing", bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']))
       distanceCountInFeet = 0;
       stepCountOverall = 0;
     };
+
+
+    // Converts from degrees to radians.
+    function toRadians(degrees) {
+      return degrees * Math.PI / 180;
+    };
+    
+    // Converts from radians to degrees.
+    function toDegrees(radians) {
+      return radians * 180 / Math.PI;
+    }
+
+    // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
+    function bearing(startLat, startLng, destLat, destLng){
+      startLat = toRadians(startLat);
+      startLng = toRadians(startLng);
+      destLat = toRadians(destLat);
+      destLng = toRadians(destLng);
+
+      y = Math.sin(destLng - startLng) * Math.cos(destLat);
+      x = Math.cos(startLat) * Math.sin(destLat) -
+            Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
+      brng = Math.atan2(y, x);
+      brng = toDegrees(brng);
+      return (brng + 360) % 360;
+    }
+
+    function getShortestTurn(currentBearing, targetBearing){
+      console.log("bearings", currentBearing, targetBearing)
+      // source: https://math.stackexchange.com/questions/110080/shortest-way-to-achieve-target-angle
+      turn = ((targetBearing - currentBearing + 540) % 360) - 180
+      turn = Number(turn.toFixed(0))
+      console.log("calculated turn" , turn)
+      if(turn >= 0){
+        Tts.speak("Turn right " + Math.abs(turn) + " degrees");
+      } else {
+        Tts.speak("Turn left " + Math.abs(turn) + " degrees");
+      }
+    }
   
     const distance = (x1, y1, x2, y2) => {
       const start = {
