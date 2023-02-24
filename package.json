@@ -31,6 +31,7 @@
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.18.2",
     "react-native-shake": "^5.1.1",
+    "react-native-sensors": "^7.3.6",
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^12.5.0",
     "react-native-tts": "^4.1.0",
