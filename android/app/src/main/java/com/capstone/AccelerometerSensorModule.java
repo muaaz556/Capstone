@@ -20,22 +20,22 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-
 // THIS IS USING LINEAR ACCELERATION: https://developer.android.com/guide/topics/sensors/sensors_motion
 public class AccelerometerSensorModule extends ReactContextBaseJavaModule implements SensorEventListener {
 
-    //variables
+    // variables
     public static final String NAME = "AccelerometerSensorModule";
     private final SensorManager mSensorManager;
     private final Sensor mSensorAcceleration;
     private final ReactApplicationContext mReactContext;
+    private long currentTimeStamp = 0;
 
-    //constructor
+    // constructor
     public AccelerometerSensorModule(ReactApplicationContext reactContext) {
         super(reactContext);
         mReactContext = reactContext;
         mSensorManager = (SensorManager) mReactContext.getSystemService(mReactContext.SENSOR_SERVICE);
-        //Here is where you set the type of sensor 
+        // Here is where you set the type of sensor
         mSensorAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
@@ -59,13 +59,18 @@ public class AccelerometerSensorModule extends ReactContextBaseJavaModule implem
     @Override
     public void onSensorChanged(SensorEvent event) {
 
+        if (event.timestamp - currentTimeStamp < Long.valueOf(1000000000)) {
+            return;
+        }
+        currentTimeStamp = event.timestamp;
+
         double scale = Math.pow(10, 2);
 
         WritableMap sensorMap = Arguments.createMap();
 
-        sensorMap.putDouble("accelerationsX", (Math.round(event.values[0] * scale)) / scale);
-        sensorMap.putDouble("accelerationsY", (Math.round(event.values[1] * scale)) / scale);
-        sensorMap.putDouble("accelerationsZ", (Math.round(event.values[2] * scale)) / scale);
+        sensorMap.putDouble("x", event.values[0]);
+        sensorMap.putDouble("y", event.values[1]);
+        sensorMap.putDouble("z", event.values[2]);
 
         sendEvent(sensorMap);
     }
@@ -79,7 +84,7 @@ public class AccelerometerSensorModule extends ReactContextBaseJavaModule implem
         if (mSensorAcceleration == null) {
             return;
         }
-        mSensorManager.registerListener(this, mSensorAcceleration, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mSensorAcceleration, 1000000);
     }
 
     @ReactMethod
@@ -96,12 +101,13 @@ public class AccelerometerSensorModule extends ReactContextBaseJavaModule implem
     }
 
     @ReactMethod
-   public void addListener(String eventName) {
-     // Keep: Required for RN built in Event Emitter Calls.
-   }
-   @ReactMethod
-   public void removeListeners(Integer count) {
-     // Keep: Required for RN built in Event Emitter Calls.
-   }
+    public void addListener(String eventName) {
+        // Keep: Required for RN built in Event Emitter Calls.
+    }
+
+    @ReactMethod
+    public void removeListeners(Integer count) {
+        // Keep: Required for RN built in Event Emitter Calls.
+    }
 
 }

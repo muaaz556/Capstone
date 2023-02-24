@@ -20,7 +20,6 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-
 public class SensorActivityModule extends ReactContextBaseJavaModule implements SensorEventListener {
 
     public static final String NAME = "SensorActivityModule";
@@ -39,6 +38,10 @@ public class SensorActivityModule extends ReactContextBaseJavaModule implements 
     private float azimuth;
     private float pitch;
     private float roll;
+
+    private long currentTimeStampAccel = 0;
+    private long currentTimeStampGyro = 0;
+    private long currentTimeStampMagnet = 0;
 
     public SensorActivityModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -70,61 +73,76 @@ public class SensorActivityModule extends ReactContextBaseJavaModule implements 
     @ReactMethod
     public void startSensors() {
         if (mAccelerometer != null) {
-            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(this, mAccelerometer, 1000000);
         }
 
         if (mGyroscope != null) {
-            mSensorManager.registerListener(this, mGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+            // mSensorManager.registerListener(this, mGyroscope,
+            // SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(this, mGyroscope, 1000000);
         }
 
         if (mMagnetometer != null) {
-            mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(this, mMagnetometer, 1000000);
         }
     }
 
     @ReactMethod
     public void stopSensors() {
-        if (mAccelerometer != null || mGyroscope != null || mMagnetometer != null ) {
+        if (mAccelerometer != null || mGyroscope != null || mMagnetometer != null) {
             mSensorManager.unregisterListener(this);
         }
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        WritableMap sensorMap = Arguments.createMap();
 
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
+                if (event.timestamp - currentTimeStampAccel < Long.valueOf(1000000000)) {
+                    return;
+                }
+                currentTimeStampAccel = event.timestamp;
 
                 System.arraycopy(event.values, 0, mGravity, 0, 3);
 
-                sensorMap.putDouble("aX", event.values[0]);
-                sensorMap.putDouble("aY", event.values[1]);
-                sensorMap.putDouble("aZ", event.values[2]);
+                // sensorMap.putDouble("aX", event.values[0]);
+                // sensorMap.putDouble("aY", event.values[1]);
+                // sensorMap.putDouble("aZ", event.values[2]);
 
                 break;
 
             case Sensor.TYPE_GYROSCOPE:
+                if (event.timestamp - currentTimeStampGyro < Long.valueOf(1000000000)) {
+                    return;
+                }
+                currentTimeStampGyro = event.timestamp;
 
                 System.arraycopy(event.values, 0, mGyroscopic, 0, 3);
 
-                sensorMap.putDouble("gX", event.values[0]);
-                sensorMap.putDouble("gY", event.values[1]);
-                sensorMap.putDouble("gZ", event.values[2]);
+                // sensorMap.putDouble("gX", event.values[0]);
+                // sensorMap.putDouble("gY", event.values[1]);
+                // sensorMap.putDouble("gZ", event.values[2]);
 
                 break;
 
             case Sensor.TYPE_MAGNETIC_FIELD:
+                if (event.timestamp - currentTimeStampMagnet < Long.valueOf(1000000000)) {
+                    return;
+                }
+                currentTimeStampMagnet = event.timestamp;
 
                 System.arraycopy(event.values, 0, mGeomagnetic, 0, 3);
 
-                sensorMap.putDouble("mX", event.values[0]);
-                sensorMap.putDouble("mY", event.values[1]);
-                sensorMap.putDouble("mZ", event.values[2]);
+                // sensorMap.putDouble("mX", event.values[0]);
+                // sensorMap.putDouble("mY", event.values[1]);
+                // sensorMap.putDouble("mZ", event.values[2]);
 
                 break;
 
         }
+
+        WritableMap sensorMap = Arguments.createMap();
 
         // Compute the rotation matrix
         boolean success = SensorManager.getRotationMatrix(mRotationMatrix, null, mGravity, mGeomagnetic);
@@ -133,30 +151,29 @@ public class SensorActivityModule extends ReactContextBaseJavaModule implements 
             // Compute the orientation
             SensorManager.getOrientation(mRotationMatrix, mOrientation);
 
-            // Apply gyroscope data to orientation angles to improve accuracy
-            float deltaT = 1.0f / 60.0f; // assume 60 FPS
+            float deltaT = 1.0f / 60.0f;
             azimuth += mGyroscopic[2] * deltaT;
             pitch -= mGyroscopic[1] * deltaT;
             roll += mGyroscopic[0] * deltaT;
 
-            // Update UI with orientation angles
             azimuth = (float) Math.toDegrees(mOrientation[0]) + azimuth;
             pitch = (float) Math.toDegrees(mOrientation[1]) + pitch;
             roll = (float) Math.toDegrees(mOrientation[2]) + roll;
-            
+
             // Ensure the values stay within [0,360]
             azimuth = (azimuth + 360) % 360;
             pitch = (pitch + 360) % 360;
             roll = (roll + 360) % 360;
 
             // Log the orientation
-            // Log.d("SensorActivity", "Azimuth: " + azimuth + " Pitch: " + pitch + " Roll: " + roll);
-            // sensorMap.putDouble("az", azimuth);
-            // sensorMap.putDouble("pi", pitch);
-            // sensorMap.putDouble("ro", roll);
+            // Log.d("SensorActivity", "Azimuth: " + azimuth + " Pitch: " + pitch + " Roll:
+            // " + roll);
+            sensorMap.putDouble("azimuth", azimuth);
+            sensorMap.putDouble("pitch", pitch);
+            sensorMap.putDouble("roll", roll);
             sendEvent(sensorMap);
         }
-        
+
     }
 
     @ReactMethod
@@ -165,17 +182,17 @@ public class SensorActivityModule extends ReactContextBaseJavaModule implements 
     }
 
     @ReactMethod
-   public void addListener(String eventName) {
-     // Keep: Required for RN built in Event Emitter Calls.
-   }
-   @ReactMethod
-   public void removeListeners(Integer count) {
-     // Keep: Required for RN built in Event Emitter Calls.
-   }
+    public void addListener(String eventName) {
+        // Keep: Required for RN built in Event Emitter Calls.
+    }
+
+    @ReactMethod
+    public void removeListeners(Integer count) {
+        // Keep: Required for RN built in Event Emitter Calls.
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
 }
-

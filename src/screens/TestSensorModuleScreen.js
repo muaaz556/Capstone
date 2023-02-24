@@ -11,18 +11,6 @@ import { NativeModules, NativeEventEmitter } from 'react-native';
 const {AccelerometerSensorModule, GyroscopeSensorModule, SensorActivityModule} = NativeModules;
 let subscription = null;
 
-const styles = StyleSheet.create({
-    view: {
-        flex: 1,
-        alignItems: 'center',
-    },
-
-    button: {
-        marginTop: 10,
-    },
-});
-
-
 // let subscription = null;
 // let prevTimestamp = 0;
 
