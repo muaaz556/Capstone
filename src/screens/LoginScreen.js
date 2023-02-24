@@ -107,6 +107,11 @@ const LoginScreen = ({navigation}) => {
               onPress={() => navigation.navigate('AccessibilityScreen')}>
               <Text style={styles.buttonText}>Accessibility</Text>
             </Button>
+            <Button
+              style={styles.button}
+              onPress={() => navigation.navigate('TestSensorModulesScreen')}>
+              <Text style={styles.buttonText}>TestSensorModulesScreen</Text>
+            </Button>
           </Stack>
         </FormControl>
       </Box>
