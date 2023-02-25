@@ -49,9 +49,45 @@ const styles = StyleSheet.create({
   },
 });
 
+const gpsNodes = [
+  {
+    lat: 43.39612353588304,
+    long: -80.29507559339233
+  },
+  {
+    lat: 43.396130357206864,
+    long: -80.29506620566102
+  },
+  {
+    lat: 43.39613474234322,
+    long: -80.29505547682521
+  },
+  {
+    lat: 43.396140101953876,
+    long: -80.29504340688494
+  },
+  {
+    lat: 43.39614497432678,
+    long: -80.29503468970586
+  },
+  {
+    lat: 43.39614887222481,
+    long: -80.29502329031784
+  },
+  {
+    lat: 43.39615423183425,
+    long: -80.29501323203428
+  },
+  {
+    lat: 43.396158616968854,
+    long: -80.2950025031985
+  },
+];
+
 const AccessibilityScreen = ({ navigation }) => {
 
   const [gpsQueue, setGpsQueue] = useState([]);
+  const [nodeIndex, setNodeIndex] = useState(0);
 
   // For Magnotometer
   const [compassHeading, setCompassHeading] = useState(0);
@@ -71,6 +107,9 @@ const AccessibilityScreen = ({ navigation }) => {
 
   // For GPS Fetching
   useEffect(() => {
+    setGpsQueue(oldArray => [gpsNodes[nodeIndex], ...oldArray]);
+    setNodeIndex(nodeIndex => nodeIndex + 1);
+
     const interval = setInterval(() => {
       fetchGpsLocation();
     }, 2000);
@@ -98,56 +137,44 @@ const AccessibilityScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (gpsQueue.length == 2) {
-      const gpsNodes = [
-        {
-          lat: 43.39612353588304,
-          lon: -80.29507559339233
-        },
-        {
-          lat: 43.396130357206864,
-          long: -80.29506620566102
-        },
-        {
-          lat: 43.39613474234322,
-          long: -80.29505547682521
-        },
-        {
-          lat: 43.396140101953876,
-          long: -80.29504340688494
-        },
-        {
-          lat: 43.39614497432678,
-          long: -80.29503468970586
-        },
-        {
-          lat: 43.39614887222481,
-          long: -80.29502329031784
-        },
-        {
-          lat: 43.39615423183425,
-          long: -80.29501323203428
-        },
-        {
-          lat: 43.396158616968854,
-          long: -80.2950025031985
-        },
-      ]
-
+      
       const prevCord = gpsQueue.pop();
       const currCord = gpsQueue.pop();
 
       const haversine = new Haversine({ lat: prevCord.lat, lng: prevCord.long });
       const bearing = haversine.getBearing({ lat: currCord.lat, lng: currCord.long });
 
-      console.log(prevCord.lat + ", " + prevCord.long);
-      console.log(currCord.lat + ", " + currCord.long);
+      console.log("Prev: " + prevCord.lat + ", " + prevCord.long);
+      console.log("Curr: " + currCord.lat + ", " + currCord.long);
 
-      // const tempval = { lat: 43.39610502085731, long: -80.29509401964366 }
-      const dist = haversine.getDistance({ lat: currCord.lat, lng: currCord.long });
-      // const newCurrDest = getDestinationCord(prevCord.lat, prevCord.long, dist / 1000, 60);
-      // setGpsQueue(oldArray => [newCurrDest, ...oldArray]);
+      let dist = haversine.getDistance({ lat: currCord.lat, lng: currCord.long });
 
-      setGpsQueue(oldArray => [currCord, ...oldArray]);
+      if (dist > 1) {
+        dist = Math.random();
+      }
+
+      const newCurrDest = getDestinationCord(prevCord.lat, prevCord.long, dist, 60);
+      console.log(newCurrDest.lat + ", " + newCurrDest.long);
+      console.log("Node Index: " + nodeIndex);
+
+      const tempHaversine = new Haversine({ lat: newCurrDest.lat, lng: newCurrDest.long });
+      const tempDist = tempHaversine.getDistance({ lat: gpsNodes[nodeIndex].lat, lng: gpsNodes[nodeIndex].long });
+      const tempBearing = tempHaversine.getBearing({ lat: gpsNodes[nodeIndex].lat, lng: gpsNodes[nodeIndex].long });
+
+      console.log("Origin: " + newCurrDest.lat + ", " + newCurrDest.long);
+      console.log("Dest: " + gpsNodes[nodeIndex].lat + ", " + gpsNodes[nodeIndex].long);
+
+      if (tempDist < 0.25 || tempBearing > (60 + 20) || tempBearing < (60 - 20)) {
+        console.log("You have made it to node " + nodeIndex);
+        setNodeIndex(nodeIndex => nodeIndex + 1);
+      } 
+      
+      console.log("Temp Distance: " + tempDist);
+      console.log("Temp Bearing: " + tempBearing + "\n");
+
+      setGpsQueue(oldArray => [newCurrDest, ...oldArray]);
+
+      // setGpsQueue(oldArray => [currCord, ...oldArray]);
     }
   }, [gpsQueue.length == 2]);
 
@@ -160,7 +187,7 @@ const AccessibilityScreen = ({ navigation }) => {
   }
 
   const getDestinationCord = (lat_param, long_param, dist, bearing_param) => {
-    const earthRadius = 6371;
+    const earthRadius = 6371000;
 
     const lat = Math.radians(lat_param);
     const long = Math.radians(long_param);
