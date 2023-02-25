@@ -22,40 +22,51 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     margin: 12,
-    width: 200,
-    borderWidth: 1,
+    width: 300,
+    borderRadius: 4,
+    borderWidth: 3,
     padding: 10,
   },
   title: {
     paddingTop: '30%',
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '500',
-    color: '#353d3f',
+    fontSize: 28,
+    fontWeight: '800',
+    color: 'black',
   },
   boxCard: {
-    backgroundColor: '#DEDEDE',
     padding: 18,
-    borderRadius: 15,
+    borderRadius: 4,
+    borderWidth: 3,
+    borderColor: 'black',
   },
   decriptionTitle: {
     lineHeight: 20,
-    fontWeight: '500',
+    fontWeight: '800',
+    fontSize: 16,
     paddingBottom: 12,
   },
   description: {
     lineHeight: 20,
+    fontWeight: '400',
+    fontSize: 14,
+  },
+  button: {
+    marginTop: 10,
+    backgroundColor: '#005AB5',
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 18,
   },
   discardButton: {
     alignItems: 'center',
     backgroundColor: '#D05959',
-    padding: 10,
+    padding: 12,
     borderRadius: 4,
     marginBottom: 10,
+    marginTop: 10,
   },
 });
 
@@ -138,14 +149,18 @@ const GPSCornerSelection = ({navigation}) => {
 
       <Box w="100%" maxWidth="75%" mt="5">
         <Button
-          mb="2"
+          mb="4"
+          style={styles.button}
+          size="lg"
           onPress={() => {
             getCurrentPosition();
           }}>
           <Text style={styles.buttonText}>{GET_CURRENT_LOCATION_LABEL}</Text>
         </Button>
         <Button
-          mb="2"
+          mb="4"
+          style={styles.button}
+          size="lg"
           onPress={() => {
             postCoordinates();
           }}>
@@ -159,7 +174,9 @@ const GPSCornerSelection = ({navigation}) => {
           <Text style={styles.buttonText}>{DISCARD_GPS_LOCATIONS_LABEL}</Text>
         </TouchableOpacity>
         <Button
-          mb="2"
+          mb="10"
+          style={styles.button}
+          size="lg"
           onPress={() => {
             setStepName('floor_name');
           }}>

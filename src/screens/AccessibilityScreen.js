@@ -9,20 +9,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
   },
+  button: {
+    marginTop: 10,
+    backgroundColor: '#005AB5',
+  },
   title: {
     paddingTop: 10,
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '500',
-    color: '#353d3f',
-    marginBottom: '0%',
+    fontSize: 28,
+    fontWeight: '800',
+    color: 'black',
+    marginBottom: '2%',
   },
   logoImage: {
     marginTop: '20%',
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 18,
   },
   dividerView: {
     flexDirection: 'row',
@@ -32,7 +37,9 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     textAlign: 'center',
-    color: '#808585',
+    color: 'black',
+    fontSize: 14,
+    fontWeight: '500',
     paddingHorizontal: 10,
   },
   dividerLine: {
@@ -49,7 +56,7 @@ const AccessibilityScreen = ({navigation}) => {
         style={styles.logoImage}
         source={require('../assets/images/splashscreen_logo.png')}
         size="lg"
-        alt="Logo image"
+        alt="Logo of a person walking with a white cane."
       />
       <Text style={styles.title} fontSize="2xl">
         Accessibility
@@ -64,12 +71,16 @@ const AccessibilityScreen = ({navigation}) => {
           <View style={styles.dividerLine} />
         </View>
         <Button
-          mb="2"
+          mb="4"
+          style={styles.button}
+          size="lg"
           onPress={() => navigation.navigate('MapNewBuildingScreen')}>
           <Text style={styles.buttonText}>Map New Building</Text>
         </Button>
         <Button
-          mb="2"
+          mb="4"
+          style={styles.button}
+          size="lg"
           onPress={() => navigation.navigate('MapExistingBuildingScreen')}>
           <Text style={styles.buttonText}>Map Existing Building</Text>
         </Button>
