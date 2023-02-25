@@ -225,7 +225,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
         [0,Math.sin(rollRad), Math.cos(rollRad)],
       ]
 
-      const R_roll = [
+      const R_pitch = [
         [Math.cos(pitchRad), 0, Math.sin(pitchRad)],
         [0,1,0]
         [-Math.sin(pitchRad), 0, Math.cos(pitchRad)],
