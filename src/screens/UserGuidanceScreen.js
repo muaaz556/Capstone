@@ -5,6 +5,7 @@ import Tts from 'react-native-tts';
 import { startCounter, stopCounter } from 'react-native-accurate-step-counter';
 const haversine = require('haversine')
 import CompassHeading from 'react-native-compass-heading';
+import { StackActions } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   view: {
@@ -13,13 +14,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   button: {
-    marginTop: 10,
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
+    marginTop: 50,
+    width: '60%',
+    height: '60%',
+    padding: 20,
     justifyContent: 'center',
-    alignContent: 'center',
-    textAlign: 'center',
+    backgroundColor: '#2298b3',
+    borderRadius: 14,
   },
   title: {
     paddingTop: 10,
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: '500',
+    textAlign:"center",
   },
   dividerView: {
     flexDirection: 'row',
@@ -73,8 +75,8 @@ let ttsIndex = 0;
 
 let stepCountOverall = 0;
 let enableCount = false;
-let distanceCountInFeet = 0;
-let stepSize = 1.5; //in feet
+let distanceCount = 0;
+let stepSize = 0.4572; //in meters (this is 1.5 feet)
 let targetDistance = null;
 
 let targetBear = null;
@@ -85,9 +87,9 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const [stepName, setStepName] = useState('');
     
     useEffect(() => {
+      resetAllVariables();
       const degree_update_rate = 3;
       CompassHeading.start(degree_update_rate, ({heading, accuracy}) => {
-        console.log('CompassHeading: ', heading, accuracy);
         currentBear = heading;
 
         console.log(route.params.path)
@@ -100,28 +102,24 @@ const UserGuidanceScreen = ({route, navigation}) => {
         CompassHeading.stop(); 
       });
       
-
       const config = {
-        default_threshold: 10.0, //sensitivity lower is more sensative
+        default_threshold: 10.0, //sensitivity, lower is more sensative
         default_delay: 600000000, //0.6 sec interval between each step count
         onStepCountChange: (stepCount) => { 
           if(enableCount){
             stepCountOverall = stepCountOverall + 1
-            console.log(stepCountOverall)
-            distanceCountInFeet = distanceCountInFeet + stepSize; // in feet
-            console.log("distance:", distanceCountInFeet);
+            console.log("steps counted:", stepCountOverall)
+            distanceCount = distanceCount + stepSize; // in feet
+            console.log("distance counted:", distanceCount);
 
-            if(targetDistance == null || targetDistance <= distanceCountInFeet) {
+            if(targetDistance == null || targetDistance <= distanceCount) {
               if(pathIndex < route.params.nodeList.length - 1){
                 findTargetDistance();
                 checkTTS();
                 pathIndex++;
               } else {
                 checkTTS();
-                enableCount = false;
-                distanceCountInFeet = 0;
-                stepCountOverall = 0;
-                targetDistance = null;
+                resetAllVariables();
                 setStepName('Done');
               }
             }
@@ -131,12 +129,22 @@ const UserGuidanceScreen = ({route, navigation}) => {
       }
       startCounter(config);
 
-      
       return () => { 
         stopCounter(); 
         CompassHeading.stop(); 
       }
     }, []);
+
+    const resetAllVariables = () => {
+      enableCount = false;
+      distanceCount = 0;
+      stepCountOverall = 0;
+      targetDistance = null;
+      targetBear = null;
+      currentBear = null;
+      pathIndex = 0;
+      ttsIndex = 0;
+    }
 
     const findTargetDistance = () => {
       let startNode = null
@@ -150,20 +158,24 @@ const UserGuidanceScreen = ({route, navigation}) => {
         }
       }
       targetDistance = distance(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
-      targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
-      getShortestTurn(currentBear, targetBear)
-      console.log("***!!!! target distance is", targetDistance)
-      console.log("Calculated bearing", bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']))
-      distanceCountInFeet = 0;
+      console.log("Target distance:", targetDistance)
+
+      if(pathIndex == 0){
+        targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+        getShortestTurn(currentBear, targetBear)
+      }
+      
+      distanceCount = 0;
       stepCountOverall = 0;
     };
 
-
+    // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
     // Converts from degrees to radians.
     function toRadians(degrees) {
       return degrees * Math.PI / 180;
     };
     
+    // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
     // Converts from radians to degrees.
     function toDegrees(radians) {
       return radians * 180 / Math.PI;
@@ -185,11 +197,12 @@ const UserGuidanceScreen = ({route, navigation}) => {
     }
 
     function getShortestTurn(currentBearing, targetBearing){
-      console.log("bearings", currentBearing, targetBearing)
+      console.log("Current bearing:", currentBearing, "Target bearing:", targetBearing)
+
       // source: https://math.stackexchange.com/questions/110080/shortest-way-to-achieve-target-angle
       turn = ((targetBearing - currentBearing + 540) % 360) - 180
       turn = Number(turn.toFixed(0))
-      console.log("calculated turn" , turn)
+
       if(turn >= 0){
         Tts.speak("Turn right " + Math.abs(turn) + " degrees");
       } else {
@@ -206,7 +219,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
         latitude: x2,
         longitude: y2,
       }
-      return haversine(start, end, {unit: 'meter'})*3.281 // coverts from meters to feet
+      return haversine(start, end, {unit: 'meter'})
     };
 
     const checkTTS = () => {
@@ -234,15 +247,15 @@ const UserGuidanceScreen = ({route, navigation}) => {
             <TouchableOpacity
               onPressIn={() => {enableCount = true}}
               onPressOut={() => {enableCount = false}}
-              style={{height: 100, backgroundColor: 'red', width: 100}}>
-              <Text>Press and hold to enable step counter</Text>
+              style={styles.button}>
+              <Text style={styles.buttonText}>Press and hold to enable step counter</Text>
             </TouchableOpacity>
           </View>
         ) : stepName == 'Done' ? (
           <Button
             title="Stop"
             style={styles.button}
-            onPress={() => navigation.navigate('Login')}>
+            onPress={() => navigation.dispatch(StackActions.popToTop())}>
               <Text style={styles.buttonText}>Go back to Login</Text>
           </Button>
         ) : (
