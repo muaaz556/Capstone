@@ -7,6 +7,7 @@ import {
   OVERVIEW_PAGE_TITLE,
   START_LABEL,
   OVERVIEW_INTRO_MESSAGE,
+  BUTTON,
 } from '../../assets/locale/en';
 import {OverviewContext} from '../../screens/MapNewBuildingScreen';
 
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
 });
 
 const Overview = () => {
-  const {stepName, setStepName} = useContext(OverviewContext);
+  const {stepName, setStepName, navigateToLogin} = useContext(OverviewContext);
 
   return (
     <>
@@ -60,8 +61,18 @@ const Overview = () => {
       </Box>
 
       <Box w="100%" maxWidth="75%" mt="5">
-        <Button style={styles.button} mb="10" onPress={() => setStepName('building_name')}>
+        <Button size="lg"
+         style={styles.button}
+         mb="4"
+         onPress={() => setStepName('building_name')}>
         <Text style={styles.buttonText}>{START_LABEL}</Text>
+        </Button>
+        <Button
+          mb="10"
+          style={styles.button}
+          size="lg"
+          onPress={navigateToLogin}>
+          <Text style={styles.buttonText}>{BUTTON.BACK}</Text>
         </Button>
       </Box>
     </>
