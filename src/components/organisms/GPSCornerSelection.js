@@ -1,5 +1,7 @@
 
-import React, {useContext} from 'react';
+import React, {useState, useContext} from 'react';
+import { View } from 'native-base';
+
 
 import {StyleSheet, Alert, TouchableOpacity} from 'react-native';
 import {Box, Button, Text} from 'native-base';
@@ -17,6 +19,8 @@ import {
   DESCRIPTION,
   BUTTON,
 } from '../../assets/locale/en';
+import Dialog from "react-native-dialog";
+
 
 const styles = StyleSheet.create({
   input: {
@@ -84,6 +88,12 @@ const GPSCornerSelection = ({navigation}) => {
   const [latitude, setLatitude] = lat;
   const [stepName, setStepName] = step;
   const [postCoordinates] = postFunction;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [latInput, setLatInput] = useState("");
+  const [longInput, setLongInput] = useState("");
+
+
+
 
   const getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
@@ -124,8 +134,35 @@ const GPSCornerSelection = ({navigation}) => {
     setStepName('please_wait');
   };
 
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  }
+
   return (
     <>
+      <View>
+          <Dialog.Container visible={modalVisible}>
+              <Dialog.Title>{"Add Coordinate"}</Dialog.Title>
+              <Dialog.Description>
+                  {"Manually add GPS coordinate"}
+              </Dialog.Description>
+              <Dialog.Input onChangeText={(input) => {setLatInput(input)}} value={latInput} placeholder="Latitude" keyboardType='numeric'/>
+              <Dialog.Input onChangeText={(input) => {setLongInput(input)}} value={longInput} placeholder="Longitude" keyboardType='numeric'/>
+              <Dialog.Button label="Cancel" onPress={() => {
+                toggleModal()
+                setLatInput("")
+                setLongInput("")
+                }}/>
+              <Dialog.Button label="Ok" disabled={latInput == "" || longInput == ""} onPress={() => {
+                  setLatitude(latitude => [...latitude, Number(latInput)]);
+                  setLongitude(longitude => [...longitude, Number(longInput)]);
+                  setStepName('gps_call')
+                  setLatInput("")
+                  setLongInput("")
+                  setModalVisible(false)
+                  }}/>
+          </Dialog.Container>
+      </View>
       <Text style={styles.title} fontSize="2xl">
         {LOCATION_OF_CORNER_TITLE}
       </Text>
@@ -148,6 +185,15 @@ const GPSCornerSelection = ({navigation}) => {
       </Box>
 
       <Box w="100%" maxWidth="75%" mt="5">
+      <Button
+          mb="4"
+          style={styles.button}
+          size="lg"
+          onPress={() => {
+            toggleModal();
+          }}>
+          <Text style={styles.buttonText}>Manual Input</Text>
+        </Button>
         <Button
           mb="4"
           style={styles.button}
