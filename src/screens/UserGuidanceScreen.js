@@ -17,11 +17,13 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 50,
     width: '60%',
-    height: '60%',
+    // height: '60%',
+    height: 200,
     padding: 20,
     justifyContent: 'center',
     backgroundColor: '#2298b3',
     borderRadius: 14,
+    margin: 20
   },
   title: {
     paddingTop: 10,
@@ -69,6 +71,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 30,
   },
+  goodBadButton: {
+    margin: 20,
+  },
+  goodBadButtonText: {
+    margin: 20,
+    color: 'white',
+    fontSize: 20
+  }
 });
 
 const {AccelerometerSensorModule, GyroscopeSensorModule, SensorActivityModule} = NativeModules;
@@ -135,7 +145,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
             distanceCount = distanceCount + stepSize; // in feet
             console.log("distance counted:", distanceCount);
 
-            averagedDistance = (distanceCount + math.abs(distance.z))/2;
+            let averagedDistance = (distanceCount + Math.abs(distance.z))/2;
 
             if(targetDistance == null || targetDistance <= averagedDistance) {
               if(pathIndex < route.params.nodeList.length - 1){
@@ -221,7 +231,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
     }, [accelData]);
 
     const areWeMoving = () => {
-      moving = math.abs(velocity.z) > 1;
+      moving = Math.abs(velocity.z) > 1;
     }
 
     const findTargetDistance = () => {
@@ -352,7 +362,8 @@ const UserGuidanceScreen = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
         ) : stepName == 'Done' ? (
-          <Button
+          <>
+          {/* <Button
             title="Stop"
             style={styles.button}
             onPress={() => {
@@ -360,8 +371,30 @@ const UserGuidanceScreen = ({route, navigation}) => {
                 navigation.dispatch(StackActions.popToTop())
               }
             }>
+             
               <Text style={styles.buttonText}>Go back to Login</Text>
-          </Button>
+          </Button> */}
+          <Text style={styles.title}>
+            How was user guidance?
+          </Text>
+          <View style={{ flexDirection:"row" }}>
+              <View >
+                  <Button style={styles.goodBadButton} onPress={() => {
+                stopAccelerometer()
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Good</Text></Button>
+              </View>
+              <View >
+                  <Button style={styles.goodBadButton} onPress={() => {
+                stopAccelerometer()
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Bad</Text></Button>
+              </View>
+          </View>
+          </>
+          
         ) : (
           <></>
         )}
