@@ -94,16 +94,17 @@ let prevVelocity = { x: 0, y: 0, z: 0 };
 let prevDistance = { x: 0, y: 0, z: 0 };
 let velocity = { x: 0, y: 0, z: 0 };
 let distance = { x: 0, y: 0, z: 0 };
+let startLocation = {lat: 0, long: 0};
+let moving = false;
 
 const UserGuidanceScreen = ({route, navigation}) => {
 
     const [stepName, setStepName] = useState('');
     const [accelData, setAccelData] = useState({ x: 0, y: 0, z: 0 });
-    const [angles, setAngles] = useState({ azimuth: 0, pitch: 0, roll: 0 })
     const [adjustedDistance, setAdjustedDistance] = useState({lat: 0, long: 0});
     
     useEffect(() => {
-      startSensors();
+      // startSensors();
       startAccelerometer();
 
       const degree_update_rate = 3;
@@ -189,6 +190,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
           z: calculateVelocity((accelData.z + prevAccelData.z) / 2, prevVelocity.z)
         };
         velocity = newVelocity;
+        areWeMoving();
   
         const newDistance = {
           x: calculateDistanceFromVelocity((velocity.x + prevVelocity.x) / 2, prevDistance.x),
@@ -196,8 +198,8 @@ const UserGuidanceScreen = ({route, navigation}) => {
           z: calculateDistanceFromVelocity((velocity.z + prevVelocity.z) / 2, prevDistance.z)
         };
         distance = newDistance;
-        // console.log("this is the new distance: ", newDistance);
-        // console.log("angles are: ", angles);
+        calcAdjDistance();
+
   
         prevAccelData = accelData;
         prevVelocity = newVelocity;
@@ -208,30 +210,13 @@ const UserGuidanceScreen = ({route, navigation}) => {
       return () => clearInterval(intervalId);
     }, [accelData]);
 
-    useEffect(() => {
-      const azimuthRad = toRadians(angles.azimuth);
-      const pitchRad = toRadians(angles.pitch);
-      const rollRad = toRadians(angles.roll);
+    const areWeMoving = () => {
+      moving = math.abs(velocity.z) > 1;
+    }
 
-      const R_azimuth = [
-        [Math.cos(azimuthRad), -Math.sin(azimuthRad), 0],
-        [Math.sin(azimuthRad), Math.cos(azimuthRad), 0],
-        [0,0,1],
-      ]
+    const calcAdjDistance = () => {
 
-      const R_roll = [
-        [1,0,0],
-        [0,Math.cos(rollRad), -Math.sin(rollRad)],
-        [0,Math.sin(rollRad), Math.cos(rollRad)],
-      ]
-
-      const R_pitch = [
-        [Math.cos(pitchRad), 0, Math.sin(pitchRad)],
-        [0,1,0]
-        [-Math.sin(pitchRad), 0, Math.cos(pitchRad)],
-      ]
-
-    }, [accelData, angles]);
+    }
 
     const findTargetDistance = () => {
       let startNode = null
@@ -315,8 +300,6 @@ const UserGuidanceScreen = ({route, navigation}) => {
 
 
     const startAccelerometer = () => {
-      // SensorEventModule.printTemp();
-      console.log("r u working accelerometer")
       AccelerometerSensorModule?.startAccelerationSensor();
 
       const eventEmitter = new NativeEventEmitter();
@@ -337,55 +320,6 @@ const UserGuidanceScreen = ({route, navigation}) => {
       subscription?.remove();
     }
 
-    const startSensors = () => {
-      // SensorEventModule.printTemp();
-      console.log("r u working SensorActivityModule")
-      SensorActivityModule?.startSensors();
-
-      const eventEmitter = new NativeEventEmitter();
-
-      subscription2 = eventEmitter.addListener(
-          'SensorActivityModule',
-          (data) => {
-              // testing to see if we can see the values of SensorActivityModule
-              setAngles(data)
-              console.log(data);
-          },
-      );
-    }
-
-    const stopSensors = () =>{
-      console.log("Stop Listening");
-      SensorActivityModule?.stopSensors();
-      subscription2?.remove();
-    }
-
-    const matrixMultiplication = (matrixA, matrixB) => {
-      const result = [];
-      for (let i = 0; i < matrixA.length; i++) {
-        result[i] = [];
-        for (let j = 0; j < matrixB[0].length; j++) {
-          let sum = 0;
-          for (let k = 0; k < matrixB.length; k++) {
-            sum += matrixA[i][k] * matrixB[k][j];
-          }
-          result[i][j] = sum;
-        }
-      }
-      return result;
-    };
-  
-    const matrixVectorMultiplication = (matrix, vector) => {
-      const result = [];
-      for (let i = 0; i < matrix.length; i++) {
-        let sum = 0;
-        for (let j = 0; j < vector.length; j++) {
-          sum += matrix[i][j] * vector[j];
-        }
-        result[i] = sum;
-      }
-      return result;
-    };
   
     return (
       <View style={styles.view}>
@@ -411,7 +345,11 @@ const UserGuidanceScreen = ({route, navigation}) => {
           <Button
             title="Stop"
             style={styles.button}
-            onPress={() => navigation.navigate('Login')}>
+            onPress={() => {
+                stopAccelerometer()
+                navigation.navigate('Login')
+              }
+            }>
               <Text style={styles.buttonText}>Go back to Login</Text>
           </Button>
         ) : (
