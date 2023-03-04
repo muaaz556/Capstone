@@ -129,7 +129,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
         default_threshold: 10.0, //sensitivity lower is more sensative
         default_delay: 600000000, //0.6 sec interval between each step count
         onStepCountChange: (stepCount) => { 
-          if(enableCount){
+          if(enableCount && moving){
             stepCountOverall = stepCountOverall + 1
             console.log("steps counted:", stepCountOverall)
             distanceCount = distanceCount + stepSize; // in feet
@@ -210,8 +210,6 @@ const UserGuidanceScreen = ({route, navigation}) => {
           z: calculateDistanceFromVelocity((velocity.z + prevVelocity.z) / 2, prevDistance.z)
         };
         distance = newDistance;
-        calcAdjDistance();
-
   
         prevAccelData = accelData;
         prevVelocity = newVelocity;
@@ -224,10 +222,6 @@ const UserGuidanceScreen = ({route, navigation}) => {
 
     const areWeMoving = () => {
       moving = math.abs(velocity.z) > 1;
-    }
-
-    const calcAdjDistance = () => {
-
     }
 
     const findTargetDistance = () => {
