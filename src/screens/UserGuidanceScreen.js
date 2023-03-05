@@ -16,11 +16,12 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 50,
     width: '60%',
-    height: '60%',
+    height: 200,
     padding: 20,
     justifyContent: 'center',
     backgroundColor: '#2298b3',
     borderRadius: 14,
+    margin: 20
   },
   title: {
     paddingTop: 10,
@@ -252,12 +253,27 @@ const UserGuidanceScreen = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
         ) : stepName == 'Done' ? (
-          <Button
-            title="Stop"
-            style={styles.button}
-            onPress={() => navigation.dispatch(StackActions.popToTop())}>
-              <Text style={styles.buttonText}>Go back to Login</Text>
-          </Button>
+          <>
+          <Text style={styles.title}>
+            How was user guidance?
+          </Text>
+          <View style={{ flexDirection:"row" }}>
+              <View >
+                  <Button style={styles.goodBadButton} onPress={() => {
+                stopAccelerometer()
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Good</Text></Button>
+              </View>
+              <View >
+                  <Button style={styles.goodBadButton} onPress={() => {
+                stopAccelerometer()
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Bad</Text></Button>
+              </View>
+          </View>
+          </>
         ) : (
           <></>
         )}

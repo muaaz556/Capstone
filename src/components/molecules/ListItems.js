@@ -38,14 +38,7 @@ const styles = StyleSheet.create({
 
 const ListItems = ({list, updateStep, titleText}) => {
     return (
-        <Box w="100%" maxWidth="75%" mt="5">
-            <View style={styles.dividerView}>
-                <View style={styles.dividerLine} />
-                <View>
-                    <Text style={styles.dividerText}>Choose a {titleText}</Text>
-                </View>
-                <View style={styles.dividerLine} />
-            </View>
+        <Box w="100%" maxWidth="100%" mt="5">
             <FlatList
                 data={list}
                 renderItem={({item}) => (

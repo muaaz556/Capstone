@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, TextInput} from 'react-native';
+import {StyleSheet, TextInput, ScrollView} from 'react-native';
 import {Box, Button, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import {NEXT_LABEL} from '../assets/locale/en';
 
 const styles = StyleSheet.create({
   view: {
-    // flex: 1,
+    flex: 1,
     alignItems: 'center',
     flexDirection: 'column',
   },
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 0,
-    marginBottom: 20,
+    marginBottom: 0,
   },
   dividerText: {
     textAlign: 'center',
@@ -65,6 +65,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 30,
   },
+  scrollViewStyle: { 
+    flexGrow: 1, 
+    alignItems: 'center',
+    // justifyContent: 'center'
+  }
 });
 
 let result;
@@ -129,12 +134,16 @@ const MapExistingBuildingScreen = ({navigation}) => {
           </View>
         </Box>
         {stepName == 'building' ? (
-          <View maxHeight="65%">
+                      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
+
+          <Box w="100%" maxWidth="100%" mt="5">
             <FlatList
             data={buildings}
             renderItem={({item}) => (
                 <>
                     <Button
+                    mb="4"
+                    size="lg"
                     title={item}
                     style={styles.button}
                     onPress={()=> updateStep(item)}>
@@ -143,7 +152,8 @@ const MapExistingBuildingScreen = ({navigation}) => {
                 </>
             )}
             />
-          </View>
+           </Box>
+          </ScrollView>
         ): stepName == 'floor' ? (
           <>
             <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
