@@ -76,7 +76,7 @@ let ttsIndex = 0;
 let stepCountOverall = 0;
 let enableCount = false;
 let distanceCount = 0;
-let stepSize = 0.4572; //in meters (this is 1.5 feet)
+let stepSize = 0.5; //in meters (this is 1.5 feet)
 let targetDistance = null;
 
 let targetBear = null;
@@ -113,7 +113,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
             console.log("distance counted:", distanceCount);
 
             if(targetDistance == null || targetDistance <= distanceCount) {
-              if(pathIndex < route.params.nodeList.length - 1){
+              if(pathIndex < route.params.path.length - 1){
                 findTargetDistance();
                 checkTTS();
                 pathIndex++;
