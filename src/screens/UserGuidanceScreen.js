@@ -15,11 +15,11 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 50,
-    width: '60%',
+    width: '70%',
     height: 200,
-    padding: 20,
+    // padding: 0,
     justifyContent: 'center',
-    backgroundColor: '#2298b3',
+    backgroundColor: '#005AB5',
     borderRadius: 14,
     margin: 20
   },
@@ -36,8 +36,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign:"center",
+    fontSize: 22,
+    padding: 60
   },
   dividerView: {
     flexDirection: 'row',
@@ -69,6 +71,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 30,
   },
+  goodBadButton: {
+    margin: 20,
+  },
+  goodBadButtonText: {
+    margin: 20,
+    color: 'white',
+    fontSize: 20
+  }
 });
 
 let pathIndex = 0;
@@ -86,6 +96,7 @@ let currentBear = null;
 const UserGuidanceScreen = ({route, navigation}) => {
 
     const [stepName, setStepName] = useState('');
+    const [enableCountUI, setEnableCountUI] = useState(false);
     
     useEffect(() => {
       resetAllVariables();
@@ -137,6 +148,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
     }, []);
 
     const resetAllVariables = () => {
+      // setEnableCount(false);
       enableCount = false;
       distanceCount = 0;
       stepCountOverall = 0;
@@ -246,10 +258,21 @@ const UserGuidanceScreen = ({route, navigation}) => {
         {stepName == 'start' ? (
           <View maxHeight="65%">
             <TouchableOpacity
-              onPressIn={() => {enableCount = true}}
-              onPressOut={() => {enableCount = false}}
+              onPress={() => {
+                if(enableCountUI == true){
+                  setEnableCountUI(false)
+                  enableCount = false
+                } else {
+                  setEnableCountUI(true)
+                  enableCount = true
+                }
+                console.log(enableCount)
+              }}
               style={styles.button}>
-              <Text style={styles.buttonText}>Press and hold to enable step counter</Text>
+                {(enableCountUI)? 
+                  <Text style={styles.buttonText}>Pause Navigation</Text>:
+                  <Text style={styles.buttonText}>Start Navigation</Text>
+                }
             </TouchableOpacity>
           </View>
         ) : stepName == 'Done' ? (
@@ -259,14 +282,14 @@ const UserGuidanceScreen = ({route, navigation}) => {
           </Text>
           <View style={{ flexDirection:"row" }}>
               <View >
-                  <Button style={styles.goodBadButton} onPress={() => {
+                  <Button style={styles.goodBadButton} size="lg" onPress={() => {
                 stopAccelerometer()
                 navigation.dispatch(StackActions.popToTop())
               }
             }><Text style={styles.goodBadButtonText}>Good</Text></Button>
               </View>
               <View >
-                  <Button style={styles.goodBadButton} onPress={() => {
+                  <Button style={styles.goodBadButton} size="lg" onPress={() => {
                 stopAccelerometer()
                 navigation.dispatch(StackActions.popToTop())
               }
