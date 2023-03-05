@@ -7,6 +7,7 @@ import {
   OVERVIEW_PAGE_TITLE,
   START_LABEL,
   OVERVIEW_INTRO_MESSAGE,
+  BUTTON,
 } from '../../assets/locale/en';
 import {OverviewContext} from '../../screens/MapNewBuildingScreen';
 
@@ -14,16 +15,24 @@ const styles = StyleSheet.create({
   title: {
     paddingTop: "30%",
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '500',
-    color: '#353d3f',
+    fontSize: 28,
+    fontWeight: '800',
+    color: 'black',
+  },
+  button: {
+    marginTop: 10,
+    backgroundColor: '#005AB5',
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 18,
   },
   boxCard: {
-    backgroundColor: '#DEDEDE', padding: 18, borderRadius: 15,
+    borderColor: 'black',
+    borderWidth: 3,
+    padding: 18,
+    borderRadius: 15,
   },
   decriptionTitle: {
     lineHeight: 20, fontWeight:'500',
@@ -34,7 +43,7 @@ const styles = StyleSheet.create({
 });
 
 const Overview = () => {
-  const {stepName, setStepName} = useContext(OverviewContext);
+  const {stepName, setStepName, navigateToLogin} = useContext(OverviewContext);
 
   return (
     <>
@@ -52,8 +61,18 @@ const Overview = () => {
       </Box>
 
       <Box w="100%" maxWidth="75%" mt="5">
-        <Button mb="2" onPress={() => setStepName('building_name')}>
+        <Button size="lg"
+         style={styles.button}
+         mb="4"
+         onPress={() => setStepName('building_name')}>
         <Text style={styles.buttonText}>{START_LABEL}</Text>
+        </Button>
+        <Button
+          mb="10"
+          style={styles.button}
+          size="lg"
+          onPress={navigateToLogin}>
+          <Text style={styles.buttonText}>{BUTTON.BACK}</Text>
         </Button>
       </Box>
     </>

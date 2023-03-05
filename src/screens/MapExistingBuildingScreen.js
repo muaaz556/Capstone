@@ -12,27 +12,28 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     alignContent: 'center',
     textAlign: 'center',
+    backgroundColor: '#005AB5',
   },
   title: {
     paddingTop: 10,
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '500',
-    color: '#353d3f',
-    marginBottom: '0%',
+    fontSize: 28,
+    fontWeight: '800',
+    color: 'black',
+    marginBottom: '5%',
   },
   logoImage: {
     marginTop: '20%',
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 18,
   },
   dividerView: {
     flexDirection: 'row',
@@ -42,7 +43,9 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     textAlign: 'center',
-    color: '#808585',
+    color: 'black',
+    fontSize: 14,
+    fontWeight: '500',
     paddingHorizontal: 10,
   },
   dividerLine: {
@@ -52,21 +55,15 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    borderWidth: 1,
+    borderWidth: 3,
     padding: 10,
-    borderRadius: 4,
-    borderColor: '#808585',
-    color: '#000000',
+    borderRadius: 14,
+    borderColor: 'black',
   },
   boxCard: {
-    backgroundColor: '#DEDEDE',
     paddingHorizontal: 18,
     borderRadius: 15,
     paddingVertical: 30,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '500',
   },
 });
 
@@ -122,13 +119,15 @@ const MapExistingBuildingScreen = ({navigation}) => {
       <Text style={styles.title} fontSize="2xl">
         Accessibility
       </Text>
-        <View style={styles.dividerView}>
-          <View style={styles.dividerLine} />
-          <View>
-            <Text style={styles.dividerText}>Choose a building</Text>
+        <Box w="100%" maxWidth="75%" mt="5">
+          <View style={styles.dividerView}>
+            <View style={styles.dividerLine} />
+            <View>
+              <Text style={styles.dividerText}>Choose a building</Text>
+            </View>
+            <View style={styles.dividerLine} />
           </View>
-          <View style={styles.dividerLine} />
-        </View>
+        </Box>
         {stepName == 'building' ? (
           <View maxHeight="65%">
             <FlatList
@@ -139,7 +138,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
                     title={item}
                     style={styles.button}
                     onPress={()=> updateStep(item)}>
-                        {item}
+                      <Text style={styles.buttonText}>{item}</Text>
                     </Button>
                 </>
             )}
@@ -158,7 +157,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
             </Box>
             <Box w="100%" maxWidth="75%" mt="5">
               <Button
-                mb="2"
+                style={styles.button}
                 onPress={() => {
                   updateStep(floorNameState);
                 }}>
