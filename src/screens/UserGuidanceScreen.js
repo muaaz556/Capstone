@@ -1,14 +1,12 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import {StyleSheet, TextInput} from 'react-native';
-import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
-import { getGPSData } from '../helper-functions/gpsFetching';
-import ListItems from '../components/molecules/ListItems';
-import {NEXT_LABEL} from '../assets/locale/en';
-import {ScrollView} from 'react-native';
-import GetLocation from 'react-native-get-location';
-// import KalmanFilter from 'kalmanjs';
-import Geolocation from 'react-native-geolocation-service';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+import {Button, Center, Text, View, Image} from 'native-base';
 import Tts from 'react-native-tts';
+import { startCounter, stopCounter } from 'react-native-accurate-step-counter';
+const haversine = require('haversine')
+import CompassHeading from 'react-native-compass-heading';
+import { NativeModules, NativeEventEmitter } from 'react-native';
+import { StackActions } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   view: {
@@ -17,13 +15,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   button: {
-    marginTop: 10,
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
+    marginTop: 50,
+    width: '60%',
+    // height: '60%',
+    height: 200,
+    padding: 20,
     justifyContent: 'center',
-    alignContent: 'center',
-    textAlign: 'center',
+    backgroundColor: '#2298b3',
+    borderRadius: 14,
+    margin: 20
   },
   title: {
     paddingTop: 10,
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: '500',
+    textAlign:"center",
   },
   dividerView: {
     flexDirection: 'row',
@@ -70,105 +71,242 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 30,
   },
+  goodBadButton: {
+    margin: 20,
+  },
+  goodBadButtonText: {
+    margin: 20,
+    color: 'white',
+    fontSize: 20
+  }
 });
 
-const maxBoundary = 0.000196;
+const {AccelerometerSensorModule, GyroscopeSensorModule, SensorActivityModule} = NativeModules;
+let subscription = null;
+let subscription2 = null;
+
 let pathIndex = 0;
 let ttsIndex = 0;
-let firstGPSLocation = true;
-// let count = 0;
+
+let stepCountOverall = 0;
+let enableCount = false;
+let distanceCount = 0;
+let stepSize = 0.4572; //in meters (this is 1.5 feet)
+let targetDistance = null;
+
+let targetBear = null;
+let currentBear = null;
+
+let time = new Date().getTime();
+let timeInterval = 0.1;
+
+let prevAccelData = { x: 0, y: 0, z: 0 };
+let prevVelocity = { x: 0, y: 0, z: 0 };
+let prevDistance = { x: 0, y: 0, z: 0 };
+let velocity = { x: 0, y: 0, z: 0 };
+let distance = { x: 0, y: 0, z: 0 };
+let startLocation = {lat: 0, long: 0};
+let moving = false;
 
 const UserGuidanceScreen = ({route, navigation}) => {
-  
-    const [indexTracker, setIndexTracker] = useState([]);
-    const [pointTracker, setPointTracker] = useState([]);
-    const [coordinates, setCoordinates] = useState([]);
+
     const [stepName, setStepName] = useState('');
-    const watchId = useRef(null);
-    const [latDrift, setLatDrift] = useState(0);
-    const [longDrift, setLongDrift] = useState(0);
+    const [accelData, setAccelData] = useState({ x: 0, y: 0, z: 0 });
+    const [adjustedDistance, setAdjustedDistance] = useState({lat: 0, long: 0});
     
     useEffect(() => {
-      // for (node in route.params.path) {
-      //   console.log(node)
-      // }
-      console.log(route.params.path)
-      getLocationUpdates();
-      setStepName('start');
-      checkTTS();
-    }, []);
+      // startSensors();
+      startAccelerometer();
+      resetAllVariables();
 
-    const updateDrifts = (lat, long) => {
-      let currentNode = null
-      console.log(route.params.nodeList);
-      for (let i = 0; i < route.params.nodeList.length; i++) {
-        console.log(route.params.nodeList[i]['guid']);
-        console.log(route.params.path[pathIndex]);
-        console.log(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]);
-        if(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]) {
-          currentNode = route.params.nodeList[i];
-          break;
+      const degree_update_rate = 3;
+      CompassHeading.start(degree_update_rate, ({heading, accuracy}) => {
+        console.log('CompassHeading: ', heading, accuracy);
+        currentBear = heading;
+
+        console.log(route.params.path)
+        if(targetDistance == null){
+          findTargetDistance();
+          checkTTS();
+          pathIndex++;
         }
-      }
-      console.log(currentNode)
-      // console.log("coord length:" + coordinates.length);
-      // const currentLat = coordinates[coordinates.length - 1][0]
-      // const currentLong = coordinates[coordinates.length - 1][1]
+        setStepName('start');
+        CompassHeading.stop(); 
+      });
+      
 
-      setLatDrift(lat - currentNode['lat'])
-      setLongDrift(long - currentNode['long'])
-      // take latest position
-      // compare it to current node in our path
-      // take the difference
-      // set equal to latdrift and longdrift
+      const config = {
+        default_threshold: 10.0, //sensitivity lower is more sensative
+        default_delay: 600000000, //0.6 sec interval between each step count
+        onStepCountChange: (stepCount) => { 
+          if(enableCount && moving){
+            stepCountOverall = stepCountOverall + 1
+            console.log("steps counted:", stepCountOverall)
+            distanceCount = distanceCount + stepSize; // in feet
+            console.log("distance counted:", distanceCount);
+
+            let averagedDistance = (distanceCount + Math.abs(distance.z))/2;
+
+            if(targetDistance == null || targetDistance <= averagedDistance) {
+              if(pathIndex < route.params.nodeList.length - 1){
+                findTargetDistance();
+                checkTTS();
+                pathIndex++;
+              } else {
+                checkTTS();
+                resetAllVariables();
+                setStepName('Done');
+              }
+            }
+
+          }
+        },
+      }
+      startCounter(config);
+
+      
+      return () => { 
+        stopCounter(); 
+        CompassHeading.stop(); 
+      }
+    }, []);
+    
+    const resetAllVariables = () => {
+      enableCount = false;
+      distanceCount = 0;
+      stepCountOverall = 0;
+      targetDistance = null;
+      targetBear = null;
+      currentBear = null;
+      pathIndex = 0;
+      ttsIndex = 0;
     }
 
-    const getLocationUpdates = async () => {
-      console.log('watch Id: ' + watchId.current);
-      if (watchId.current === null) {
-        watchId.current = Geolocation.watchPosition(
-          position => {
-            // if (count % 10 == 0) {
-            //   checkTTS();
-            // }
-            const percievedLat = position.coords.latitude + latDrift;
-            const percievedLong = position.coords.longitude + longDrift;
-            // console.log("got gps")
-            setCoordinates(coordinates => [...coordinates, [percievedLat, percievedLong]]);
-            closestPoint(percievedLat, percievedLong)
-            // if(firstGPSLocation) {
-            //   updateDrifts(percievedLat, percievedLong);
-            //   firstGPSLocation = false;
-            // }
-            // count++;
-          },
-          error => {
-            setCoordinates(null);
-            console.log(error);
-          },
-          {
-            enableHighAccuracy: true,
-            distanceFilter: 0,
-            interval: 1000,
-            fastestInterval: 200,
-            showLocationDialog: true,
-          },
-        );
-        // setWatchId(watchIdRef);
-        console.log('watch Id: ' + watchId.current);
+    useEffect(() => {
+      const calculateDistance = () => {
+        const currTime = new Date().getTime();
+        const deltaTime = (currTime - time) / 1000; // convert to seconds
+        time = currTime;
+  
+        const calculateVelocity = (accel, prevVelocity) => {
+          const k1 = accel;
+          const k2 = (accel + k1 * deltaTime / 2);
+          const k3 = (accel + k2 * deltaTime / 2);
+          const k4 = (accel + k3 * deltaTime);
+          const newVelocity = prevVelocity + deltaTime * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+          return newVelocity;
+        };
+  
+        const calculateDistanceFromVelocity = (velocity, prevDistance) => {
+          const k1 = velocity;
+          const k2 = (velocity + k1 * deltaTime / 2);
+          const k3 = (velocity + k2 * deltaTime / 2);
+          const k4 = (velocity + k3 * deltaTime);
+          const newDistance = prevDistance * deltaTime + deltaTime * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+          return newDistance;
+        };
+  
+        const newVelocity = {
+          x: calculateVelocity((accelData.x + prevAccelData.x) / 2, prevVelocity.x),
+          y: calculateVelocity((accelData.y + prevAccelData.y) / 2, prevVelocity.y),
+          z: calculateVelocity((accelData.z + prevAccelData.z) / 2, prevVelocity.z)
+        };
+        velocity = newVelocity;
+        areWeMoving();
+  
+        const newDistance = {
+          x: calculateDistanceFromVelocity((velocity.x + prevVelocity.x) / 2, prevDistance.x),
+          y: calculateDistanceFromVelocity((velocity.y + prevVelocity.y) / 2, prevDistance.y),
+          z: calculateDistanceFromVelocity((velocity.z + prevVelocity.z) / 2, prevDistance.z)
+        };
+        distance = newDistance;
+  
+        prevAccelData = accelData;
+        prevVelocity = newVelocity;
+        prevDistance = newDistance;
+      };
+  
+      const intervalId = setInterval(calculateDistance, timeInterval * 1000);
+      return () => clearInterval(intervalId);
+    }, [accelData]);
+
+    const areWeMoving = () => {
+      moving = Math.abs(velocity.z) > 1;
+    }
+
+    const findTargetDistance = () => {
+      let startNode = null
+      let endNode = null
+
+      for (let i = 0; i < route.params.nodeList.length; i++) {
+        if(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]) {
+          startNode = route.params.nodeList[i];
+        } else if (route.params.nodeList[i]['guid'] === route.params.path[pathIndex + 1]){
+          endNode = route.params.nodeList[i];
+        }
       }
+      targetDistance = coordinateDistance(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+      console.log("Target distance:", targetDistance)
+
+      if(pathIndex == 0){
+        targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+        getShortestTurn(currentBear, targetBear)
+      }
+
+      distanceCount = 0;
+      stepCountOverall = 0;
+      distance = {x: 0, y: 0, z: 0};
+    };
+
+
+    // Converts from degrees to radians.
+    function toRadians(degrees) {
+      return degrees * Math.PI / 180;
     };
     
-    const stop = () => {
-      if (watchId.current !== null) {
-        console.log('watch is not null');
-        Geolocation.clearWatch(watchId.current);
-        watchId.current = null;
+    // Converts from radians to degrees.
+    function toDegrees(radians) {
+      return radians * 180 / Math.PI;
+    }
+
+    // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
+    function bearing(startLat, startLng, destLat, destLng){
+      startLat = toRadians(startLat);
+      startLng = toRadians(startLng);
+      destLat = toRadians(destLat);
+      destLng = toRadians(destLng);
+
+      y = Math.sin(destLng - startLng) * Math.cos(destLat);
+      x = Math.cos(startLat) * Math.sin(destLat) -
+            Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
+      brng = Math.atan2(y, x);
+      brng = toDegrees(brng);
+      return (brng + 360) % 360;
+    }
+
+    function getShortestTurn(currentBearing, targetBearing){
+      console.log("bearings", currentBearing, targetBearing)
+      // source: https://math.stackexchange.com/questions/110080/shortest-way-to-achieve-target-angle
+      turn = ((targetBearing - currentBearing + 540) % 360) - 180
+      turn = Number(turn.toFixed(0))
+      console.log("calculated turn" , turn)
+      if(turn >= 0){
+        Tts.speak("Turn right " + Math.abs(turn) + " degrees");
+      } else {
+        Tts.speak("Turn left " + Math.abs(turn) + " degrees");
       }
     }
   
-    const distance = (x1, y1, x2, y2) => {
-      return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    const coordinateDistance = (x1, y1, x2, y2) => {
+      const start = {
+        latitude: x1,
+        longitude: y1,
+      }
+      const end = {
+        latitude: x2,
+        longitude: y2,
+      }
+      return haversine(start, end, {unit: 'meter'});
     };
 
     const checkTTS = () => {
@@ -178,47 +316,30 @@ const UserGuidanceScreen = ({route, navigation}) => {
         Tts.speak(route.params.tts[ttsIndex][1]);
         ttsIndex++;
       }
-      // pathIndex++;
     };
-  
-    const closestPoint = (lat, long) => {
-  
-      //finds node closest to currently obtained GPS location
-      let minVal = 100;
-      let minNode = null;
-      let nodeDistance = 0
-      route.params.nodeList.forEach(node => {
-        nodeDistance = distance(node['lat'], node['long'], lat, long);
-        if (nodeDistance < minVal) {
-          minVal = nodeDistance;
-          minNode = node; 
-        }
-        
-      });
-      // console.log("min node=" + minNode["guid"])
-      //if the closest node is the next node in the path
-      if (minNode["guid"] === route.params.path[pathIndex + 1] && minVal < maxBoundary) {
-        //update current index
-        pathIndex++;
-        console.log("checking tts, path index=" + pathIndex)
-        checkTTS(minNode['lat'], minNode['long']);
 
-        // updateDrifts();
 
-        setIndexTracker(indexTracker => [...indexTracker, pathIndex]);
-        setIndexTracker(indexTracker => [
-          ...indexTracker,
-          'update coordinates: ' + lat + ', ' + long
-        ]);
+    const startAccelerometer = () => {
+      AccelerometerSensorModule?.startAccelerationSensor();
 
-        if(pathIndex === route.params.path.length) {
-          stop();
-          setStepName('Done');
-        }
-      }
+      const eventEmitter = new NativeEventEmitter();
 
-      setPointTracker(pointTracker => [...pointTracker, 'POINT3: ' + pathIndex]);
-    };
+      subscription = eventEmitter.addListener(
+          'AccelerometerModule',
+          (data) => {
+              // testing to see if we can see the values of accelerometer
+              // console.log(data);
+              setAccelData(data)
+          },
+      );
+    }
+
+    const stopAccelerometer = () => {
+      console.log("Stop Listening");
+      AccelerometerSensorModule?.stopAccelerationSensor();
+      subscription?.remove();
+    }
+
   
     return (
       <View style={styles.view}>
@@ -231,32 +352,49 @@ const UserGuidanceScreen = ({route, navigation}) => {
         <Text style={styles.title} fontSize="2xl">
           User Guidance Screen
         </Text>
-        {/* <Button
-          title="Stop"
-          style={styles.button}
-          onPress={stop}>
-            <Text style={styles.buttonText}>Stop</Text>
-        </Button> */}
         {stepName == 'start' ? (
           <View maxHeight="65%">
-            <FlatList
-              data={coordinates}
-              renderItem={({item}) => (
-                <>
-                  <Text style={styles.dividerText}>
-                    {item}
-                  </Text>
-                </>
-              )}
-            />
+            <TouchableOpacity
+              onPressIn={() => {enableCount = true}}
+              onPressOut={() => {enableCount = false}}
+              style={styles.button}>
+              <Text style={styles.buttonText}>Press and hold to enable step counter</Text>
+            </TouchableOpacity>
           </View>
         ) : stepName == 'Done' ? (
-          <Button
+          <>
+          {/* <Button
             title="Stop"
             style={styles.button}
-            onPress={() => navigation.navigate('Login')}>
+            onPress={() => {
+                stopAccelerometer()
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }>
+             
               <Text style={styles.buttonText}>Go back to Login</Text>
-          </Button>
+          </Button> */}
+          <Text style={styles.title}>
+            How was user guidance?
+          </Text>
+          <View style={{ flexDirection:"row" }}>
+              <View >
+                  <Button style={styles.goodBadButton} onPress={() => {
+                stopAccelerometer()
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Good</Text></Button>
+              </View>
+              <View >
+                  <Button style={styles.goodBadButton} onPress={() => {
+                stopAccelerometer()
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Bad</Text></Button>
+              </View>
+          </View>
+          </>
+          
         ) : (
           <></>
         )}
