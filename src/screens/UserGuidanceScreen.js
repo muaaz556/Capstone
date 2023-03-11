@@ -73,6 +73,8 @@ const styles = StyleSheet.create({
   },
   goodBadButton: {
     margin: 20,
+    backgroundColor: '#005AB5',
+
   },
   goodBadButtonText: {
     margin: 20,
@@ -283,14 +285,12 @@ const UserGuidanceScreen = ({route, navigation}) => {
           <View style={{ flexDirection:"row" }}>
               <View >
                   <Button style={styles.goodBadButton} size="lg" onPress={() => {
-                stopAccelerometer()
                 navigation.dispatch(StackActions.popToTop())
               }
             }><Text style={styles.goodBadButtonText}>Good</Text></Button>
               </View>
               <View >
                   <Button style={styles.goodBadButton} size="lg" onPress={() => {
-                stopAccelerometer()
                 navigation.dispatch(StackActions.popToTop())
               }
             }><Text style={styles.goodBadButtonText}>Bad</Text></Button>
