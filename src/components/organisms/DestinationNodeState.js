@@ -14,7 +14,10 @@ import Dialog from "react-native-dialog";
 const styles = StyleSheet.create({ 
     navBarView: {
         flex: 0.16,
-      },
+    },
+    dialog: {
+        color: 'black',
+    }
 });
 
 const DestinationNodeState = ({windowH, photo}) => {
@@ -139,7 +142,7 @@ const DestinationNodeState = ({windowH, photo}) => {
     return ( 
         <>
             <View>
-                <Dialog.Container visible={modalVisible}>
+                <Dialog.Container visible={modalVisible} style={styles.dialog}>
                     <Dialog.Title>{DIALOG.DESTINATION_TITLE}</Dialog.Title>
                     <Dialog.Description>
                         {DIALOG.DESTINATION_DESCRIPTION}
