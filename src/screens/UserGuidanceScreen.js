@@ -251,13 +251,15 @@ const UserGuidanceScreen = ({route, navigation}) => {
 
       Tts.speak("Please hold your phone horizontally");
 
-      if (turn >= 0) {
-        Tts.speak("Turn to your right and continue turning until you hear stop");
-      } else {
-        Tts.speak("Turn to your left and continue turning until you hear stop.")
-      }
-
-      checkState = true;
+      setTimeout(() => {
+        if (turn >= 0) {
+          Tts.speak("Turn to your right and continue turning until you hear stop");
+        } else {
+          Tts.speak("Turn to your left and continue turning until you hear stop.")
+        }
+  
+        checkState = true;
+      }, 6000);
     }
   
     const distance = (x1, y1, x2, y2) => {
