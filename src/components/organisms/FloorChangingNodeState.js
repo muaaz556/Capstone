@@ -21,7 +21,7 @@ const FloorChangingNodeState = ({windowH, photo}) => {
     const [stateName, setStateName] = state;
     const [gestureLocations, setGestureLocations] = floorChangingGestures;
 
-    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK, BUTTON.HELP];
 
     useEffect(() => {
         displayTextAlert(FLOOR_CHANGING_NODE_STATE.TITLE, FLOOR_CHANGING_NODE_STATE.MESSAGE);
@@ -55,6 +55,10 @@ const FloorChangingNodeState = ({windowH, photo}) => {
         setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
     }
 
+    const help = () => {
+        displayTextAlert(FLOOR_CHANGING_NODE_STATE.TITLE, FLOOR_CHANGING_NODE_STATE.MESSAGE);
+    }
+
     const onPress = (buttonName) => {
         switch (buttonName) {
             case BUTTON.NEXT:
@@ -68,6 +72,9 @@ const FloorChangingNodeState = ({windowH, photo}) => {
                 break;
             case BUTTON.BACK:
                 back();
+                break;
+            case BUTTON.HELP:
+                help();
                 break;
             default:
                 console.log("invalid button name");

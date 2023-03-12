@@ -27,7 +27,7 @@ const CornerNodeState = ({buildingName, windowH, clearAllNodes, numOfCorners}) =
     const [photo, setPhoto] = photoState;
     const [gestureLocations, setGestureLocations] = cornerNodeGestures;
 
-    const listOfButtonNames = [BUTTON.UPLOAD, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT];
+    const listOfButtonNames = [BUTTON.UPLOAD, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.HELP];
 
     if (gestureLocations.length > numOfCorners) {
         displayTextAlert(TOO_MANY_NODES_PLACED.TITLE, TOO_MANY_NODES_PLACED.MESSAGE);
@@ -79,6 +79,10 @@ const CornerNodeState = ({buildingName, windowH, clearAllNodes, numOfCorners}) =
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1));
     };
 
+    const help = () => {
+        displayTextAlert(CORNERS_STATE.TITLE, CORNERS_STATE.MESSAGE);
+    }
+
     const updateGesture = (gestureItem) => {
         setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
     };
@@ -96,6 +100,9 @@ const CornerNodeState = ({buildingName, windowH, clearAllNodes, numOfCorners}) =
                 break;
             case BUTTON.UNDO:
                 undo();
+                break;
+            case BUTTON.HELP:
+                help();
                 break;
             default:
                 console.log('invalid button name');

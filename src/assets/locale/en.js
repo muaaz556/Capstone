@@ -123,6 +123,7 @@ export const BUTTON = { NEXT: 'Next',
                         LABEL: 'Label',
                         UNSELECT: 'Unselect',
                         VIEW_TEXT: 'View Text',
+                        HELP: 'Help',
                         };
 
 export const DESCRIPTION = 'Description';

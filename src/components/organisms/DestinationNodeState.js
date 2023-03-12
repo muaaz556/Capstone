@@ -27,7 +27,7 @@ const DestinationNodeState = ({windowH, photo}) => {
     const [currentGesture, setCurrentGesture] = useState(null);
     const [nodeUnnamed, setNodeUnnamed] = useState(false);
 
-    const listOfButtonNames = [BUTTON.LABEL, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.LABEL, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK, BUTTON.HELP];
 
     useEffect(() => {
         displayTextAlert(DESTINATION_NODE_STATE.TITLE, DESTINATION_NODE_STATE.MESSAGE);
@@ -82,6 +82,10 @@ const DestinationNodeState = ({windowH, photo}) => {
         setModalVisible(true);
     }
 
+    const help = () => {
+        displayTextAlert(DESTINATION_NODE_STATE.TITLE, DESTINATION_NODE_STATE.MESSAGE);
+    }
+
     const onPress = (buttonName) => {
         switch (buttonName) {
             case BUTTON.NEXT:
@@ -98,6 +102,9 @@ const DestinationNodeState = ({windowH, photo}) => {
                 break;
             case BUTTON.LABEL:
                 label();
+                break;
+            case BUTTON.HELP:
+                help();
                 break;
             default:
                 console.log("invalid button name");

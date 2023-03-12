@@ -21,7 +21,7 @@ const HallwayNodeState = ({windowH, photo}) => {
     const [stateName, setStateName] = state;
     const [gestureLocations, setGestureLocations] = hallwayGestures;
 
-    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK, BUTTON.HELP];
 
     useEffect(() => {
         displayTextAlert(HALLWAY_NODE_STATE.TITLE, HALLWAY_NODE_STATE.MESSAGE);
@@ -51,6 +51,10 @@ const HallwayNodeState = ({windowH, photo}) => {
         setGestureLocations((point) => point.filter((_, index) => index !== gestureLocations.length - 1))
     }
 
+    const help = () => {
+        displayTextAlert(HALLWAY_NODE_STATE.TITLE, HALLWAY_NODE_STATE.MESSAGE);
+    }
+
     const updateGesture = (gestureItem) => {
         setGestureLocations(gestureLocations => [...gestureLocations, gestureItem]);
     }
@@ -68,6 +72,9 @@ const HallwayNodeState = ({windowH, photo}) => {
                 break;
             case BUTTON.BACK:
                 back();
+                break;
+            case BUTTON.HELP:
+                help();
                 break;
             default:
                 console.log("invalid button name");
