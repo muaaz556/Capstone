@@ -95,43 +95,72 @@ let targetDistance = null;
 let targetBear = null;
 let currentBear = null;
 
+let checkState = true;
+
 const UserGuidanceScreen = ({route, navigation}) => {
 
     const [stepName, setStepName] = useState('');
     const [enableCountUI, setEnableCountUI] = useState(false);
+
+    // const [currentHeading, setCurrentHeading] = useState(0);
+    const [targetHeading, setTargetHeading] = useState(0);
+    const [checkContinue, setCheckContinue] = useState(true);
+
+    useEffect(() => {
+      if (!checkContinue) {
+        checkTTS();
+        pathIndex++;
+        setStepName('start');
+      }
+    }, [checkContinue]);
     
     useEffect(() => {
-      resetAllVariables();
       const degree_update_rate = 3;
-      CompassHeading.start(degree_update_rate, ({heading, accuracy}) => {
+  
+      CompassHeading.start(degree_update_rate, ({ heading, accuracy }) => {
         currentBear = heading;
-
-        console.log(route.params.path)
-        if(targetDistance == null){
-          findTargetDistance();
-          checkTTS();
-          pathIndex++;
+        if (checkState) {
+          console.log(checkState, " ", heading, " ", targetHeading, " ", targetBear);
+          if (heading >= targetBear - 5 && heading <= targetBear + 5) {
+            checkState = false;
+            Tts.speak("Stop");
+            Tts.speak("Please hold your phone vertically");
+            setCheckContinue(false);
+          }
         }
-        setStepName('start');
-        CompassHeading.stop(); 
       });
+  
+      return () => {
+        CompassHeading.stop();
+      };
+    }, []);
+
+    useEffect(() => {
+      resetAllVariables();
+      if(targetDistance == null){
+        findTargetDistance();
+      }
       
       const config = {
         default_threshold: 10.0, //sensitivity, lower is more sensative
         default_delay: 600000000, //0.6 sec interval between each step count
         onStepCountChange: (stepCount) => { 
           if(enableCount){
-            stepCountOverall = stepCountOverall + 1
+            rand_step = (Math.random() * (0.2000 - 0.3000) + 0.3000).toFixed(4);
+            console.log(rand_step);
+            stepCountOverall = stepCountOverall + 1 + parseFloat(rand_step);
             console.log("steps counted:", stepCountOverall)
-            distanceCount = distanceCount + stepSize; // in feet
+            distanceCount = distanceCount + stepSize + 0.5*rand_step; // in feet
             console.log("distance counted:", distanceCount);
 
             if(targetDistance == null || targetDistance <= distanceCount) {
               if(pathIndex < route.params.path.length - 1){
                 findTargetDistance();
+                console.log("Over here now");
                 checkTTS();
                 pathIndex++;
               } else {
+                console.log("Over over here");
                 checkTTS();
                 resetAllVariables();
                 setStepName('Done');
@@ -145,7 +174,6 @@ const UserGuidanceScreen = ({route, navigation}) => {
 
       return () => { 
         stopCounter(); 
-        CompassHeading.stop(); 
       }
     }, []);
 
@@ -173,10 +201,13 @@ const UserGuidanceScreen = ({route, navigation}) => {
         }
       }
       targetDistance = distance(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
-      console.log("Target distance:", targetDistance)
+      console.log("\nTarget distance:", targetDistance)
+      console.log("Start Node: ", startNode['lat'], ", ", startNode['long']);
+      console.log("End Node: ", endNode['lat'], ", ", endNode['long']);
 
       if(pathIndex == 0){
         targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+        setTargetHeading(targetBear);
         getShortestTurn(currentBear, targetBear)
       }
       
@@ -218,11 +249,15 @@ const UserGuidanceScreen = ({route, navigation}) => {
       turn = ((targetBearing - currentBearing + 540) % 360) - 180
       turn = Number(turn.toFixed(0))
 
-      if(turn >= 0){
-        Tts.speak("Turn right " + Math.abs(turn) + " degrees");
+      Tts.speak("Please hold your phone horizontally");
+
+      if (turn >= 0) {
+        Tts.speak("Turn to your right and continue turning until you hear stop");
       } else {
-        Tts.speak("Turn left " + Math.abs(turn) + " degrees");
+        Tts.speak("Turn to your left and continue turning until you hear stop.")
       }
+
+      checkState = true;
     }
   
     const distance = (x1, y1, x2, y2) => {
@@ -241,6 +276,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
       let guid = route.params.path[pathIndex];
 
       while(ttsIndex < route.params.tts.length && route.params.tts[ttsIndex][0] == guid) {
+        console.log(route.params.tts[ttsIndex][1])
         Tts.speak(route.params.tts[ttsIndex][1]);
         ttsIndex++;
       }
