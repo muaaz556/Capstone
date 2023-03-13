@@ -95,7 +95,7 @@ let targetDistance = null;
 let targetBear = null;
 let currentBear = null;
 
-let checkState = true;
+let checkState = false;
 
 const UserGuidanceScreen = ({route, navigation}) => {
 
@@ -260,7 +260,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
         }
   
         checkState = true;
-      }, 6000);
+      }, 8000);
     }
   
     const distance = (x1, y1, x2, y2) => {
