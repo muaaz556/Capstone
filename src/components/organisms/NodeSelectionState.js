@@ -27,7 +27,7 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
     const [showPleaseWait, setShowPleaseWait] = useState(false);
     const [makingHallwayConnections, setMakingHallwayConnections] = useState(true);
 
-    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.UNDO, BUTTON.CLEAR, BUTTON.UNSELECT, BUTTON.NEXT, BUTTON.BACK, BUTTON.HELP];
 
     useEffect(() => {
         displayTextAlert(NODE_SELECTION_STATE.HALLWAY_TITLE, NODE_SELECTION_STATE.HALLWAY_MESSAGE);
@@ -221,6 +221,14 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
 
     }
 
+    const help = () => {
+        if (makingHallwayConnections) {
+            displayTextAlert(NODE_SELECTION_STATE.HALLWAY_TITLE, NODE_SELECTION_STATE.HALLWAY_MESSAGE);
+        } else {
+            displayTextAlert(NODE_SELECTION_STATE.DESTINATION_TITLE, NODE_SELECTION_STATE.DESTINATION_MESSAGE);
+        }
+    }
+
     const onPress = (buttonName) => {
         switch (buttonName) {
             case BUTTON.NEXT:
@@ -240,6 +248,9 @@ const NodeSelectionState = ({windowH, photo, allGestures, navigation, buildingNa
                 break;
             case BUTTON.UNSELECT:
                 unselect();
+                break;
+            case BUTTON.HELP:
+                help();
                 break;
             default:
                 console.log("invalid button name");

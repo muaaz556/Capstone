@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, TextInput, ScrollView} from 'react-native';
+import {StyleSheet, TextInput, ScrollView, ActivityIndicator} from 'react-native';
 import {Box, Button, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import {NEXT_LABEL} from '../assets/locale/en';
@@ -69,7 +69,11 @@ const styles = StyleSheet.create({
     flexGrow: 1, 
     alignItems: 'center',
     // justifyContent: 'center'
-  }
+  },
+  container: {
+    flex: 0.5,
+    justifyContent: 'center',
+  },
 });
 
 let result;
@@ -79,9 +83,11 @@ const MapExistingBuildingScreen = ({navigation}) => {
   const [floors, setFloors] = useState([])
   const [selectedBuilding, setselectedBuilding] = useState("")
   const [floorNameState, setFloorNameState] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(()  => {
     const fetchBuildings = async () => {
+      setLoading(true);
       result = await getGPSData('get-nodes', 'getType=get-buildings');
 
       let buildingArray = []
@@ -90,6 +96,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
       });
 
       setBuildings(buildingArray);
+      setLoading(false);
     }
     fetchBuildings();
   }, []);
@@ -133,50 +140,54 @@ const MapExistingBuildingScreen = ({navigation}) => {
             <View style={styles.dividerLine} />
           </View>
         </Box>
-        {stepName == 'building' ? (
-                      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
-
-          <Box w="100%" maxWidth="100%" mt="5">
-            <FlatList
-            data={buildings}
-            renderItem={({item}) => (
-                <>
-                    <Button
-                    mb="4"
-                    size="lg"
-                    title={item}
-                    style={styles.button}
-                    onPress={()=> updateStep(item)}>
-                      <Text style={styles.buttonText}>{item}</Text>
-                    </Button>
-                </>
-            )}
-            />
-           </Box>
-          </ScrollView>
-        ): stepName == 'floor' ? (
-          <>
-            <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={e => setFloorNameState(e)}
-                  value={floorNameState}
-                  placeholder="Floor name"
-                  placeholderTextColor="#808585"
-                />
-            </Box>
-            <Box w="100%" maxWidth="75%" mt="5">
-              <Button
-                style={styles.button}
-                onPress={() => {
-                  updateStep(floorNameState);
-                }}>
-                <Text style={styles.buttonText}>{NEXT_LABEL}</Text>
-              </Button>
-            </Box>
-          </>
+        {loading ? (
+          <ActivityIndicator size={100} color='#005AB5' style={[styles.container]}/>
         ) : (
-          <></>
+          stepName == 'building' ? (
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
+
+            <Box w="100%" maxWidth="100%" mt="5">
+              <FlatList
+              data={buildings}
+              renderItem={({item}) => (
+                  <>
+                      <Button
+                      mb="4"
+                      size="lg"
+                      title={item}
+                      style={styles.button}
+                      onPress={()=> updateStep(item)}>
+                        <Text style={styles.buttonText}>{item}</Text>
+                      </Button>
+                  </>
+              )}
+              />
+            </Box>
+            </ScrollView>
+          ): stepName == 'floor' ? (
+            <>
+              <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={e => setFloorNameState(e)}
+                    value={floorNameState}
+                    placeholder="Floor name"
+                    placeholderTextColor="#808585"
+                  />
+              </Box>
+              <Box w="100%" maxWidth="75%" mt="5">
+                <Button
+                  style={styles.button}
+                  onPress={() => {
+                    updateStep(floorNameState);
+                  }}>
+                  <Text style={styles.buttonText}>{NEXT_LABEL}</Text>
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <></>
+          )
         )}
     </View>
   );

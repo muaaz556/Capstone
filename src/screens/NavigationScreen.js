@@ -11,10 +11,11 @@ import {
   VIBRATION_DURATION,
 } from '../assets/locale/en';
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, ScrollView} from 'react-native';
+import {ActivityIndicator, StyleSheet, ScrollView} from 'react-native';
 import {Box, Text, View, Image, Button, ChevronLeftIcon} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
+import Tts from 'react-native-tts';
 
 const styles = StyleSheet.create({
   view: {
@@ -61,7 +62,11 @@ const styles = StyleSheet.create({
     flexGrow: 1, 
     alignItems: 'center',
     // justifyContent: 'center'
-  }
+  }, 
+  container: {
+    flex: 0.5,
+    justifyContent: 'center',
+  },
 });
 
 let result;
@@ -74,9 +79,11 @@ const NavigationScreen = ({navigation}) => {
   const [selectedBuilding, setSelectedBuilding] = useState("")
   const [selectedFloor, setSelectedFloor] = useState("");
   const [startingNode, setStartingNode] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBuildings = async () => {
+      setLoading(true);
       result = await getGPSData('get-nodes', 'getType=get-building-data');
 
 
@@ -88,6 +95,7 @@ const NavigationScreen = ({navigation}) => {
 
       setBuildings(building);
       setStepName('building');
+      setLoading(false);
     }
     fetchBuildings();
   }, []);
@@ -139,6 +147,7 @@ const NavigationScreen = ({navigation}) => {
   }
 
   const destination = async (dest) => {
+    setLoading(true);
     console.log("Building: " + selectedBuilding + " Floor: " + selectedFloor + " Current Location: " + startingNode + " Destination: " + dest );
     let response = await getGPSData('get-nodes', `getType=get-route&buildingName=${selectedBuilding}&floorName=${selectedFloor}&startingNode=${startingNode}&destination=${dest}`);
     
@@ -186,70 +195,75 @@ const NavigationScreen = ({navigation}) => {
           style={styles.logoImage}
           source={require('../assets/images/splashscreen_logo.png')}
           size="lg"
-          alt="Logo of a person walking with a white cane."
+          alt="Logo of a person walking with a white guide cane."
         />
         <Text style={styles.title} fontSize="2xl">
-          Accessibility
+          Student Navigation
         </Text>
         <DistanceSensorComponent
             enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
             distanceLimit={DISTANCE_LIMIT}
             vibrationDuration={VIBRATION_DURATION}
-            navigation={navigation}></DistanceSensorComponent>
-        {stepName == 'building' ? (
-          <>
-          <View style={styles.dividerView}>
-              <View style={styles.dividerLine} />
-              <View>
-                  <Text style={styles.dividerText}>Choose a building</Text>
-              </View>
-              <View style={styles.dividerLine} />
-          </View>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
-            <ListItems list={buildings} updateStep={updateStep} titleText="building" />
-          </ScrollView>
-          </>
-        ): stepName == 'floor' ? (
-          <>
-          <View style={styles.dividerView}>
-              <View style={styles.dividerLine} />
-              <View>
-                  <Text style={styles.dividerText}>Choose a floor</Text>
-              </View>
-              <View style={styles.dividerLine} />
-          </View>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
-          <ListItems list={floors} updateStep={updateStep} titleText="floor" />
-          </ScrollView>
-          </>
-        ): stepName == 'start' ? (
-          <>
-          <View style={styles.dividerView}>
-              <View style={styles.dividerLine} />
-              <View>
-                  <Text style={styles.dividerText}>Choose a starting location</Text>
-              </View>
-              <View style={styles.dividerLine} />
-          </View>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
-          <ListItems list={destinations} updateStep={updateStep} titleText="starting location" />
-          </ScrollView>
-          </>
-        ): stepName == 'destination' ? (
-          <>
-          <View style={styles.dividerView}>
-              <View style={styles.dividerLine} />
-              <View>
-                  <Text style={styles.dividerText}>Choose a destination</Text>
-              </View>
-              <View style={styles.dividerLine} />
-          </View>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
-          <ListItems list={destinations} updateStep={updateStep} titleText="destination"/>
-          </ScrollView>
-          </>
+            navigation={navigation}/>
+
+        {loading ? (
+          <ActivityIndicator size={100} color='#005AB5' style={[styles.container]}/>
         ) : (
-          <></>
+          stepName == 'building' ? (
+            <>
+            <View style={styles.dividerView}>
+                <View style={styles.dividerLine} />
+                <View>
+                    <Text style={styles.dividerText}>Choose a building</Text>
+                </View>
+                <View style={styles.dividerLine} />
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
+              <ListItems list={buildings} updateStep={updateStep} titleText="building" />
+            </ScrollView>
+            </>
+          ): stepName == 'floor' ? (
+            <>
+            <View style={styles.dividerView}>
+                <View style={styles.dividerLine} />
+                <View>
+                    <Text style={styles.dividerText}>Choose a floor</Text>
+                </View>
+                <View style={styles.dividerLine} />
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
+            <ListItems list={floors} updateStep={updateStep} titleText="floor" />
+            </ScrollView>
+            </>
+          ): stepName == 'start' ? (
+            <>
+              <View style={styles.dividerView}>
+                  <View style={styles.dividerLine} />
+                    <View>
+                        <Text style={styles.dividerText}>Choose a starting location</Text>
+                    </View>
+                  <View style={styles.dividerLine} />
+              </View>
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
+                <ListItems list={destinations} updateStep={updateStep} titleText="starting location" />
+              </ScrollView>
+            </>
+          ): stepName == 'destination' ? (
+            <>
+              <View style={styles.dividerView}>
+                  <View style={styles.dividerLine} />
+                    <View>
+                        <Text style={styles.dividerText}>Choose a destination</Text>
+                    </View>
+                  <View style={styles.dividerLine} />
+              </View>
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
+                <ListItems list={destinations.filter(dest => dest !== startingNode)} updateStep={updateStep} titleText="destination"/>
+              </ScrollView>
+            </>
+          ) : (
+            <></>
+          )
         )}
       </View>
     </>

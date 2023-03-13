@@ -27,7 +27,7 @@ const BathroomNodeState = ({windowH, photo}) => {
     const [currentGesture, setCurrentGesture] = useState(null);
     const [name, setName] = useState("");
 
-    const listOfButtonNames = [BUTTON.LABEL, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK];
+    const listOfButtonNames = [BUTTON.LABEL, BUTTON.UNDO, BUTTON.CLEAR, BUTTON.NEXT, BUTTON.BACK, BUTTON.HELP];
 
     useEffect(() => {
         displayTextAlert(BATHROOM_NODE_STATE.TITLE, BATHROOM_NODE_STATE.MESSAGE);
@@ -84,6 +84,10 @@ const BathroomNodeState = ({windowH, photo}) => {
     const toggleModal = () => {
         setModalVisible(!modalVisible);
     }
+
+    const help = () => {
+        displayTextAlert(BATHROOM_NODE_STATE.TITLE, BATHROOM_NODE_STATE.MESSAGE);
+    }
     
     const onPress = (buttonName) => {
         switch (buttonName) {
@@ -101,6 +105,9 @@ const BathroomNodeState = ({windowH, photo}) => {
                 break;
             case BUTTON.LABEL:
                 label();
+                break;
+            case BUTTON.HELP:
+                help();
                 break;
             default:
                 console.log("invalid button name");
