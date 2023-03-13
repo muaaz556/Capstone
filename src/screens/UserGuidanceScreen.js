@@ -102,7 +102,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const [stepName, setStepName] = useState('');
     const [enableCountUI, setEnableCountUI] = useState(false);
 
-    // const [currentHeading, setCurrentHeading] = useState(0);
+    const [currentHeading, setCurrentHeading] = useState(0);
     const [targetHeading, setTargetHeading] = useState(0);
     const [checkContinue, setCheckContinue] = useState(true);
 
@@ -119,6 +119,7 @@ const UserGuidanceScreen = ({route, navigation}) => {
   
       CompassHeading.start(degree_update_rate, ({ heading, accuracy }) => {
         currentBear = heading;
+        setCurrentHeading(heading);
         if (checkState) {
           console.log(checkState, " ", heading, " ", targetHeading, " ", targetBear);
           if (heading >= targetBear - 5 && heading <= targetBear + 5) {
@@ -295,6 +296,8 @@ const UserGuidanceScreen = ({route, navigation}) => {
         <Text style={styles.title} fontSize="2xl">
           User Guidance Screen
         </Text>
+        <Text>Current Heading: {currentHeading}</Text>
+        <Text>Target Heading: {targetHeading}</Text>
         {stepName == 'start' ? (
           <View maxHeight="65%">
             <TouchableOpacity
