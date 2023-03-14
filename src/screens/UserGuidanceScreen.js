@@ -92,8 +92,8 @@ let distanceCount = 0;
 let stepSize = 0.5; //in meters (this is 1.5 feet)
 let targetDistance = null;
 
-let targetBear = null;
-let currentBear = null;
+// let targetBear = null;
+// let currentBear = null;
 
 let checkState = false;
 
@@ -102,45 +102,50 @@ const UserGuidanceScreen = ({route, navigation}) => {
     const [stepName, setStepName] = useState('');
     const [enableCountUI, setEnableCountUI] = useState(false);
 
-    const [currentHeading, setCurrentHeading] = useState(0);
-    const [targetHeading, setTargetHeading] = useState(0);
+    // const [currentHeading, setCurrentHeading] = useState(0);
+    // const [targetHeading, setTargetHeading] = useState(0);
     const [checkContinue, setCheckContinue] = useState(true);
 
-    useEffect(() => {
-      if (!checkContinue) {
-        checkTTS();
-        pathIndex++;
-        setStepName('start');
-      }
-    }, [checkContinue]);
+    // useEffect(() => {
+    //   if (!checkContinue) {
+    //     checkTTS();
+    //     pathIndex++;
+    //     setStepName('start');
+    //   }
+    // }, [checkContinue]);
     
-    useEffect(() => {
-      const degree_update_rate = 3;
+    // useEffect(() => {
+    //   const degree_update_rate = 3;
   
-      CompassHeading.start(degree_update_rate, ({ heading, accuracy }) => {
-        currentBear = heading;
-        setCurrentHeading(heading);
-        if (checkState) {
-          console.log(checkState, " ", heading, " ", targetHeading, " ", targetBear);
-          if (heading >= targetBear - 5 && heading <= targetBear + 5) {
-            checkState = false;
-            Tts.speak("Stop");
-            Tts.speak("Please hold your phone vertically");
-            setCheckContinue(false);
-          }
-        }
-      });
+    //   CompassHeading.start(degree_update_rate, ({ heading, accuracy }) => {
+    //     currentBear = heading;
+    //     setCurrentHeading(heading);
+    //     if (checkState) {
+    //       console.log(checkState, " ", heading, " ", targetHeading, " ", targetBear);
+    //       if (heading >= targetBear - 5 && heading <= targetBear + 5) {
+    //         checkState = false;
+    //         Tts.speak("Stop");
+    //         Tts.speak("Please hold your phone vertically");
+    //         setCheckContinue(false);
+    //       }
+    //     }
+    //   });
   
-      return () => {
-        CompassHeading.stop();
-      };
-    }, []);
+    //   return () => {
+    //     CompassHeading.stop();
+    //   };
+    // }, []);
 
     useEffect(() => {
       resetAllVariables();
+      
+
       if(targetDistance == null){
         findTargetDistance();
       }
+      checkTTS();
+      pathIndex++;
+      setStepName('start');
       
       const config = {
         default_threshold: 10.0, //sensitivity, lower is more sensative
@@ -184,8 +189,8 @@ const UserGuidanceScreen = ({route, navigation}) => {
       distanceCount = 0;
       stepCountOverall = 0;
       targetDistance = null;
-      targetBear = null;
-      currentBear = null;
+      // targetBear = null;
+      // currentBear = null;
       pathIndex = 0;
       ttsIndex = 0;
     }
@@ -206,11 +211,11 @@ const UserGuidanceScreen = ({route, navigation}) => {
       console.log("Start Node: ", startNode['lat'], ", ", startNode['long']);
       console.log("End Node: ", endNode['lat'], ", ", endNode['long']);
 
-      if(pathIndex == 0){
-        targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
-        setTargetHeading(targetBear);
-        getShortestTurn(currentBear, targetBear)
-      }
+      // if(pathIndex == 0){
+      //   targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+      //   setTargetHeading(targetBear);
+      //   getShortestTurn(currentBear, targetBear)
+      // }
       
       distanceCount = 0;
       stepCountOverall = 0;
@@ -218,50 +223,50 @@ const UserGuidanceScreen = ({route, navigation}) => {
 
     // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
     // Converts from degrees to radians.
-    function toRadians(degrees) {
-      return degrees * Math.PI / 180;
-    };
+    // function toRadians(degrees) {
+    //   return degrees * Math.PI / 180;
+    // };
     
     // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
     // Converts from radians to degrees.
-    function toDegrees(radians) {
-      return radians * 180 / Math.PI;
-    }
+    // function toDegrees(radians) {
+    //   return radians * 180 / Math.PI;
+    // }
 
     // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
-    function bearing(startLat, startLng, destLat, destLng){
-      startLat = toRadians(startLat);
-      startLng = toRadians(startLng);
-      destLat = toRadians(destLat);
-      destLng = toRadians(destLng);
+    // function bearing(startLat, startLng, destLat, destLng){
+    //   startLat = toRadians(startLat);
+    //   startLng = toRadians(startLng);
+    //   destLat = toRadians(destLat);
+    //   destLng = toRadians(destLng);
 
-      y = Math.sin(destLng - startLng) * Math.cos(destLat);
-      x = Math.cos(startLat) * Math.sin(destLat) -
-            Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
-      brng = Math.atan2(y, x);
-      brng = toDegrees(brng);
-      return (brng + 360) % 360;
-    }
+    //   y = Math.sin(destLng - startLng) * Math.cos(destLat);
+    //   x = Math.cos(startLat) * Math.sin(destLat) -
+    //         Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
+    //   brng = Math.atan2(y, x);
+    //   brng = toDegrees(brng);
+    //   return (brng + 360) % 360;
+    // }
 
-    function getShortestTurn(currentBearing, targetBearing){
-      console.log("Current bearing:", currentBearing, "Target bearing:", targetBearing)
+    // function getShortestTurn(currentBearing, targetBearing){
+    //   console.log("Current bearing:", currentBearing, "Target bearing:", targetBearing)
 
-      // source: https://math.stackexchange.com/questions/110080/shortest-way-to-achieve-target-angle
-      turn = ((targetBearing - currentBearing + 540) % 360) - 180
-      turn = Number(turn.toFixed(0))
+    //   // source: https://math.stackexchange.com/questions/110080/shortest-way-to-achieve-target-angle
+    //   turn = ((targetBearing - currentBearing + 540) % 360) - 180
+    //   turn = Number(turn.toFixed(0))
 
-      Tts.speak("Please hold your phone horizontally");
+    //   Tts.speak("Please hold your phone horizontally");
 
-      setTimeout(() => {
-        if (turn >= 0) {
-          Tts.speak("Turn to your right and continue turning until you hear stop");
-        } else {
-          Tts.speak("Turn to your left and continue turning until you hear stop.")
-        }
+    //   setTimeout(() => {
+    //     if (turn >= 0) {
+    //       Tts.speak("Turn to your right and continue turning until you hear stop");
+    //     } else {
+    //       Tts.speak("Turn to your left and continue turning until you hear stop.")
+    //     }
   
-        checkState = true;
-      }, 8000);
-    }
+    //     checkState = true;
+    //   }, 8000);
+    // }
   
     const distance = (x1, y1, x2, y2) => {
       const start = {
@@ -296,8 +301,8 @@ const UserGuidanceScreen = ({route, navigation}) => {
         <Text style={styles.title} fontSize="2xl">
           User Guidance Screen
         </Text>
-        <Text>Current Heading: {currentHeading}</Text>
-        <Text>Target Heading: {targetHeading}</Text>
+        {/* <Text>Current Heading: {currentHeading}</Text>
+        <Text>Target Heading: {targetHeading}</Text> */}
         {stepName == 'start' ? (
           <View maxHeight="65%">
             <TouchableOpacity
