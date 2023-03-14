@@ -1,14 +1,11 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import {StyleSheet, TextInput} from 'react-native';
-import {Box, Button, Center, Text, View, Image, FlatList} from 'native-base';
-import { getGPSData } from '../helper-functions/gpsFetching';
-import ListItems from '../components/molecules/ListItems';
-import {NEXT_LABEL} from '../assets/locale/en';
-import {ScrollView} from 'react-native';
-import GetLocation from 'react-native-get-location';
-// import KalmanFilter from 'kalmanjs';
-import Geolocation from 'react-native-geolocation-service';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+import {Button, Center, Text, View, Image} from 'native-base';
 import Tts from 'react-native-tts';
+import { startCounter, stopCounter } from 'react-native-accurate-step-counter';
+const haversine = require('haversine')
+import CompassHeading from 'react-native-compass-heading';
+import { StackActions } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   view: {
@@ -17,13 +14,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   button: {
-    marginTop: 10,
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
+    marginTop: 50,
+    width: '70%',
+    height: 200,
+    // padding: 0,
     justifyContent: 'center',
-    alignContent: 'center',
-    textAlign: 'center',
+    backgroundColor: '#005AB5',
+    borderRadius: 14,
+    margin: 20
   },
   title: {
     paddingTop: 10,
@@ -38,7 +36,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    textAlign:"center",
+    fontSize: 22,
+    padding: 60
   },
   dividerView: {
     flexDirection: 'row',
@@ -70,105 +71,170 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 30,
   },
+  goodBadButton: {
+    margin: 20,
+    backgroundColor: '#005AB5',
+
+  },
+  goodBadButtonText: {
+    margin: 20,
+    color: 'white',
+    fontSize: 20
+  }
 });
 
-const maxBoundary = 0.000196;
 let pathIndex = 0;
 let ttsIndex = 0;
-let firstGPSLocation = true;
-// let count = 0;
+
+let stepCountOverall = 0;
+let enableCount = false;
+let distanceCount = 0;
+let stepSize = 0.5; //in meters (this is 1.5 feet)
+let targetDistance = null;
+
+let targetBear = null;
+let currentBear = null;
 
 const UserGuidanceScreen = ({route, navigation}) => {
-  
-    const [indexTracker, setIndexTracker] = useState([]);
-    const [pointTracker, setPointTracker] = useState([]);
-    const [coordinates, setCoordinates] = useState([]);
+
     const [stepName, setStepName] = useState('');
-    const watchId = useRef(null);
-    const [latDrift, setLatDrift] = useState(0);
-    const [longDrift, setLongDrift] = useState(0);
+    const [enableCountUI, setEnableCountUI] = useState(false);
     
     useEffect(() => {
-      // for (node in route.params.path) {
-      //   console.log(node)
-      // }
-      console.log(route.params.path)
-      getLocationUpdates();
-      setStepName('start');
-      checkTTS();
+      resetAllVariables();
+      const degree_update_rate = 3;
+      CompassHeading.start(degree_update_rate, ({heading, accuracy}) => {
+        currentBear = heading;
+
+        console.log(route.params.path)
+        if(targetDistance == null){
+          findTargetDistance();
+          checkTTS();
+          pathIndex++;
+        }
+        setStepName('start');
+        CompassHeading.stop(); 
+      });
+      
+      const config = {
+        default_threshold: 10.0, //sensitivity, lower is more sensative
+        default_delay: 600000000, //0.6 sec interval between each step count
+        onStepCountChange: (stepCount) => { 
+          if(enableCount){
+            stepCountOverall = stepCountOverall + 1
+            console.log("steps counted:", stepCountOverall)
+            distanceCount = distanceCount + stepSize; // in feet
+            console.log("distance counted:", distanceCount);
+
+            if(targetDistance == null || targetDistance <= distanceCount) {
+              if(pathIndex < route.params.path.length - 1){
+                findTargetDistance();
+                checkTTS();
+                pathIndex++;
+              } else {
+                checkTTS();
+                resetAllVariables();
+                setStepName('Done');
+              }
+            }
+
+          }
+        },
+      }
+      startCounter(config);
+
+      return () => { 
+        stopCounter(); 
+        CompassHeading.stop(); 
+      }
     }, []);
 
-    const updateDrifts = (lat, long) => {
-      let currentNode = null
-      console.log(route.params.nodeList);
-      for (let i = 0; i < route.params.nodeList.length; i++) {
-        console.log(route.params.nodeList[i]['guid']);
-        console.log(route.params.path[pathIndex]);
-        console.log(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]);
-        if(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]) {
-          currentNode = route.params.nodeList[i];
-          break;
-        }
-      }
-      console.log(currentNode)
-      // console.log("coord length:" + coordinates.length);
-      // const currentLat = coordinates[coordinates.length - 1][0]
-      // const currentLong = coordinates[coordinates.length - 1][1]
-
-      setLatDrift(lat - currentNode['lat'])
-      setLongDrift(long - currentNode['long'])
-      // take latest position
-      // compare it to current node in our path
-      // take the difference
-      // set equal to latdrift and longdrift
+    const resetAllVariables = () => {
+      // setEnableCount(false);
+      enableCount = false;
+      distanceCount = 0;
+      stepCountOverall = 0;
+      targetDistance = null;
+      targetBear = null;
+      currentBear = null;
+      pathIndex = 0;
+      ttsIndex = 0;
     }
 
-    const getLocationUpdates = async () => {
-      console.log('watch Id: ' + watchId.current);
-      if (watchId.current === null) {
-        watchId.current = Geolocation.watchPosition(
-          position => {
-            // if (count % 10 == 0) {
-            //   checkTTS();
-            // }
-            const percievedLat = position.coords.latitude + latDrift;
-            const percievedLong = position.coords.longitude + longDrift;
-            // console.log("got gps")
-            setCoordinates(coordinates => [...coordinates, [percievedLat, percievedLong]]);
-            closestPoint(percievedLat, percievedLong)
-            // if(firstGPSLocation) {
-            //   updateDrifts(percievedLat, percievedLong);
-            //   firstGPSLocation = false;
-            // }
-            // count++;
-          },
-          error => {
-            setCoordinates(null);
-            console.log(error);
-          },
-          {
-            enableHighAccuracy: true,
-            distanceFilter: 0,
-            interval: 1000,
-            fastestInterval: 200,
-            showLocationDialog: true,
-          },
-        );
-        // setWatchId(watchIdRef);
-        console.log('watch Id: ' + watchId.current);
+    const findTargetDistance = () => {
+      let startNode = null
+      let endNode = null
+
+      for (let i = 0; i < route.params.nodeList.length; i++) {
+        if(route.params.nodeList[i]['guid'] === route.params.path[pathIndex]) {
+          startNode = route.params.nodeList[i];
+        } else if (route.params.nodeList[i]['guid'] === route.params.path[pathIndex + 1]){
+          endNode = route.params.nodeList[i];
+        }
       }
+      targetDistance = distance(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+      console.log("Target distance:", targetDistance)
+
+      if(pathIndex == 0){
+        targetBear = bearing(startNode['lat'], startNode['long'], endNode['lat'], endNode['long']);
+        getShortestTurn(currentBear, targetBear)
+      }
+      
+      distanceCount = 0;
+      stepCountOverall = 0;
+    };
+
+    // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
+    // Converts from degrees to radians.
+    function toRadians(degrees) {
+      return degrees * Math.PI / 180;
     };
     
-    const stop = () => {
-      if (watchId.current !== null) {
-        console.log('watch is not null');
-        Geolocation.clearWatch(watchId.current);
-        watchId.current = null;
+    // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
+    // Converts from radians to degrees.
+    function toDegrees(radians) {
+      return radians * 180 / Math.PI;
+    }
+
+    // source: https://stackoverflow.com/questions/46590154/calculate-bearing-between-2-points-with-javascript
+    function bearing(startLat, startLng, destLat, destLng){
+      startLat = toRadians(startLat);
+      startLng = toRadians(startLng);
+      destLat = toRadians(destLat);
+      destLng = toRadians(destLng);
+
+      y = Math.sin(destLng - startLng) * Math.cos(destLat);
+      x = Math.cos(startLat) * Math.sin(destLat) -
+            Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
+      brng = Math.atan2(y, x);
+      brng = toDegrees(brng);
+      return (brng + 360) % 360;
+    }
+
+    function getShortestTurn(currentBearing, targetBearing){
+      console.log("Current bearing:", currentBearing, "Target bearing:", targetBearing)
+
+      // source: https://math.stackexchange.com/questions/110080/shortest-way-to-achieve-target-angle
+      turn = ((targetBearing - currentBearing + 540) % 360) - 180
+      turn = Number(turn.toFixed(0))
+
+      if(turn >= 0){
+        Tts.speak("Turn right " + Math.abs(turn) + " degrees");
+      } else {
+        Tts.speak("Turn left " + Math.abs(turn) + " degrees");
       }
     }
   
     const distance = (x1, y1, x2, y2) => {
-      return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      const start = {
+        latitude: x1,
+        longitude: y1,
+      }
+      const end = {
+        latitude: x2,
+        longitude: y2,
+      }
+      return haversine(start, end, {unit: 'meter'})
     };
 
     const checkTTS = () => {
@@ -178,46 +244,6 @@ const UserGuidanceScreen = ({route, navigation}) => {
         Tts.speak(route.params.tts[ttsIndex][1]);
         ttsIndex++;
       }
-      // pathIndex++;
-    };
-  
-    const closestPoint = (lat, long) => {
-  
-      //finds node closest to currently obtained GPS location
-      let minVal = 100;
-      let minNode = null;
-      let nodeDistance = 0
-      route.params.nodeList.forEach(node => {
-        nodeDistance = distance(node['lat'], node['long'], lat, long);
-        if (nodeDistance < minVal) {
-          minVal = nodeDistance;
-          minNode = node; 
-        }
-        
-      });
-      // console.log("min node=" + minNode["guid"])
-      //if the closest node is the next node in the path
-      if (minNode["guid"] === route.params.path[pathIndex + 1] && minVal < maxBoundary) {
-        //update current index
-        pathIndex++;
-        console.log("checking tts, path index=" + pathIndex)
-        checkTTS(minNode['lat'], minNode['long']);
-
-        // updateDrifts();
-
-        setIndexTracker(indexTracker => [...indexTracker, pathIndex]);
-        setIndexTracker(indexTracker => [
-          ...indexTracker,
-          'update coordinates: ' + lat + ', ' + long
-        ]);
-
-        if(pathIndex === route.params.path.length) {
-          stop();
-          setStepName('Done');
-        }
-      }
-
-      setPointTracker(pointTracker => [...pointTracker, 'POINT3: ' + pathIndex]);
     };
   
     return (
@@ -231,32 +257,46 @@ const UserGuidanceScreen = ({route, navigation}) => {
         <Text style={styles.title} fontSize="2xl">
           User Guidance Screen
         </Text>
-        {/* <Button
-          title="Stop"
-          style={styles.button}
-          onPress={stop}>
-            <Text style={styles.buttonText}>Stop</Text>
-        </Button> */}
         {stepName == 'start' ? (
           <View maxHeight="65%">
-            <FlatList
-              data={coordinates}
-              renderItem={({item}) => (
-                <>
-                  <Text style={styles.dividerText}>
-                    {item}
-                  </Text>
-                </>
-              )}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                if(enableCountUI == true){
+                  setEnableCountUI(false)
+                  enableCount = false
+                } else {
+                  setEnableCountUI(true)
+                  enableCount = true
+                }
+                console.log(enableCount)
+              }}
+              style={styles.button}>
+                {(enableCountUI)? 
+                  <Text style={styles.buttonText}>Pause Navigation</Text>:
+                  <Text style={styles.buttonText}>Start Navigation</Text>
+                }
+            </TouchableOpacity>
           </View>
         ) : stepName == 'Done' ? (
-          <Button
-            title="Stop"
-            style={styles.button}
-            onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.buttonText}>Go back to Login</Text>
-          </Button>
+          <>
+          <Text style={styles.title}>
+            How was user guidance?
+          </Text>
+          <View style={{ flexDirection:"row" }}>
+              <View >
+                  <Button style={styles.goodBadButton} size="lg" onPress={() => {
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Good</Text></Button>
+              </View>
+              <View >
+                  <Button style={styles.goodBadButton} size="lg" onPress={() => {
+                navigation.dispatch(StackActions.popToTop())
+              }
+            }><Text style={styles.goodBadButtonText}>Bad</Text></Button>
+              </View>
+          </View>
+          </>
         ) : (
           <></>
         )}

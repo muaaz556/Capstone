@@ -1,48 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, TextInput} from 'react-native';
+import {StyleSheet, TextInput, ScrollView} from 'react-native';
 import {Box, Button, Text, View, Image, FlatList} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import {NEXT_LABEL} from '../assets/locale/en';
 
 const styles = StyleSheet.create({
   view: {
-    // flex: 1,
+    flex: 1,
     alignItems: 'center',
     flexDirection: 'column',
   },
   button: {
     marginTop: 10,
-    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     alignContent: 'center',
     textAlign: 'center',
+    backgroundColor: '#005AB5',
   },
   title: {
     paddingTop: 10,
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '500',
-    color: '#353d3f',
-    marginBottom: '0%',
+    fontSize: 28,
+    fontWeight: '800',
+    color: 'black',
+    marginBottom: '5%',
   },
   logoImage: {
     marginTop: '20%',
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 18,
   },
   dividerView: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 0,
-    marginBottom: 20,
+    marginBottom: 0,
   },
   dividerText: {
     textAlign: 'center',
-    color: '#808585',
+    color: 'black',
+    fontSize: 14,
+    fontWeight: '500',
     paddingHorizontal: 10,
   },
   dividerLine: {
@@ -52,22 +55,21 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    borderWidth: 1,
+    borderWidth: 3,
     padding: 10,
-    borderRadius: 4,
-    borderColor: '#808585',
-    color: '#000000',
+    borderRadius: 14,
+    borderColor: 'black',
   },
   boxCard: {
-    backgroundColor: '#DEDEDE',
     paddingHorizontal: 18,
     borderRadius: 15,
     paddingVertical: 30,
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '500',
-  },
+  scrollViewStyle: { 
+    flexGrow: 1, 
+    alignItems: 'center',
+    // justifyContent: 'center'
+  }
 });
 
 let result;
@@ -122,29 +124,36 @@ const MapExistingBuildingScreen = ({navigation}) => {
       <Text style={styles.title} fontSize="2xl">
         Accessibility
       </Text>
-        <View style={styles.dividerView}>
-          <View style={styles.dividerLine} />
-          <View>
-            <Text style={styles.dividerText}>Choose a building</Text>
+        <Box w="100%" maxWidth="75%" mt="5">
+          <View style={styles.dividerView}>
+            <View style={styles.dividerLine} />
+            <View>
+              <Text style={styles.dividerText}>Choose a building</Text>
+            </View>
+            <View style={styles.dividerLine} />
           </View>
-          <View style={styles.dividerLine} />
-        </View>
+        </Box>
         {stepName == 'building' ? (
-          <View maxHeight="65%">
+                      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewStyle}>
+
+          <Box w="100%" maxWidth="100%" mt="5">
             <FlatList
             data={buildings}
             renderItem={({item}) => (
                 <>
                     <Button
+                    mb="4"
+                    size="lg"
                     title={item}
                     style={styles.button}
                     onPress={()=> updateStep(item)}>
-                        {item}
+                      <Text style={styles.buttonText}>{item}</Text>
                     </Button>
                 </>
             )}
             />
-          </View>
+           </Box>
+          </ScrollView>
         ): stepName == 'floor' ? (
           <>
             <Box w="100%" maxWidth="90%" mt="5" style={styles.boxCard}>
@@ -158,7 +167,7 @@ const MapExistingBuildingScreen = ({navigation}) => {
             </Box>
             <Box w="100%" maxWidth="75%" mt="5">
               <Button
-                mb="2"
+                style={styles.button}
                 onPress={() => {
                   updateStep(floorNameState);
                 }}>

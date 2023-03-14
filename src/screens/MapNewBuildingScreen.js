@@ -73,10 +73,14 @@ const MapNewBuildingScreen = ({navigation}) => {
     });
   };
 
+  const navigateToLogin = () => {
+    navigation.navigate('Login');
+  }
+
   return (
     <View style={styles.view}>
       {stepName === 'overview' ? (
-        <OverviewContext.Provider value={{ stepName, setStepName }}>
+        <OverviewContext.Provider value={{ stepName, setStepName, navigateToLogin }}>
           <Overview />
         </OverviewContext.Provider>
       ) : stepName === 'building_name' ? (

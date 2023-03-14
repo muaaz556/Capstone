@@ -1,5 +1,7 @@
 
-import React, {useContext} from 'react';
+import React, {useState, useContext} from 'react';
+import { View } from 'native-base';
+
 
 import {StyleSheet, Alert, TouchableOpacity} from 'react-native';
 import {Box, Button, Text} from 'native-base';
@@ -17,45 +19,58 @@ import {
   DESCRIPTION,
   BUTTON,
 } from '../../assets/locale/en';
+import Dialog from "react-native-dialog";
+
 
 const styles = StyleSheet.create({
   input: {
     height: 40,
     margin: 12,
-    width: 200,
-    borderWidth: 1,
+    width: 300,
+    borderRadius: 4,
+    borderWidth: 3,
     padding: 10,
   },
   title: {
-    paddingTop: '30%',
+    paddingTop: '10%',
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '500',
-    color: '#353d3f',
+    fontSize: 28,
+    fontWeight: '800',
+    color: 'black',
   },
   boxCard: {
-    backgroundColor: '#DEDEDE',
     padding: 18,
-    borderRadius: 15,
+    borderRadius: 4,
+    borderWidth: 3,
+    borderColor: 'black',
   },
   decriptionTitle: {
     lineHeight: 20,
-    fontWeight: '500',
+    fontWeight: '800',
+    fontSize: 16,
     paddingBottom: 12,
   },
   description: {
     lineHeight: 20,
+    fontWeight: '400',
+    fontSize: 14,
+  },
+  button: {
+    marginTop: 10,
+    backgroundColor: '#005AB5',
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 18,
   },
   discardButton: {
     alignItems: 'center',
     backgroundColor: '#D05959',
-    padding: 10,
+    padding: 12,
     borderRadius: 4,
     marginBottom: 10,
+    marginTop: 10,
   },
 });
 
@@ -73,6 +88,12 @@ const GPSCornerSelection = ({navigation}) => {
   const [latitude, setLatitude] = lat;
   const [stepName, setStepName] = step;
   const [postCoordinates] = postFunction;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [latInput, setLatInput] = useState("");
+  const [longInput, setLongInput] = useState("");
+
+
+
 
   const getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
@@ -113,8 +134,35 @@ const GPSCornerSelection = ({navigation}) => {
     setStepName('please_wait');
   };
 
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  }
+
   return (
     <>
+      <View>
+          <Dialog.Container visible={modalVisible}>
+              <Dialog.Title>{"Add Coordinate"}</Dialog.Title>
+              <Dialog.Description>
+                  {"Manually add GPS coordinate"}
+              </Dialog.Description>
+              <Dialog.Input onChangeText={(input) => {setLatInput(input)}} value={latInput} placeholder="Latitude" keyboardType='numeric'/>
+              <Dialog.Input onChangeText={(input) => {setLongInput(input)}} value={longInput} placeholder="Longitude" keyboardType='numeric'/>
+              <Dialog.Button label="Cancel" onPress={() => {
+                toggleModal()
+                setLatInput("")
+                setLongInput("")
+                }}/>
+              <Dialog.Button label="Ok" disabled={latInput == "" || longInput == ""} onPress={() => {
+                  setLatitude(latitude => [...latitude, Number(latInput)]);
+                  setLongitude(longitude => [...longitude, Number(longInput)]);
+                  setStepName('gps_call')
+                  setLatInput("")
+                  setLongInput("")
+                  setModalVisible(false)
+                  }}/>
+          </Dialog.Container>
+      </View>
       <Text style={styles.title} fontSize="2xl">
         {LOCATION_OF_CORNER_TITLE}
       </Text>
@@ -137,15 +185,28 @@ const GPSCornerSelection = ({navigation}) => {
       </Box>
 
       <Box w="100%" maxWidth="75%" mt="5">
+      <Button
+          mb="4"
+          style={styles.button}
+          size="lg"
+          onPress={() => {
+            toggleModal();
+          }}>
+          <Text style={styles.buttonText}>Manual Input</Text>
+        </Button>
         <Button
-          mb="2"
+          mb="4"
+          style={styles.button}
+          size="lg"
           onPress={() => {
             getCurrentPosition();
           }}>
           <Text style={styles.buttonText}>{GET_CURRENT_LOCATION_LABEL}</Text>
         </Button>
         <Button
-          mb="2"
+          mb="4"
+          style={styles.button}
+          size="lg"
           onPress={() => {
             postCoordinates();
           }}>
@@ -159,7 +220,9 @@ const GPSCornerSelection = ({navigation}) => {
           <Text style={styles.buttonText}>{DISCARD_GPS_LOCATIONS_LABEL}</Text>
         </TouchableOpacity>
         <Button
-          mb="2"
+          mb="10"
+          style={styles.button}
+          size="lg"
           onPress={() => {
             setStepName('floor_name');
           }}>

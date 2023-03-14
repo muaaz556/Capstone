@@ -23,20 +23,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoImage: {
-    marginBottom: 10,
+    marginBottom: 20,
   },
   titleText: {
-    fontSize: 26,
-    paddingTop: 20,
-    fontWeight: '500',
-    color: '#353d3f',
+    fontSize: 28,
+    paddingTop: 26,
+    fontWeight: '800',
+    color: 'black',
+    marginBottom: '2%',
   },
   titleSubText: {
     fontSize: 14,
     marginTop: 4,
     marginBottom: 30,
-    fontWeight: '400',
-    color: '#808585',
+    fontWeight: '500',
+    color: 'black',
   },
   inputBox: {
     marginBottom: 10,
@@ -48,67 +49,58 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+    backgroundColor: '#005AB5',
   },
   buttonText: {
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 18,
   },
   dividerView: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 10,
-  },
-  dividerText: {
-    textAlign: 'center',
-    color: '#808585',
-    paddingHorizontal: 10,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#808585',
-  },
+  }
 });
 
 const LoginScreen = ({navigation}) => {
 
-  const handleGuestStudentButtonClick = () => {
-    console.log('Fetching data');
-    getGPSData();
-  };
-
   return (
     <View style={styles.view}>
       <Image
+        accessible={true}
         style={styles.logoImage}
         source={require('../assets/images/splashscreen_logo.png')}
         size="lg"
-        alt="Logo image"
+        alt="Logo of a person walking with a white cane."
       />
-      <Text style={styles.titleText}>Welcome to Eye Guide!</Text>
-      <Text style={styles.titleSubText}>Choose an option to begin!</Text>
+      <Text style={styles.titleText}>Welcome to Eye Guide</Text>
+      <Text style={styles.titleSubText}>Choose an option to begin</Text>
 
-      <Box w="100%" maxWidth="300px">
-        <FormControl isRequired>
-          <Stack mx="0">
-            <Button
-              style={styles.button}
-              onPress={() => {}/*() => navigation.navigate('AdminHomeScreen')*/}>
-              <Text style={styles.buttonText}>Guest Admin</Text>
-            </Button>
-            <Button
-              style={styles.button}
-              onPress={() => navigation.navigate('NavigationScreen')}>
-              <Text style={styles.buttonText}>Guest Student</Text>
-            </Button>
-            <Button
-              style={styles.button}
-              onPress={() => navigation.navigate('AccessibilityScreen')}>
-              <Text style={styles.buttonText}>Accessibility</Text>
-            </Button>
-          </Stack>
-        </FormControl>
+      <Box w="100%" maxWidth="350px">
+        <Stack mx="1" safeArea mt={20} space="lg">
+          <Button
+            style={styles.button}
+            size="lg"
+            accessible={true}
+            accessibilityHint="Go to select a building for navigation"
+            accessibilityLabel="Student"
+            accessibilityRole="button"
+            onPress={() => navigation.navigate('NavigationScreen')}>
+            <Text style={styles.buttonText}>Student</Text>
+          </Button>
+          <Button
+            style={styles.button}
+            size="lg"
+            accessible={true}
+            accessibilityLabel="Accessibility"
+            accessibilityHint="Go to map a building for navigation"
+            accessibilityRole="button"
+            onPress={() => navigation.navigate('AccessibilityScreen')}>
+            <Text style={styles.buttonText}>Accessibility</Text>
+          </Button>
+        </Stack>
       </Box>
     </View>
   );

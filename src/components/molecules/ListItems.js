@@ -11,6 +11,12 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignContent: 'center',
       textAlign: 'center',
+      backgroundColor: '#005AB5',
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 18,
     },
     dividerView: {
         flexDirection: 'row',
@@ -20,35 +26,34 @@ const styles = StyleSheet.create({
     },
     dividerText: {
         textAlign: 'center',
-        color: '#808585',
+        color: 'black',
         paddingHorizontal: 10,
     },
     dividerLine: {
         flex: 1,
         height: 1,
-        backgroundColor: '#808585',
+        backgroundColor: 'black',
     },
   });
 
 const ListItems = ({list, updateStep, titleText}) => {
     return (
-        <Box w="100%" maxWidth="75%" mt="5">
-            <View style={styles.dividerView}>
-                <View style={styles.dividerLine} />
-                <View>
-                    <Text style={styles.dividerText}>{titleText}</Text>
-                </View>
-                <View style={styles.dividerLine} />
-            </View>
+        <Box w="100%" maxWidth="100%" mt="5">
             <FlatList
                 data={list}
                 renderItem={({item}) => (
                     <>
                         <Button
                         title={item}
+                        size="lg"
+                        mb="4"
+                        accessible={true}
+                        accessibilityHint={`Select ${item} as ${titleText}`}
+                        accessibilityLabel={item}
+                        accessibilityRole="button"
                         style={styles.button}
                         onPress={()=> updateStep(item)}>
-                            {item}
+                            <Text style={styles.buttonText}>{item}</Text>
                         </Button>
                     </>
                 )}
