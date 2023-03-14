@@ -89,7 +89,7 @@ let ttsIndex = 0;
 let stepCountOverall = 0;
 let enableCount = false;
 let distanceCount = 0;
-let stepSize = 0.5; //in meters (this is 1.5 feet)
+let stepSize = 0.75 //0.5; //in meters (this is 1.5 feet)
 let targetDistance = null;
 
 let targetBear = null;
