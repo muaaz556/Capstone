@@ -7,7 +7,7 @@ export const getGPSData = async (urlPath = "get-gps", queryString = "") => {
     }
      
     // If you are getting bad json, add a console log here (cannot be an existing one)
-    console.log("add/remove me to fix fetching issues") 
+    // console.log("add/remove me to fix fetching issues") 
     await fetch(`${NGROK_URL}/api/${urlPath}${queryString}`, {
         method: 'GET',
         headers: {
@@ -16,10 +16,11 @@ export const getGPSData = async (urlPath = "get-gps", queryString = "") => {
             'Content-type': 'application/json',
         },
     }).then(res => {
+        console.log(res);
         if (res.ok) {
-            return res.json()
+            return res.json();
         } else {
-            throw res.json()
+            throw res.json();
         }
     }).then(json => {
         console.log("Good JSON ", json)

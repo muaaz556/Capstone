@@ -12,7 +12,7 @@ import {
 } from '../assets/locale/en';
 import React, { useEffect, useState } from 'react';
 import {StyleSheet} from 'react-native';
-import {Box, Text, View, Image} from 'native-base';
+import {Box, Text, View, Image, Button, ChevronLeftIcon} from 'native-base';
 import { getGPSData } from '../helper-functions/gpsFetching';
 import ListItems from '../components/molecules/ListItems';
 
@@ -22,47 +22,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
   },
-  button: {
-    marginTop: 10,
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignContent: 'center',
-    textAlign: 'center',
+  backButton: {
+    padding: 20,
+    margin: 10,
+    borderRadius: 5,
+    backgroundColor: '#005AB5',
   },
   title: {
     paddingTop: 10,
     textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '500',
-    color: '#353d3f',
+    fontSize: 28,
+    fontWeight: '800',
+    color: 'black',
     marginBottom: '0%',
   },
   logoImage: {
     marginTop: '20%',
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '500',
-  },
   input: {
     height: 50,
-    borderWidth: 1,
+    borderWidth: 3,
     padding: 10,
     borderRadius: 4,
-    borderColor: '#808585',
-    color: '#000000',
+    borderColor: 'black',
   },
   boxCard: {
-    backgroundColor: '#DEDEDE',
     paddingHorizontal: 18,
     borderRadius: 15,
     paddingVertical: 30,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '500',
   },
 });
 
@@ -121,6 +108,23 @@ const NavigationScreen = ({navigation}) => {
   const start = (selectedItem) => {
     setStartingNode(selectedItem);
     setStepName('destination');
+  }
+
+  const navigateBack = () =>{
+    switch(stepName) {
+      case 'building':
+        navigation.navigate('Login');
+        break;
+      case 'floor':
+        setStepName('building');
+        break;
+      case 'start':
+        setStepName('floor');
+        break;
+      case 'destination':
+        setStepName('start');
+        break;
+    }
   }
 
   const destination = async (dest) => {
@@ -203,33 +207,43 @@ const NavigationScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.view}>
-      <Image
-        style={styles.logoImage}
-        source={require('../assets/images/splashscreen_logo.png')}
-        size="lg"
-        alt="Logo image"
-      />
-      <Text style={styles.title} fontSize="2xl">
-        Accessibility
-      </Text>
-      <DistanceSensorComponent
-          enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
-          distanceLimit={DISTANCE_LIMIT}
-          vibrationDuration={VIBRATION_DURATION}
-          navigation={navigation}></DistanceSensorComponent>
-      {stepName == 'building' ? (
-        <ListItems list={buildings} updateStep={updateStep} titleText="Choose a building" />
-      ): stepName == 'floor' ? (
-        <ListItems list={floors} updateStep={updateStep} titleText="Choose a floor" />
-      ): stepName == 'start' ? (
-        <ListItems list={destinations} updateStep={updateStep} titleText="Choose your starting location" />
-      ): stepName == 'destination' ? (
-        <ListItems list={destinations} updateStep={updateStep} titleText="Choose your final destination"/>
-      ) : (
-        <></>
-      )}
-    </View>
+    <>
+      <ChevronLeftIcon
+      style={styles.backButton}
+      accessible={true}
+      accessibilityHint="Select this button to go back"
+      accessibilityLabel="Back Button"
+      accessibilityRole="button"
+      onPress={navigateBack}
+      color="white" />
+      <View style={styles.view}>
+        <Image
+          style={styles.logoImage}
+          source={require('../assets/images/splashscreen_logo.png')}
+          size="lg"
+          alt="Logo of a person walking with a white cane."
+        />
+        <Text style={styles.title} fontSize="2xl">
+          Accessibility
+        </Text>
+        <DistanceSensorComponent
+            enableVibration={ENABLE_DISTANCE_SENSOR_VIBRATION}
+            distanceLimit={DISTANCE_LIMIT}
+            vibrationDuration={VIBRATION_DURATION}
+            navigation={navigation}></DistanceSensorComponent>
+        {stepName == 'building' ? (
+          <ListItems list={buildings} updateStep={updateStep} titleText="building" />
+        ): stepName == 'floor' ? (
+          <ListItems list={floors} updateStep={updateStep} titleText="floor" />
+        ): stepName == 'start' ? (
+          <ListItems list={destinations} updateStep={updateStep} titleText="starting location" />
+        ): stepName == 'destination' ? (
+          <ListItems list={destinations} updateStep={updateStep} titleText="destination"/>
+        ) : (
+          <></>
+        )}
+      </View>
+    </>
   );
 };
 
